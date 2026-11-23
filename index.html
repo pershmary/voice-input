@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="vendor/ui-kit/components/button/button.css">
   <link rel="stylesheet" href="vendor/ui-kit/components/tumbler/tumbler.css">
   <link rel="stylesheet" href="css/fonts.css">
-  <link rel="stylesheet" href="css/demo-frame.css?v=voice-radio-caption">
+  <link rel="stylesheet" href="css/demo-frame.css?v=voice-split-window">
   <link rel="stylesheet" href="css/scene-background.css">
   <link rel="stylesheet" href="css/voice-toolbar.css">
   <script defer src="vendor/ui-kit/components/demo-frame/demo-frame.js"></script>
@@ -244,6 +244,34 @@
         <p class="voice-window__transcript">
           нужно отрисовать объединенный механизм голосового ввода и отправки аудиосообщения также нужно добавить возможность голосового ввода в любое поле на сайте по шорткату
         </p>
+      </section>
+      <section class="voice-window voice-window--split-window" data-voice-scenario="split-window" aria-label="Окно голосового ввода" hidden>
+        <div class="voice-window__toolbar">
+          <div class="voice-window__audio">
+            <time class="voice-window__timer" datetime="PT12S">0:12</time>
+            <span class="voice-window__waveform" aria-hidden="true"></span>
+          </div>
+          <div class="voice-window__playback">
+            <button type="button" class="btn btn--link btn--style-info btn--icon" aria-label="Пауза">
+              <span class="btn__icon" aria-hidden="true">&#xE639;</span>
+            </button>
+            <button type="button" class="btn btn--link btn--style-info btn--icon" aria-label="Начать заново">
+              <span class="btn__icon" aria-hidden="true">&#xE629;</span>
+            </button>
+          </div>
+          <button type="button" class="btn btn--filled btn--style-info btn--size-m btn--icon voice-window__split-insert" aria-label="Вставить аудио">
+            <span class="btn__icon" aria-hidden="true">&#xEB1A;</span>
+          </button>
+          <button type="button" class="close-button close-button--external voice-window__dismiss" aria-label="Закрыть"></button>
+        </div>
+        <div class="voice-window__transcript">
+          <p>
+            нужно отрисовать объединенный механизм голосового ввода и отправки аудиосообщения также нужно добавить возможность голосового ввода в любое поле на сайте по шорткату
+          </p>
+          <button type="button" class="btn btn--filled btn--style-info btn--size-m btn--icon voice-window__split-insert" aria-label="Вставить текст">
+            <span class="btn__icon" aria-hidden="true">&#xEB1A;</span>
+          </button>
+        </div>
       </section>
     </main>
   </div>
