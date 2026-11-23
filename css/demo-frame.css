@@ -350,3 +350,70 @@ body {
 .voice-window__confirm {
   flex: none;
 }
+
+.voice-window--two-buttons {
+  top: 188px;
+  right: 68px;
+  width: 732px;
+  padding-bottom: 6px;
+  border-radius: 20px;
+}
+
+.voice-window--two-buttons .voice-window__toolbar {
+  padding-left: 6px;
+}
+
+.voice-window--two-buttons .voice-window__audio {
+  box-sizing: border-box;
+  display: flex;
+  flex: 0 0 388px;
+  gap: 12px;
+  padding-inline: 8px;
+}
+
+.voice-window--two-buttons .voice-window__timer {
+  margin: 0;
+}
+
+.voice-window--two-buttons .voice-window__waveform {
+  opacity: 1;
+}
+
+.voice-window--two-buttons .voice-window__transcript {
+  margin: 0 6px;
+  padding: 8px;
+  border-radius: 12px;
+  background: var(--background-background-color);
+  color: var(--text-text-color);
+}
+
+.voice-window__playback {
+  display: flex;
+  gap: 4px;
+  padding-left: 4px;
+}
+
+.voice-window__playback .btn {
+  width: 32px;
+  height: 32px;
+}
+
+.voice-window__insert-options {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  padding-left: 16px;
+  color: var(--text-label_contrast_text-color);
+}
+
+.voice-window__insert-options .btn {
+  letter-spacing: inherit;
+}
+
+.voice-window__dismiss {
+  position: absolute;
+  top: 8px;
+  right: -14px;
+}
