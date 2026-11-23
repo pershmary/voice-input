@@ -438,7 +438,8 @@ body {
 .voice-window--menu-button {
   box-sizing: border-box;
   top: 188px;
-  right: 111px;
+  right: auto;
+  left: 803px;
   width: 720px;
   padding: 8px 8px 10px 12px;
   border-radius: 20px;
