@@ -265,6 +265,7 @@
   padding: 6px 6px 12px 14px;
   border: 0;
   border-radius: 16px;
+  box-shadow: 0 0 var(--blur-shadow-blur_c) var(--color-shadow-color_c);
   background: var(--background-info_background-color);
   color: var(--text-text-color);
   font: inherit;
