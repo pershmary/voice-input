@@ -86,8 +86,7 @@ const frame = DemoFrame.mount({
         { id: 'menu-button', title: 'Кнопка с меню в 3-х точках' },
         { id: 'toggle', title: 'Тумблер' },
         { id: 'two-buttons', title: '2 кнопки' },
-        { id: 'split-window', title: 'Окно из двух частей' },
-        { id: 'double-button', title: 'Двойная кнопка' }
+        { id: 'split-window', title: 'Окно из двух частей' }
       ]
     }
   ],
