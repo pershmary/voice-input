@@ -238,6 +238,7 @@ body {
   box-sizing: border-box;
   width: 129px;
   height: 28px;
+  padding-bottom: 2px;
   place-items: center;
   border: 1px solid var(--border-info_border-color);
   border-radius: 100px;
