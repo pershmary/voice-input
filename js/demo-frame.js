@@ -62,7 +62,7 @@ const menuGroup = stage.querySelector('.voice-window__menu-group');
 const menuTrigger = menuGroup.querySelector('.voice-window__menu-trigger');
 const formatMenu = menuGroup.querySelector('.voice-window__menu');
 const addButton = menuGroup.querySelector('.voice-window__add');
-const addIcon = addButton.querySelector('.voice-window__add-icon');
+const addIcon = addButton.querySelector('.voice-format-icon');
 const formatOptions = formatMenu.querySelectorAll('[data-format]');
 
 function showFormatMenu(show) {
@@ -70,7 +70,13 @@ function showFormatMenu(show) {
   menuTrigger.setAttribute('aria-expanded', String(show));
 }
 
+function closeFormatMenu() {
+  showFormatMenu(false);
+  menuTrigger.focus({ preventScroll: true });
+}
+
 menuTrigger.addEventListener('click', () => showFormatMenu(formatMenu.hidden));
+formatMenu.querySelector('.voice-window__menu-close').addEventListener('click', closeFormatMenu);
 for (const option of formatOptions) {
   option.addEventListener('click', () => {
     const isAudio = option.dataset.format === 'audio';
@@ -78,10 +84,10 @@ for (const option of formatOptions) {
       item.setAttribute('aria-pressed', String(item === option));
     }
     addButton.setAttribute('aria-label', isAudio ? 'Добавить аудио' : 'Добавить текст');
-    addIcon.textContent = isAudio ? '\uE666' : '\uE764';
-    addIcon.classList.toggle('is-text', !isAudio);
-    showFormatMenu(false);
-    menuTrigger.focus({ preventScroll: true });
+    addIcon.textContent = option.querySelector('.voice-format-icon').textContent;
+    addIcon.classList.toggle('voice-format-icon--audio', isAudio);
+    addIcon.classList.toggle('voice-format-icon--text', !isAudio);
+    closeFormatMenu();
   });
 }
 document.addEventListener('click', event => {
@@ -90,8 +96,7 @@ document.addEventListener('click', event => {
 menuGroup.addEventListener('keydown', event => {
   if (event.key !== 'Escape' || formatMenu.hidden) return;
   event.preventDefault();
-  showFormatMenu(false);
-  menuTrigger.focus({ preventScroll: true });
+  closeFormatMenu();
 });
 
 const team = [

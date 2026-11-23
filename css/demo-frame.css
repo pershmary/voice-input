@@ -499,7 +499,7 @@ body {
   letter-spacing: inherit;
 }
 
-.voice-window__add .voice-window__add-icon:not(.is-text) {
+.voice-format-icon.voice-format-icon--audio {
   border-radius: 50%;
   background: var(--background-contrast-info_color);
   color: var(--icon-contrast_icon-color);
@@ -509,23 +509,72 @@ body {
   color: var(--icon-icon-color);
 }
 
+.voice-format-icon {
+  display: inline-grid;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  place-items: center;
+  font: 16px/1 "cbuc-icons";
+}
+
+.voice-format-icon.voice-format-icon--text {
+  color: var(--icon-info_icon-color);
+  font: 17px/1 "Times New Roman", serif;
+}
+
 .voice-window__menu {
   position: absolute;
   z-index: 1;
   top: calc(100% + 4px);
   right: 0;
-  min-width: 128px;
-  padding: 4px;
-  border-radius: 12px;
+  box-sizing: border-box;
+  width: 153px;
+  padding: 8px;
+  border-radius: 8px;
   background: var(--background-background-color);
-  box-shadow: 0 0 8px rgb(0 0 0 / 15%);
+  box-shadow: 0 0 23px rgb(0 0 0 / 12%), 0 0 7.5px rgb(0 0 0 / 12%);
 }
 
-.voice-window__menu .btn {
+.voice-window__menu-title {
+  display: flex;
+  align-items: center;
+  height: 28px;
+  padding-left: 12px;
+  color: var(--text-label_text-color);
+  letter-spacing: 1.25px;
+  text-transform: uppercase;
+}
+
+.voice-window__menu-option.btn {
+  --btn-h: 32px;
+  --btn-px: 12px;
+  --btn-fs: 16px;
+  --btn-radius: 16px;
+  --btn-gap: 10px;
+  --btn-fg: var(--text-text-color);
   width: 100%;
   justify-content: flex-start;
+  margin-top: 6px;
+  letter-spacing: -0.2256px;
 }
 
-.voice-window__menu .btn[aria-pressed="true"] {
-  --btn-bg: var(--background-info_hover_background-color);
+.voice-window__menu-option .voice-format-icon {
+  width: 20px;
+  height: 20px;
+  margin-left: 2px;
+}
+
+.voice-window__menu-option .voice-format-icon--audio {
+  background: radial-gradient(circle, var(--background-contrast-info_color) 8px, transparent 8.5px);
+}
+
+.voice-window__menu-option .voice-format-icon--text {
+  font-size: 20px;
+}
+
+.voice-window__menu-close {
+  position: absolute;
+  top: 8px;
+  right: -14px;
 }
