@@ -280,6 +280,15 @@ body {
   line-height: 20px;
 }
 
+.voice-window--radio-buttons {
+  right: 71px;
+  padding-bottom: 6px;
+}
+
+.voice-window--radio-buttons .voice-window__transcript {
+  margin-inline: 6px;
+}
+
 .voice-window--toggle {
   top: 188px;
   right: 69px;
