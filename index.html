@@ -12,10 +12,10 @@
   <link rel="stylesheet" href="vendor/ui-kit/components/tumbler/tumbler.css">
   <link rel="stylesheet" href="css/fonts.css">
   <link rel="stylesheet" href="css/demo-frame.css?v=insert-audio">
-  <link rel="stylesheet" href="css/scene-background.css?v=audio-shadow">
+  <link rel="stylesheet" href="css/scene-background.css?v=audio-toolbar">
   <link rel="stylesheet" href="css/voice-toolbar.css">
   <script defer src="vendor/ui-kit/components/demo-frame/demo-frame.js"></script>
-  <script defer src="js/demo-frame.js?v=insert-audio"></script>
+  <script defer src="js/demo-frame.js?v=audio-toolbar"></script>
 </head>
 <body>
   <div class="demo-canvas" id="demo-canvas">
@@ -71,6 +71,19 @@
       </div>
       <button type="button" class="editor-transcript" id="editor-transcript" hidden>Нужно отрисовать объединенный механизм голосового ввода и отправки аудиосообщения. Также нужно добавить возможность голосового ввода в любое поле на сайте по шорткату</button>
       <div class="editor-audio-panel">
+        <div class="tb tb--style-info editor-audio-toolbar" role="toolbar" aria-label="Панель виджета «Аудио»">
+          <button type="button" class="tb__btn editor-audio-toolbar__size" aria-label="Размер виджета: большой" disabled>
+            <span class="tb__icon" aria-hidden="true">&#xEBDF;</span>
+            <span class="tb__caption">Большое</span>
+            <span class="tb__arrow" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="tb__btn editor-audio-toolbar__delete" aria-label="Удалить аудио">
+            <span class="tb__icon" aria-hidden="true">&#xEB72;</span>
+          </button>
+          <button type="button" class="tb__btn" aria-label="Ещё" disabled>
+            <span class="tb__icon" aria-hidden="true">&#xEAB4;</span>
+          </button>
+        </div>
         <button type="button" class="editor-audio" id="editor-audio" aria-label="Аудио, 12 секунд. Удалить аудио и вернуться к голосовому вводу" hidden>
           <span class="editor-audio__controls" aria-hidden="true">
             <time datetime="PT12S">0:12</time>

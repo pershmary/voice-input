@@ -25,6 +25,7 @@ function restoreVoiceWindow() {
 
 editorTranscript.addEventListener('click', restoreVoiceWindow);
 editorAudio.addEventListener('click', restoreVoiceWindow);
+stage.querySelector('.editor-audio-toolbar__delete').addEventListener('click', restoreVoiceWindow);
 
 for (const voiceWindow of voiceWindows) {
   const insertLabel = voiceWindow.querySelector('.voice-window__insert');
