@@ -42,14 +42,57 @@ const waveformPeaks = {
   80: 10, 81: 10, 82: 10, 113: 4, 114: 4, 115: 20,
   116: 20, 117: 14, 164: 4, 165: 20, 166: 14, 167: 10, 168: 4
 };
+const menuWaveformPeaks = {
+  4: 14, 5: 14, 6: 20, 7: 20, 8: 10, 9: 4,
+  33: 10, 34: 10, 35: 10, 66: 4, 67: 4, 68: 20, 69: 20, 70: 14,
+  117: 4, 118: 20, 119: 14, 120: 10, 121: 4
+};
 for (const waveform of stage.querySelectorAll('.voice-window__waveform')) {
-  const bars = Array.from({ length: 209 }, (_, index) => {
+  const isMenuWaveform = waveform.dataset.waveform === 'menu';
+  const peaks = isMenuWaveform ? menuWaveformPeaks : waveformPeaks;
+  const bars = Array.from({ length: isMenuWaveform ? 190 : 209 }, (_, index) => {
     const bar = document.createElement('span');
-    bar.style.height = `${waveformPeaks[index] ?? 2}px`;
+    bar.style.height = `${peaks[index] ?? 2}px`;
     return bar;
   });
   waveform.append(...bars);
 }
+
+const menuGroup = stage.querySelector('.voice-window__menu-group');
+const menuTrigger = menuGroup.querySelector('.voice-window__menu-trigger');
+const formatMenu = menuGroup.querySelector('.voice-window__menu');
+const addButton = menuGroup.querySelector('.voice-window__add');
+const addIcon = addButton.querySelector('.voice-window__add-icon');
+const formatOptions = formatMenu.querySelectorAll('[data-format]');
+
+function showFormatMenu(show) {
+  formatMenu.hidden = !show;
+  menuTrigger.setAttribute('aria-expanded', String(show));
+}
+
+menuTrigger.addEventListener('click', () => showFormatMenu(formatMenu.hidden));
+for (const option of formatOptions) {
+  option.addEventListener('click', () => {
+    const isAudio = option.dataset.format === 'audio';
+    for (const item of formatOptions) {
+      item.setAttribute('aria-pressed', String(item === option));
+    }
+    addButton.setAttribute('aria-label', isAudio ? 'Добавить аудио' : 'Добавить текст');
+    addIcon.textContent = isAudio ? '\uE666' : '\uE764';
+    addIcon.classList.toggle('is-text', !isAudio);
+    showFormatMenu(false);
+    menuTrigger.focus({ preventScroll: true });
+  });
+}
+document.addEventListener('click', event => {
+  if (!formatMenu.hidden && !menuGroup.contains(event.target)) showFormatMenu(false);
+});
+menuGroup.addEventListener('keydown', event => {
+  if (event.key !== 'Escape' || formatMenu.hidden) return;
+  event.preventDefault();
+  showFormatMenu(false);
+  menuTrigger.focus({ preventScroll: true });
+});
 
 const team = [
   {

@@ -434,3 +434,98 @@ body {
   top: 8px;
   right: -14px;
 }
+
+.voice-window--menu-button {
+  box-sizing: border-box;
+  top: 188px;
+  right: 111px;
+  width: 686px;
+  padding: 8px 8px 10px 12px;
+  border-radius: 20px;
+  background: linear-gradient(100.79deg, var(--background-info_background-color) 54.608%, var(--background-background-color) 99.287%);
+}
+
+.voice-window--menu-button .voice-window__toolbar {
+  height: 32px;
+  padding: 0 14px 0 0;
+}
+
+.voice-window--menu-button .voice-window__audio {
+  display: flex;
+  gap: 12px;
+  padding-right: 8px;
+}
+
+.voice-window--menu-button .voice-window__timer {
+  margin: 0;
+}
+
+.voice-window--menu-button .voice-window__waveform {
+  opacity: 1;
+}
+
+.voice-window--menu-button .voice-window__playback {
+  gap: 6px;
+  padding-left: 16px;
+}
+
+.voice-window--menu-button .voice-window__transcript {
+  margin: 4px 0 0;
+  padding: 0;
+  color: var(--text-text-color);
+}
+
+.voice-window--menu-button .voice-window__dismiss {
+  top: 2px;
+  right: -22px;
+}
+
+.voice-window__menu-group {
+  position: relative;
+  margin-left: 8px;
+}
+
+.voice-window__menu-button {
+  display: flex;
+  border-radius: var(--components-button-border-radius_button);
+  background: var(--background-background-color);
+  box-shadow: 0 0 0 1px var(--components-button-outlined-same-border-info_outlined-same_border-color_button);
+}
+
+.voice-window__menu-button .voice-window__add {
+  --btn-px: 6px;
+  --btn-gap: 4px;
+  --btn-fg: var(--text-text-color);
+  letter-spacing: inherit;
+}
+
+.voice-window__add .voice-window__add-icon:not(.is-text) {
+  border-radius: 50%;
+  background: var(--background-contrast-info_color);
+  color: var(--icon-contrast_icon-color);
+}
+
+.voice-window__menu-trigger .btn__icon {
+  color: var(--icon-icon-color);
+}
+
+.voice-window__menu {
+  position: absolute;
+  z-index: 1;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 128px;
+  padding: 4px;
+  border-radius: 12px;
+  background: var(--background-background-color);
+  box-shadow: 0 0 8px rgb(0 0 0 / 15%);
+}
+
+.voice-window__menu .btn {
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.voice-window__menu .btn[aria-pressed="true"] {
+  --btn-bg: var(--background-info_hover_background-color);
+}
