@@ -4,11 +4,11 @@ body {
   font-family: Inter, sans-serif;
 }
 
-/* Размеры исходного каркаса: сцена 1600×900, шапка 80, панель 280. */
+/* Размеры каркаса: сцена 1600×900, шапка 100, панель 280. */
 .demo-canvas {
   position: relative;
   width: 1900px;
-  height: 980px;
+  height: 1000px;
 }
 
 .demo-canvas .df-head,
@@ -23,6 +23,12 @@ body {
   box-sizing: border-box;
   width: 1600px;
   height: 900px;
+}
+
+.demo-head-description {
+  margin: 5px 0 0 4px;
+  font-size: 15px;
+  line-height: 18px;
 }
 
 .demo-info {
