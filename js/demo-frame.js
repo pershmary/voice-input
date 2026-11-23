@@ -65,9 +65,36 @@ const addButton = menuGroup.querySelector('.voice-window__add');
 const addIcon = addButton.querySelector('.voice-format-icon');
 const formatOptions = formatMenu.querySelectorAll('[data-format]');
 
+const triggerIcon = menuTrigger.querySelector('.btn__icon');
+const menuTitle = formatMenu.querySelector('.voice-window__menu-title > span');
+const menuClose = formatMenu.querySelector('.voice-window__menu-close');
+
+function positionFormatMenu() {
+  formatMenu.style.removeProperty('left');
+  formatMenu.style.removeProperty('top');
+
+  const scene = stage.getBoundingClientRect();
+  const menu = formatMenu.getBoundingClientRect();
+  const icon = triggerIcon.getBoundingClientRect();
+  const title = menuTitle.getBoundingClientRect();
+  const close = menuClose.getBoundingClientRect();
+  const scaleX = scene.width / stage.offsetWidth;
+  const scaleY = scene.height / stage.offsetHeight;
+
+  const desiredShift = icon.left + icon.width / 2 - title.left;
+  const minShift = scene.left - menu.left;
+  const maxShift = scene.right - Math.max(menu.right, close.right);
+  const shiftX = Math.max(minShift, Math.min(desiredShift, maxShift));
+  const shiftY = Math.max(scene.top - menu.top, Math.min(0, scene.bottom - menu.bottom));
+
+  formatMenu.style.left = `${shiftX / scaleX}px`;
+  formatMenu.style.top = `calc(100% + 4px + ${shiftY / scaleY}px)`;
+}
+
 function showFormatMenu(show) {
   formatMenu.hidden = !show;
   menuTrigger.setAttribute('aria-expanded', String(show));
+  if (show) positionFormatMenu();
 }
 
 function closeFormatMenu() {
@@ -76,7 +103,7 @@ function closeFormatMenu() {
 }
 
 menuTrigger.addEventListener('click', () => showFormatMenu(formatMenu.hidden));
-formatMenu.querySelector('.voice-window__menu-close').addEventListener('click', closeFormatMenu);
+menuClose.addEventListener('click', closeFormatMenu);
 for (const option of formatOptions) {
   option.addEventListener('click', () => {
     const isAudio = option.dataset.format === 'audio';
