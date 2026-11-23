@@ -190,29 +190,10 @@ body {
   place-items: center;
 }
 
-.voice-window__pause {
-  box-sizing: border-box;
-  width: 8px;
-  height: 12px;
-  border-inline: 3px solid;
-}
-
-.voice-window__restart {
-  position: relative;
-  width: 11px;
-  height: 11px;
-  border: 2px solid;
-  border-top-color: transparent;
-  border-radius: 50%;
-}
-
-.voice-window__restart::after {
-  content: "";
-  position: absolute;
-  top: -4px;
-  right: -2px;
-  border-block: 3px solid transparent;
-  border-right: 4px solid;
+.voice-window__icon > span {
+  padding-bottom: 1px;
+  font: 16px/normal "cbuc-icons";
+  letter-spacing: normal;
 }
 
 .voice-window__insert {
