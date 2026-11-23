@@ -85,7 +85,8 @@ function positionFormatMenu() {
   const minShift = scene.left - menu.left;
   const maxShift = scene.right - Math.max(menu.right, close.right);
   const shiftX = Math.max(minShift, Math.min(desiredShift, maxShift));
-  const shiftY = Math.max(scene.top - menu.top, Math.min(0, scene.bottom - menu.bottom));
+  const desiredShiftY = icon.top + icon.height / 2 + 4 * scaleY - (title.top + title.height / 2);
+  const shiftY = Math.max(scene.top - menu.top, Math.min(desiredShiftY, scene.bottom - menu.bottom));
 
   formatMenu.style.left = `${shiftX / scaleX}px`;
   formatMenu.style.top = `calc(100% + 4px + ${shiftY / scaleY}px)`;
