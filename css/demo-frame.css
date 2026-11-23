@@ -500,12 +500,6 @@ body {
   letter-spacing: inherit;
 }
 
-.voice-format-icon.voice-format-icon--audio {
-  border-radius: 50%;
-  background: var(--background-contrast-info_color);
-  color: var(--icon-contrast_icon-color);
-}
-
 .voice-window__menu-trigger .btn__icon {
   color: var(--icon-icon-color);
 }
@@ -516,12 +510,8 @@ body {
   width: 16px;
   height: 16px;
   place-items: center;
-  font: 16px/1 "cbuc-icons";
-}
-
-.voice-format-icon.voice-format-icon--text {
   color: var(--icon-info_icon-color);
-  font: 17px/1 "Times New Roman", serif;
+  font: 16px/1 "cbuc-icons24";
 }
 
 .voice-window__menu {
@@ -552,7 +542,7 @@ body {
   --btn-px: 12px;
   --btn-fs: 16px;
   --btn-radius: 16px;
-  --btn-gap: 10px;
+  --btn-gap: 8px;
   --btn-fg: var(--text-text-color);
   width: 100%;
   justify-content: flex-start;
@@ -561,17 +551,9 @@ body {
 }
 
 .voice-window__menu-option .voice-format-icon {
-  width: 20px;
-  height: 20px;
-  margin-left: 2px;
-}
-
-.voice-window__menu-option .voice-format-icon--audio {
-  background: radial-gradient(circle, var(--background-contrast-info_color) 8px, transparent 8.5px);
-}
-
-.voice-window__menu-option .voice-format-icon--text {
-  font-size: 20px;
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
 }
 
 .voice-window__menu-close {

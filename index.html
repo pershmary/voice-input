@@ -11,11 +11,11 @@
   <link rel="stylesheet" href="vendor/ui-kit/components/button/button.css">
   <link rel="stylesheet" href="vendor/ui-kit/components/tumbler/tumbler.css">
   <link rel="stylesheet" href="css/fonts.css">
-  <link rel="stylesheet" href="css/demo-frame.css?v=voice-menu-position">
+  <link rel="stylesheet" href="css/demo-frame.css?v=voice-format-glyphs">
   <link rel="stylesheet" href="css/scene-background.css">
   <link rel="stylesheet" href="css/voice-toolbar.css">
   <script defer src="vendor/ui-kit/components/demo-frame/demo-frame.js"></script>
-  <script defer src="js/demo-frame.js?v=voice-format-menu"></script>
+  <script defer src="js/demo-frame.js?v=voice-format-glyphs"></script>
 </head>
 <body>
   <div class="demo-canvas" id="demo-canvas">
@@ -161,7 +161,7 @@
           <div class="voice-window__menu-group">
             <div class="voice-window__menu-button">
               <button type="button" class="btn btn--ghost btn--style-info btn--size-m voice-window__add" aria-label="Добавить аудио">
-                <span class="btn__icon voice-format-icon voice-format-icon--audio" aria-hidden="true">&#xE666;</span>
+                <span class="btn__icon voice-format-icon" aria-hidden="true">&#xEAB3;</span>
                 <span class="btn__caption">Добавить</span>
               </button>
               <button type="button" class="btn btn--same btn--style-unaccented btn--size-m btn--icon voice-window__menu-trigger" aria-label="Формат вставки" aria-expanded="false" aria-controls="voice-format-menu">
@@ -171,11 +171,11 @@
             <div class="voice-window__menu" id="voice-format-menu" role="group" aria-labelledby="voice-format-title" hidden>
               <div class="voice-window__menu-title" id="voice-format-title">Добавить</div>
               <button type="button" class="btn btn--ghost btn--style-info voice-window__menu-option" data-format="audio" aria-pressed="true">
-                <span class="voice-format-icon voice-format-icon--audio" aria-hidden="true">&#xE666;</span>
+                <span class="voice-format-icon" aria-hidden="true">&#xEAB3;</span>
                 Аудио
               </button>
               <button type="button" class="btn btn--ghost btn--style-info voice-window__menu-option" data-format="text" aria-pressed="false">
-                <span class="voice-format-icon voice-format-icon--text" aria-hidden="true">T</span>
+                <span class="voice-format-icon" aria-hidden="true">&#xEAC9;</span>
                 Текст
               </button>
               <button type="button" class="close-button close-button--external voice-window__menu-close" aria-label="Закрыть меню"></button>

@@ -85,8 +85,6 @@ for (const option of formatOptions) {
     }
     addButton.setAttribute('aria-label', isAudio ? 'Добавить аудио' : 'Добавить текст');
     addIcon.textContent = option.querySelector('.voice-format-icon').textContent;
-    addIcon.classList.toggle('voice-format-icon--audio', isAudio);
-    addIcon.classList.toggle('voice-format-icon--text', !isAudio);
     closeFormatMenu();
   });
 }
