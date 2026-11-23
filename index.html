@@ -6,11 +6,14 @@
   <title>Голосовой ввод</title>
   <link rel="stylesheet" href="vendor/ui-kit/tokens.css">
   <link rel="stylesheet" href="vendor/ui-kit/components/demo-frame/demo-frame.css">
+  <link rel="stylesheet" href="vendor/ui-kit/components/toolbar/toolbar.css">
+  <link rel="stylesheet" href="vendor/ui-kit/components/close-button/close-button.css">
   <link rel="stylesheet" href="css/fonts.css">
   <link rel="stylesheet" href="css/demo-frame.css">
   <link rel="stylesheet" href="css/scene-background.css">
+  <link rel="stylesheet" href="css/voice-toolbar.css">
   <script defer src="vendor/ui-kit/components/demo-frame/demo-frame.js"></script>
-  <script defer src="js/demo-frame.js"></script>
+  <script defer src="js/demo-frame.js?v=toolbar"></script>
 </head>
 <body>
   <div class="demo-canvas" id="demo-canvas">
@@ -64,6 +67,61 @@
             </div>
           </div>
         </div>
+      </div>
+      <div class="tb tb--style-info voice-toolbar" id="voice-toolbar" role="toolbar" aria-label="Панель редактора">
+        <div class="voice-toolbar__actions">
+          <button type="button" class="tb__btn voice-toolbar__text-style" disabled>
+            <span class="tb__caption">Текст</span>
+            <span class="tb__arrow" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="tb__btn" aria-label="Свойства текста" disabled>
+            <span class="tb__icon" aria-hidden="true">&#xe764;</span>
+          </button>
+          <span class="tb__sep" aria-hidden="true"></span>
+          <button type="button" class="tb__btn" aria-label="Маркированный список" disabled>
+            <span class="tb__icon" aria-hidden="true">&#xe6c7;</span>
+          </button>
+          <button type="button" class="tb__btn" aria-label="Нумерованный список" disabled>
+            <span class="tb__icon" aria-hidden="true">&#xe6c8;</span>
+          </button>
+          <button type="button" class="tb__btn" aria-label="Чек-лист" disabled>
+            <span class="tb__icon" aria-hidden="true">&#xe76f;</span>
+          </button>
+          <button type="button" class="tb__btn" aria-label="Ссылка" disabled>
+            <span class="tb__icon" aria-hidden="true">&#xe6a7;</span>
+          </button>
+          <button type="button" class="tb__btn" aria-label="Фото" disabled>
+            <span class="tb__icon" aria-hidden="true">&#xe9a3;</span>
+          </button>
+          <button type="button" class="tb__btn" aria-label="Таблица" disabled>
+            <span class="tb__icon" aria-hidden="true">&#xe958;</span>
+          </button>
+          <button type="button" class="tb__btn" aria-label="Колонки" disabled>
+            <span class="tb__icon" aria-hidden="true">&#xeaee;</span>
+          </button>
+          <button type="button" class="tb__btn" aria-label="Эмодзи" disabled>
+            <span class="tb__icon" aria-hidden="true">&#xe9a7;</span>
+          </button>
+          <button type="button" class="tb__btn" aria-label="Код" disabled>
+            <span class="tb__icon" aria-hidden="true">&#xea88;</span>
+          </button>
+          <button type="button" class="tb__btn" aria-label="Видео" disabled>
+            <span class="tb__icon" aria-hidden="true">&#xe929;</span>
+          </button>
+          <span class="tb__sep" aria-hidden="true"></span>
+          <button type="button" class="tb__btn" aria-label="Голосовой ввод" disabled>
+            <span class="tb__icon" aria-hidden="true">&#xe9b1;</span>
+          </button>
+          <button type="button" class="tb__btn" aria-label="SabyGPT" disabled>
+            <span class="voice-toolbar__assistant"><img src="assets/voice-toolbar/assistant.svg" alt=""></span>
+          </button>
+          <button type="button" class="tb__btn" aria-label="Ещё" disabled>
+            <span class="tb__icon" aria-hidden="true">&#xeab4;</span>
+          </button>
+        </div>
+        <button type="button" class="close-button close-button--link-button voice-toolbar__close" aria-label="Закрыть панель редактора">
+          <img src="assets/voice-toolbar/close.svg" alt="">
+        </button>
       </div>
     </main>
   </div>

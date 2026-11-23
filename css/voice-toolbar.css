@@ -1,0 +1,68 @@
+@font-face {
+  font-family: "cbuc-icons";
+  font-display: block;
+  src: url("../vendor/ui-kit/fonts/cbuc-icons.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "cbuc-icons24";
+  font-display: block;
+  src: url("../vendor/ui-kit/fonts/cbuc-icons24.ttf") format("truetype");
+}
+
+.voice-toolbar {
+  position: absolute;
+  top: 128px;
+  right: 67px;
+  width: 718px;
+  justify-content: space-between;
+}
+
+.voice-toolbar[hidden] {
+  display: none;
+}
+
+.voice-toolbar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--offset-offset_3xs);
+}
+
+.voice-toolbar .tb__btn:disabled {
+  --tb-bg: transparent;
+  opacity: 1;
+  cursor: default;
+}
+
+.voice-toolbar .voice-toolbar__text-style {
+  width: 64px;
+  gap: var(--offset-offset_3xs);
+}
+
+.voice-toolbar .tb__sep {
+  align-self: center;
+  height: var(--inline_height-inline_height_l);
+  padding-inline: var(--offset-offset_3xs);
+}
+
+.voice-toolbar .tb__sep::before {
+  border-radius: var(--border-radius-border-radius_2xs);
+  background: color-mix(in srgb, var(--text-text-color) 4%, transparent);
+}
+
+.voice-toolbar__assistant {
+  border-radius: var(--border-radius-border-radius_2xs);
+  background: url("../assets/voice-toolbar/assistant-glow.svg") center / contain no-repeat;
+}
+
+.voice-toolbar img {
+  display: block;
+}
+
+.voice-toolbar .voice-toolbar__close {
+  --clb-size: var(--inline_height-inline_height_xl);
+}
+
+.voice-toolbar__close::before {
+  content: none;
+}

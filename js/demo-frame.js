@@ -33,3 +33,8 @@ info.append(description);
 frame.panel.append(info);
 
 canvas.prepend(frame.root);
+
+const toolbar = document.getElementById('voice-toolbar');
+toolbar.querySelector('.voice-toolbar__close').addEventListener('click', () => {
+  toolbar.hidden = true;
+});

@@ -1,0 +1,2 @@
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+  <rect x="0" y="0" height="100%" width="100%" fill="url(#grad)" opacity="1"/><defs><radialGradient id="grad" gradientUnits="userSpaceOnUse" cx="0" cy="0" r="10" gradientTransform="matrix(-1.0286 -0.68571 0.14288 -0.95293 12 12)"><stop stop-color="rgba(192,205,255,1)" offset="0"/><stop stop-color="rgba(222,215,255,1)" offset="0.54519"/><stop stop-color="rgba(248,248,248,0)" offset="1"/></radialGradient></defs></svg>
