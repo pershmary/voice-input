@@ -2,6 +2,7 @@ const canvas = document.getElementById('demo-canvas');
 const stage = document.getElementById('demo-stage');
 
 const voiceWindows = stage.querySelectorAll('[data-voice-scenario]');
+const insertButtons = stage.querySelectorAll('[data-insert-voice]');
 const editorTranscript = document.getElementById('editor-transcript');
 const editorAudio = document.getElementById('editor-audio');
 editorAudio.querySelector('.editor-audio__transcript').textContent = editorTranscript.textContent;
@@ -9,11 +10,16 @@ editorAudio.querySelector('.editor-audio__transcript').textContent = editorTrans
 let insertTrigger;
 
 function showScenario({ scenario }) {
+  const compare = scenario === 'compare-audio';
+  stage.classList.toggle('demo-stage--compare-audio', compare);
   editorTranscript.hidden = true;
-  editorAudio.hidden = true;
+  editorAudio.hidden = !compare;
+  editorAudio.disabled = compare;
+  for (const button of insertButtons) button.disabled = compare;
+  showFormatMenu(false);
   insertTrigger = undefined;
   for (const voiceWindow of voiceWindows) {
-    voiceWindow.hidden = voiceWindow.dataset.voiceScenario !== scenario;
+    voiceWindow.hidden = !compare && voiceWindow.dataset.voiceScenario !== scenario;
   }
 }
 
@@ -194,6 +200,9 @@ const frame = DemoFrame.mount({
       ]
     }
   ],
+  bottomScenarios: [
+    { id: 'compare-audio', title: 'Окно ввода и виджет "Аудио"' }
+  ],
   team,
   value: { scenario: 'radio-buttons' },
   onChange: showScenario
@@ -207,7 +216,8 @@ headDescription.textContent = 'Голосовой ввод позволяет н
 frame.head.append(headDescription);
 
 frame.panel.setAttribute('aria-label', 'Системная область');
-frame.panel.querySelector('[role="radiogroup"]').setAttribute('aria-label', 'Варианты окна');
+frame.panel.querySelector('.df-panel__top [role="radiogroup"]').setAttribute('aria-label', 'Варианты окна');
+frame.panel.querySelector('.df-card--bottom').setAttribute('aria-label', 'Сравнение');
 
 frame.panel.querySelectorAll('.df-team__label').forEach((label, index) => {
   const member = team[index];

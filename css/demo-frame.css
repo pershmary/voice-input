@@ -611,3 +611,27 @@ body {
   --btn-h: 26px;
   flex: none;
 }
+
+.demo-stage--compare-audio {
+  display: grid;
+  grid-template-columns: 746px 704px;
+  align-content: start;
+  align-items: start;
+  gap: 24px 48px;
+  padding: 36px 40px;
+  background: #fff;
+}
+
+.demo-stage--compare-audio .voice-window {
+  position: relative;
+  inset: auto;
+  grid-column: 1;
+}
+
+.demo-stage--compare-audio .voice-window:has(.voice-window__menu:not([hidden])) {
+  z-index: 1;
+}
+
+.demo-stage--compare-audio [data-insert-voice]:disabled {
+  cursor: default;
+}

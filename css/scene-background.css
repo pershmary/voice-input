@@ -368,3 +368,23 @@
   border-radius: 50%;
   background: var(--icon-label_icon-color);
 }
+
+.demo-stage--compare-audio .scene-background,
+.demo-stage--compare-audio .editor-audio-toolbar,
+.demo-stage--compare-audio .editor-audio::after {
+  display: none;
+}
+
+.demo-stage--compare-audio .editor-audio-panel:has(.editor-audio:not([hidden])) {
+  position: static;
+  grid-area: 1 / 2;
+  width: auto;
+  height: auto;
+  border: 0;
+  background: transparent;
+}
+
+.demo-stage--compare-audio .editor-audio {
+  position: static;
+  cursor: default;
+}
