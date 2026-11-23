@@ -2,17 +2,32 @@ const canvas = document.getElementById('demo-canvas');
 const stage = document.getElementById('demo-stage');
 
 const voiceWindows = stage.querySelectorAll('[data-voice-scenario]');
+const editorTranscript = document.getElementById('editor-transcript');
 
 function showScenario({ scenario }) {
+  editorTranscript.hidden = true;
   for (const voiceWindow of voiceWindows) {
     voiceWindow.hidden = voiceWindow.dataset.voiceScenario !== scenario;
   }
 }
 
+editorTranscript.addEventListener('click', () => {
+  showScenario(frame.value);
+  stage.querySelector('[data-voice-scenario]:not([hidden]) [data-insert-voice]').focus();
+});
+
 for (const voiceWindow of voiceWindows) {
   const insertLabel = voiceWindow.querySelector('.voice-window__insert');
   const confirm = voiceWindow.querySelector('.voice-window__confirm');
   const choices = voiceWindow.querySelectorAll('input[type="radio"]');
+  const insert = voiceWindow.querySelector('[data-insert-voice]');
+
+  insert.addEventListener('click', () => {
+    if (voiceWindow.querySelector('input[value="audio"]:checked, [data-format="audio"][aria-pressed="true"]')) return;
+    voiceWindow.hidden = true;
+    editorTranscript.hidden = false;
+    editorTranscript.focus({ preventScroll: true });
+  });
 
   function selectOutput(value) {
     for (const choice of choices) {
