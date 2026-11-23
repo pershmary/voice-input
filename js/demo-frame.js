@@ -3,31 +3,45 @@ const stage = document.getElementById('demo-stage');
 
 const voiceWindows = stage.querySelectorAll('[data-voice-scenario]');
 const editorTranscript = document.getElementById('editor-transcript');
+const editorAudio = document.getElementById('editor-audio');
+editorAudio.querySelector('.editor-audio__transcript').textContent = editorTranscript.textContent;
+
+let insertTrigger;
 
 function showScenario({ scenario }) {
   editorTranscript.hidden = true;
+  editorAudio.hidden = true;
+  insertTrigger = undefined;
   for (const voiceWindow of voiceWindows) {
     voiceWindow.hidden = voiceWindow.dataset.voiceScenario !== scenario;
   }
 }
 
-editorTranscript.addEventListener('click', () => {
+function restoreVoiceWindow() {
+  const trigger = insertTrigger;
   showScenario(frame.value);
-  stage.querySelector('[data-voice-scenario]:not([hidden]) [data-insert-voice]').focus();
-});
+  trigger?.focus({ preventScroll: true });
+}
+
+editorTranscript.addEventListener('click', restoreVoiceWindow);
+editorAudio.addEventListener('click', restoreVoiceWindow);
 
 for (const voiceWindow of voiceWindows) {
   const insertLabel = voiceWindow.querySelector('.voice-window__insert');
   const confirm = voiceWindow.querySelector('.voice-window__confirm');
   const choices = voiceWindow.querySelectorAll('input[type="radio"]');
-  const insert = voiceWindow.querySelector('[data-insert-voice]');
 
-  insert.addEventListener('click', () => {
-    if (voiceWindow.querySelector('input[value="audio"]:checked, [data-format="audio"][aria-pressed="true"]')) return;
-    voiceWindow.hidden = true;
-    editorTranscript.hidden = false;
-    editorTranscript.focus({ preventScroll: true });
-  });
+  for (const insert of voiceWindow.querySelectorAll('[data-insert-voice]')) {
+    insert.addEventListener('click', () => {
+      const selectedAudio = voiceWindow.querySelector('input[value="audio"]:checked, [data-format="audio"][aria-pressed="true"]');
+      const output = insert.dataset.insertVoice || (selectedAudio ? 'audio' : 'text');
+      const result = output === 'audio' ? editorAudio : editorTranscript;
+      insertTrigger = insert;
+      voiceWindow.hidden = true;
+      result.hidden = false;
+      result.focus({ preventScroll: true });
+    });
+  }
 
   function selectOutput(value) {
     for (const choice of choices) {

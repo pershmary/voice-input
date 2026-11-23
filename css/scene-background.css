@@ -231,3 +231,87 @@
   border: 1px solid var(--background-same-info_active_same_background-color);
   background: var(--background-same-info_same_background-color);
 }
+
+.editor-audio {
+  position: absolute;
+  top: 169px;
+  right: 82px;
+  box-sizing: border-box;
+  width: 704px;
+  height: 104px;
+  padding: 6px 6px 12px 14px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--background-info_background-color);
+  color: var(--text-text-color);
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.editor-audio__controls {
+  display: flex;
+  align-items: center;
+  height: 32px;
+}
+
+.editor-audio__controls time {
+  flex: 0 0 31px;
+  margin-right: 12px;
+  color: var(--text-label_text-color);
+  font-variant-numeric: tabular-nums;
+}
+
+.editor-audio .voice-window__waveform {
+  height: 20px;
+  opacity: 1;
+}
+
+.editor-audio__speed {
+  flex: 0 0 42px;
+  color: var(--text-info_text-color);
+  text-align: center;
+}
+
+.editor-audio__play {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--background-contrast-info_color);
+  color: #fff;
+  font: 16px/1 "cbuc-icons";
+}
+
+.editor-audio__transcript {
+  position: relative;
+  display: block;
+  height: 32px;
+  margin-top: 6px;
+  overflow: hidden;
+  line-height: 20px;
+}
+
+.editor-audio__transcript::after {
+  position: absolute;
+  inset: 16px 13px 0 0;
+  background: linear-gradient(transparent, var(--background-info_background-color));
+  content: "";
+}
+
+.editor-audio__more {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 12px;
+  margin-top: 4px;
+}
+
+.editor-audio__more span {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--icon-label_icon-color);
+}
