@@ -412,6 +412,10 @@ body {
   letter-spacing: inherit;
 }
 
+.voice-window__insert-options .btn__caption {
+  padding-bottom: 2px;
+}
+
 .voice-window__dismiss {
   position: absolute;
   top: 8px;
