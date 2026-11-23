@@ -299,7 +299,7 @@
 
 .editor-audio__play {
   display: grid;
-  width: 32px;
+  flex: 0 0 32px;
   height: 32px;
   place-items: center;
   border-radius: 50%;
