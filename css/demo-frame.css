@@ -4,10 +4,10 @@ body {
   font-family: Inter, sans-serif;
 }
 
-/* Размеры каркаса: сцена 1600×900, шапка 100, панель 280. */
+/* Размеры каркаса: сцена 1600×900, шапка 100, панель 300. */
 .demo-canvas {
   position: relative;
-  width: 1900px;
+  width: 1920px;
   height: 1000px;
 }
 
@@ -31,7 +31,82 @@ body {
   line-height: 18px;
 }
 
-.demo-info {
-  margin: 0;
+.demo-canvas .df-panel {
+  border-radius: var(--border-radius-border-radius_s);
+}
+
+.df-panel .df-panel__top {
+  gap: 0;
+}
+
+.df-panel .df-devices {
+  padding-top: 8px;
+}
+
+.df-panel .df-device.is-on {
+  background-image: url("../assets/system-panel/monitor.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  box-shadow: 0 0 6px var(--color-shadow-color_d);
+}
+
+.df-panel .df-device.is-on svg {
+  display: none;
+}
+
+.df-panel .df-size {
+  height: 34px;
+  padding: 6px 6px 8px 12px;
+}
+
+.df-panel .df-card {
+  gap: 4px;
+  background: #f2f2f2;
+}
+
+.df-panel .df-group {
+  display: flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 6px;
+  font-size: 13px;
+  letter-spacing: -0.0141em;
+}
+
+.df-panel .df-options {
+  gap: 0;
   padding: 6px;
+}
+
+.df-panel .df-radio.is-on .df-radio__box::before {
+  border: 0;
+  background: url("../assets/system-panel/selected-radio.svg") center no-repeat;
+  box-shadow: none;
+}
+
+.df-panel .df-team {
+  gap: 4px;
+  padding: 6px;
+}
+
+.df-panel .df-team__label {
+  width: auto;
+}
+
+.df-panel .df-team__label img {
+  display: block;
+}
+
+.df-panel .df-team + .df-team .df-team__label {
+  padding-top: 1px;
+}
+
+.df-panel .df-team__info {
+  padding-bottom: 2px;
+}
+
+.df-panel .df-team__link {
+  text-decoration: underline from-font;
+  text-decoration-skip-ink: none;
+  text-underline-position: from-font;
 }

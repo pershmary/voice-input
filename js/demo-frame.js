@@ -1,20 +1,48 @@
 const canvas = document.getElementById('demo-canvas');
 const stage = document.getElementById('demo-stage');
 
+const team = [
+  {
+    label: 'Дизайн',
+    name: 'Першина Мария',
+    icon: 'design',
+    links: [
+      {
+        title: 'Поручение',
+        href: 'https://online.sbis.ru/opendoc.html?guid=01a061f0-b497-7d83-9087-1b2947bce022&client=3'
+      }
+    ]
+  },
+  { label: 'Разработка', name: 'Киямов Тимур', icon: 'development' }
+];
+
 const frame = DemoFrame.mount({
   stage,
   viewport: canvas,
   headHeight: 100,
-  panelWidth: 280,
   head: {
     title: 'Голосовой ввод',
     version: '27.xxxx',
     status: 'Не показали'
   },
-  scenarios: [
-    { group: 'Сценарии', items: [{ id: 'demo', title: 'Общее демо' }] }
+  devices: [
+    { id: 'monitor', icon: 'monitor', label: 'Монитор', size: '1600х900', name: 'монитор' }
   ],
-  value: { scenario: 'demo' }
+  scenarios: [
+    { id: 'standard', title: 'Типовое' },
+    {
+      group: 'Варианты окна',
+      items: [
+        { id: 'radio-buttons', title: 'Радиокнопки' },
+        { id: 'toggle', title: 'Тумблер' },
+        { id: 'two-buttons', title: '2 кнопки' },
+        { id: 'split-window', title: 'Окно из двух частей' },
+        { id: 'double-button', title: 'Двойная кнопка' }
+      ]
+    }
+  ],
+  team,
+  value: { scenario: 'standard' }
 });
 
 const headDescription = document.createElement('p');
@@ -23,14 +51,15 @@ headDescription.textContent = 'Голосовой ввод позволяет н
 frame.head.append(headDescription);
 
 frame.panel.setAttribute('aria-label', 'Системная область');
+frame.panel.querySelector('[role="radiogroup"]').setAttribute('aria-label', 'Варианты окна');
 
-const info = document.createElement('div');
-info.className = 'df-card';
-const description = document.createElement('p');
-description.className = 'demo-info';
-description.textContent = 'Диктовка с вставкой текста или аудио в редактор.';
-info.append(description);
-frame.panel.append(info);
+frame.panel.querySelectorAll('.df-team__label').forEach((label, index) => {
+  const member = team[index];
+  const icon = document.createElement('img');
+  icon.src = `assets/system-panel/${member.icon}.svg`;
+  icon.alt = member.label;
+  label.replaceChildren(icon);
+});
 
 canvas.prepend(frame.root);
 
