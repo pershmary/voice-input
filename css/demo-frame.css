@@ -328,6 +328,11 @@ body {
   color: var(--icon-label_icon-color);
 }
 
+.voice-window--toggle .voice-window__icon--pause > span {
+  position: relative;
+  inset: 1px auto auto 0.5px;
+}
+
 .voice-window__format {
   display: flex;
   align-items: center;
