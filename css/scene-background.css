@@ -232,10 +232,33 @@
   background: var(--background-same-info_same_background-color);
 }
 
+/* The task-card image is cropped at y=210 and resumes below the expanded editor. */
+.demo-stage:has(.editor-audio:not([hidden])) .scene-background__task-body img {
+  clip-path: inset(0 0 calc(100% - 218px) 0);
+}
+
+.demo-stage:has(.editor-audio:not([hidden])) .scene-background__task-body::after {
+  inset: 308px 0 0;
+  width: auto;
+  height: auto;
+  background: url("../assets/scene/task-panel.png") no-repeat -8px -218px;
+}
+
+.editor-audio-panel:has(.editor-audio:not([hidden])) {
+  position: absolute;
+  top: 165px;
+  right: 67px;
+  box-sizing: content-box;
+  width: 719px;
+  height: 142px;
+  border-bottom: 1px solid #d2d6da;
+  background: var(--background-background-color);
+}
+
 .editor-audio {
   position: absolute;
-  top: 169px;
-  right: 82px;
+  top: 4px;
+  left: 0;
   box-sizing: border-box;
   width: 704px;
   height: 104px;

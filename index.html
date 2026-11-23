@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="vendor/ui-kit/components/tumbler/tumbler.css">
   <link rel="stylesheet" href="css/fonts.css">
   <link rel="stylesheet" href="css/demo-frame.css?v=insert-audio">
-  <link rel="stylesheet" href="css/scene-background.css?v=insert-audio">
+  <link rel="stylesheet" href="css/scene-background.css?v=expand-audio-editor">
   <link rel="stylesheet" href="css/voice-toolbar.css">
   <script defer src="vendor/ui-kit/components/demo-frame/demo-frame.js"></script>
   <script defer src="js/demo-frame.js?v=insert-audio"></script>
@@ -70,16 +70,18 @@
         </div>
       </div>
       <button type="button" class="editor-transcript" id="editor-transcript" hidden>Нужно отрисовать объединенный механизм голосового ввода и отправки аудиосообщения. Также нужно добавить возможность голосового ввода в любое поле на сайте по шорткату</button>
-      <button type="button" class="editor-audio" id="editor-audio" aria-label="Аудио, 12 секунд. Удалить аудио и вернуться к голосовому вводу" hidden>
-        <span class="editor-audio__controls" aria-hidden="true">
-          <time datetime="PT12S">0:12</time>
-          <span class="voice-window__waveform"></span>
-          <span class="editor-audio__speed">1x</span>
-          <span class="editor-audio__play">&#xEC80;</span>
-        </span>
-        <span class="editor-audio__transcript" aria-hidden="true"></span>
-        <span class="editor-audio__more" aria-hidden="true"><span></span><span></span><span></span></span>
-      </button>
+      <div class="editor-audio-panel">
+        <button type="button" class="editor-audio" id="editor-audio" aria-label="Аудио, 12 секунд. Удалить аудио и вернуться к голосовому вводу" hidden>
+          <span class="editor-audio__controls" aria-hidden="true">
+            <time datetime="PT12S">0:12</time>
+            <span class="voice-window__waveform"></span>
+            <span class="editor-audio__speed">1x</span>
+            <span class="editor-audio__play">&#xEC80;</span>
+          </span>
+          <span class="editor-audio__transcript" aria-hidden="true"></span>
+          <span class="editor-audio__more" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+      </div>
       <div class="tb tb--style-info voice-toolbar" id="voice-toolbar" role="toolbar" aria-label="Панель редактора">
         <div class="voice-toolbar__actions">
           <button type="button" class="tb__btn voice-toolbar__text-style" disabled>
