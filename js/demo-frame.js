@@ -52,7 +52,6 @@ const frame = DemoFrame.mount({
     { id: 'monitor', icon: 'monitor', label: 'Монитор', size: '1600х900', name: 'монитор' }
   ],
   scenarios: [
-    { id: 'standard', title: 'Типовое' },
     {
       group: 'Варианты окна',
       items: [
