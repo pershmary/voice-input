@@ -138,13 +138,16 @@
   left: -8px;
 }
 
-.scene-background__caret {
+.scene-background__task-body::after {
+  /* Участок с плейсхолдером на фоновой картинке карточки задачи. */
+  content: "";
   position: absolute;
-  top: 169px;
-  left: 62px;
-  width: 1px;
-  height: 16px;
-  background: var(--text-text-color);
+  top: 170px;
+  left: 61px;
+  width: 74px;
+  height: 18px;
+  background: #fff;
+  pointer-events: none;
 }
 
 .scene-background__toolbar {
