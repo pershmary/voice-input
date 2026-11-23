@@ -83,6 +83,7 @@ const frame = DemoFrame.mount({
       group: 'Варианты окна',
       items: [
         { id: 'radio-buttons', title: 'Радиокнопки' },
+        { id: 'menu-button', title: 'Кнопка с меню в 3-х точках' },
         { id: 'toggle', title: 'Тумблер' },
         { id: 'two-buttons', title: '2 кнопки' },
         { id: 'split-window', title: 'Окно из двух частей' },
