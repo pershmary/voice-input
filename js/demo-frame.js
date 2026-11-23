@@ -1,6 +1,29 @@
 const canvas = document.getElementById('demo-canvas');
 const stage = document.getElementById('demo-stage');
 
+const voiceWindows = stage.querySelectorAll('[data-voice-scenario]');
+
+function showScenario({ scenario }) {
+  for (const voiceWindow of voiceWindows) {
+    voiceWindow.hidden = voiceWindow.dataset.voiceScenario !== scenario;
+  }
+}
+
+const waveform = stage.querySelector('.voice-window__waveform');
+const waveformPeaks = {
+  7: 4, 8: 20, 9: 20, 10: 14, 11: 10, 12: 4,
+  22: 10, 23: 10, 35: 14, 36: 10, 37: 20, 38: 14,
+  51: 14, 52: 14, 53: 20, 54: 20, 55: 10, 56: 4,
+  80: 10, 81: 10, 82: 10, 113: 4, 114: 4, 115: 20,
+  116: 20, 117: 14, 164: 4, 165: 20, 166: 14, 167: 10, 168: 4
+};
+const waveformBars = Array.from({ length: 209 }, (_, index) => {
+  const bar = document.createElement('span');
+  bar.style.height = `${waveformPeaks[index] ?? 2}px`;
+  return bar;
+});
+waveform.append(...waveformBars);
+
 const team = [
   {
     label: 'Дизайн',
@@ -42,8 +65,11 @@ const frame = DemoFrame.mount({
     }
   ],
   team,
-  value: { scenario: 'standard' }
+  value: { scenario: 'radio-buttons' },
+  onChange: showScenario
 });
+
+showScenario(frame.value);
 
 const headDescription = document.createElement('p');
 headDescription.className = 'demo-head-description';
