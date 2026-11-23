@@ -1,0 +1,32 @@
+body {
+  margin: 0;
+  background: #fff;
+  font-family: Inter, sans-serif;
+}
+
+/* Размеры исходного каркаса: сцена 1600×900, шапка 80, панель 280. */
+.demo-canvas {
+  position: relative;
+  width: 1900px;
+  height: 980px;
+}
+
+.demo-canvas .df-head,
+.demo-canvas .df-panel,
+.demo-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.demo-stage {
+  box-sizing: border-box;
+  width: 1600px;
+  height: 900px;
+  border: 1px solid var(--border-unaccented_border-color, #ddd);
+}
+
+.demo-info {
+  margin: 0;
+  padding: 6px;
+}
