@@ -160,8 +160,8 @@
           </div>
           <div class="voice-window__menu-group">
             <div class="voice-window__menu-button">
-              <button type="button" class="btn btn--ghost btn--style-info btn--size-m voice-window__add" aria-label="Добавить аудио">
-                <span class="btn__icon voice-format-icon" aria-hidden="true">&#xEAB3;</span>
+              <button type="button" class="btn btn--ghost btn--style-info btn--size-m voice-window__add" aria-label="Добавить текст">
+                <span class="btn__icon voice-format-icon" aria-hidden="true">&#xEAC9;</span>
                 <span class="btn__caption">Добавить</span>
               </button>
               <button type="button" class="btn btn--same btn--style-unaccented btn--size-m btn--icon voice-window__menu-trigger" aria-label="Формат вставки" aria-expanded="false" aria-controls="voice-format-menu">
@@ -170,13 +170,13 @@
             </div>
             <div class="voice-window__menu" id="voice-format-menu" role="group" aria-labelledby="voice-format-title" hidden>
               <div class="voice-window__menu-title" id="voice-format-title"><span>Добавить</span></div>
-              <button type="button" class="btn btn--ghost btn--style-info voice-window__menu-option" data-format="audio" aria-pressed="true">
-                <span class="voice-format-icon" aria-hidden="true">&#xEAB3;</span>
-                Аудио
-              </button>
-              <button type="button" class="btn btn--ghost btn--style-info voice-window__menu-option" data-format="text" aria-pressed="false">
+              <button type="button" class="btn btn--ghost btn--style-info voice-window__menu-option" data-format="text" aria-pressed="true">
                 <span class="voice-format-icon" aria-hidden="true">&#xEAC9;</span>
                 Текст
+              </button>
+              <button type="button" class="btn btn--ghost btn--style-info voice-window__menu-option" data-format="audio" aria-pressed="false">
+                <span class="voice-format-icon" aria-hidden="true">&#xEAB3;</span>
+                Аудио
               </button>
               <button type="button" class="close-button close-button--external voice-window__menu-close" aria-label="Закрыть меню"></button>
             </div>
