@@ -23,7 +23,6 @@ body {
   box-sizing: border-box;
   width: 1600px;
   height: 900px;
-  border: 1px solid var(--border-unaccented_border-color, #ddd);
 }
 
 .demo-info {

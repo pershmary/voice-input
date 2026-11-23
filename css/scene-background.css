@@ -1,0 +1,214 @@
+.scene-background {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  background: var(--background-unaccented_background-color);
+}
+
+.scene-background img {
+  display: block;
+}
+
+.scene-background__navigation {
+  flex: 0 0 200px;
+  background: #2c3e50;
+}
+
+.scene-background__brand {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  margin: 3px 8px 2px 12px;
+}
+
+.scene-background__logo {
+  box-sizing: border-box;
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  padding-bottom: 2px;
+  border-radius: 50%;
+  background: #273748;
+}
+
+.scene-background__navigation-arrow {
+  position: absolute;
+  right: 11px;
+}
+
+.scene-background__menu {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 28px;
+  margin: 0 14px 5px 20px;
+  color: var(--text-label_text-color);
+  font-size: 10px;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+}
+
+.scene-background__menu img {
+  margin-bottom: 1px;
+}
+
+.scene-background__menu span {
+  margin-top: 2px;
+}
+
+.scene-background__items {
+  display: grid;
+  gap: 12px;
+  padding: 0 16px;
+}
+
+.scene-background__items span {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+}
+
+.scene-background__items span::before,
+.scene-background__items span::after {
+  display: block;
+  content: "";
+}
+
+.scene-background__items span::before {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #5a677c;
+}
+
+.scene-background__items span::after {
+  width: 110px;
+  height: 16px;
+  border-radius: 6px;
+  background: #697886;
+}
+
+.scene-background__workspace {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin-right: 52px;
+  padding-top: 44px;
+}
+
+.scene-background__placeholder {
+  align-self: flex-end;
+  width: 298px;
+  height: 22px;
+  margin: 5px 6px;
+  border-radius: 100px;
+  background: var(--components-skeleton-background-color_skeleton);
+}
+
+.scene-background__surface {
+  flex: 1;
+  border-top-right-radius: 8px;
+  background: var(--background-background-color);
+  box-shadow: 0 0 var(--blur-shadow-blur_b) var(--color-shadow-color_b);
+}
+
+.scene-background__task {
+  position: absolute;
+  inset: 0 0 0 auto;
+  display: flex;
+  box-shadow: -6px 0 22px rgb(0 0 0 / 11%), -2px 0 8px rgb(0 0 0 / 2%);
+}
+
+.scene-background__task-body {
+  position: relative;
+  width: 796px;
+  overflow: hidden;
+  background: var(--background-background-color);
+}
+
+.scene-background__task-body img {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+}
+
+.scene-background__caret {
+  position: absolute;
+  top: 169px;
+  left: 62px;
+  width: 1px;
+  height: 16px;
+  background: var(--text-text-color);
+}
+
+.scene-background__toolbar {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 52px;
+  padding: 7px 10px 6px;
+  background: var(--background-unaccented_background-color);
+}
+
+.scene-background__tools,
+.scene-background__actions,
+.scene-background__informers {
+  display: grid;
+}
+
+.scene-background__tools {
+  gap: 7px;
+}
+
+.scene-background__actions {
+  gap: 6px;
+}
+
+.scene-background__informers {
+  gap: 16px;
+}
+
+.scene-background__circle,
+.scene-background__actions span {
+  box-sizing: border-box;
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+}
+
+.scene-background__actions img {
+  margin-bottom: 2px;
+}
+
+.scene-background__circle {
+  border-radius: 50%;
+  background: var(--background-contrast-pale_color);
+}
+
+.scene-background__date {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 2px;
+  font-size: 14px;
+  letter-spacing: -0.1974px;
+}
+
+.scene-background__date small {
+  margin-top: -4px;
+  font-size: 11px;
+  letter-spacing: -0.1551px;
+}
+
+.scene-background__help {
+  border: 1px solid var(--background-same-info_active_same_background-color);
+  background: var(--background-same-info_same_background-color);
+}

@@ -8,12 +8,64 @@
   <link rel="stylesheet" href="vendor/ui-kit/components/demo-frame/demo-frame.css">
   <link rel="stylesheet" href="css/fonts.css">
   <link rel="stylesheet" href="css/demo-frame.css">
+  <link rel="stylesheet" href="css/scene-background.css">
   <script defer src="vendor/ui-kit/components/demo-frame/demo-frame.js"></script>
   <script defer src="js/demo-frame.js"></script>
 </head>
 <body>
   <div class="demo-canvas" id="demo-canvas">
-    <main class="demo-stage" id="demo-stage" aria-label="Сцена демо"></main>
+    <main class="demo-stage" id="demo-stage" aria-label="Сцена демо">
+      <div class="scene-background" aria-hidden="true">
+        <div class="scene-background__navigation">
+          <div class="scene-background__brand">
+            <span class="scene-background__logo"><img src="assets/scene/logo.svg" alt=""></span>
+            <img src="assets/scene/wordmark.svg" alt="">
+            <img class="scene-background__navigation-arrow" src="assets/scene/navigation-arrow.svg" alt="">
+          </div>
+          <div class="scene-background__menu">
+            <img src="assets/scene/menu.svg" alt="">
+            <span>Предприятие</span>
+          </div>
+          <div class="scene-background__items">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+        <div class="scene-background__workspace">
+          <div class="scene-background__placeholder"></div>
+          <div class="scene-background__surface"></div>
+        </div>
+        <div class="scene-background__task">
+          <div class="scene-background__task-body">
+            <img src="assets/scene/task-panel.png" alt="">
+            <div class="scene-background__caret"></div>
+          </div>
+          <div class="scene-background__toolbar">
+            <div class="scene-background__tools">
+              <span class="scene-background__circle"><img src="assets/scene/close.svg" alt=""></span>
+              <div class="scene-background__actions">
+                <span><img src="assets/scene/settings.svg" alt=""></span>
+                <span><img src="assets/scene/list.svg" alt=""></span>
+                <span><img src="assets/scene/share.svg" alt=""></span>
+                <span><img src="assets/scene/edit.svg" alt=""></span>
+                <span><img src="assets/scene/more.svg" alt=""></span>
+              </div>
+            </div>
+            <div class="scene-background__informers">
+              <span class="scene-background__circle scene-background__date">16 <small>чт</small></span>
+              <span class="scene-background__circle"><img src="assets/scene/phone.svg" alt=""></span>
+              <span class="scene-background__circle"><img src="assets/scene/chat.svg" alt=""></span>
+              <span class="scene-background__circle scene-background__help"><img src="assets/scene/help.svg" alt=""></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
   </div>
 </body>
 </html>
