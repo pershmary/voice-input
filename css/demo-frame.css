@@ -279,3 +279,69 @@ body {
   color: var(--text-label_contrast_text-color);
   line-height: 20px;
 }
+
+.voice-window--toggle {
+  top: 188px;
+  right: 69px;
+  width: 732px;
+  padding-bottom: 6px;
+}
+
+.voice-window--toggle .voice-window__toolbar {
+  padding-left: 6px;
+}
+
+.voice-window--toggle .voice-window__audio {
+  gap: 12px;
+  padding-inline: 8px;
+}
+
+.voice-window--toggle .voice-window__timer {
+  margin: 0;
+}
+
+.voice-window--toggle .voice-window__transcript {
+  margin-inline: 6px;
+  padding: 8px;
+}
+
+.voice-window--toggle .voice-window__block {
+  position: relative;
+}
+
+.voice-window--toggle .voice-window__radio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+}
+
+.voice-window--toggle .voice-window__block:has(:focus-visible) {
+  outline: 2px solid var(--border-info_border-color);
+  outline-offset: 1px;
+}
+
+.voice-window--toggle .voice-window__icon {
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--background-contrast-info_color) 15%, transparent);
+  color: var(--icon-label_icon-color);
+}
+
+.voice-window__format {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 13px;
+  background: var(--background-same-info_same_background-color);
+}
+
+.voice-window__format .tumbler {
+  --tb-fs: var(--font-font-size-font-size_m);
+  --tb-sh-d: 0 0 3px rgb(0 0 0 / 10%);
+  background: var(--background-same-info_same_background-color);
+}
+
+.voice-window__confirm {
+  flex: none;
+}

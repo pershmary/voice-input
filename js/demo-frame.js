@@ -11,18 +11,30 @@ function showScenario({ scenario }) {
 
 for (const voiceWindow of voiceWindows) {
   const insertLabel = voiceWindow.querySelector('.voice-window__insert');
+  const confirm = voiceWindow.querySelector('.voice-window__confirm');
+  const choices = voiceWindow.querySelectorAll('input[type="radio"]');
 
-  function updateInsertLabel() {
-    const selected = voiceWindow.querySelector('input[name="voice-output"]:checked');
-    insertLabel.textContent = selected?.value === 'audio' ? 'Вставить аудио' : 'Вставить текст';
+  function selectOutput(value) {
+    for (const choice of choices) {
+      choice.checked = choice.value === value;
+    }
+    const caption = value === 'audio' ? 'Вставить аудио' : 'Вставить текст';
+    if (insertLabel) insertLabel.textContent = caption;
+    if (confirm) confirm.setAttribute('aria-label', caption);
   }
 
-  voiceWindow.addEventListener('change', updateInsertLabel);
-  window.addEventListener('pageshow', updateInsertLabel);
-  updateInsertLabel();
+  function restoreOutput() {
+    const selectedBlock = voiceWindow.querySelector('.voice-window__radio:checked');
+    selectOutput(selectedBlock?.value ?? 'text');
+  }
+
+  for (const choice of choices) {
+    choice.addEventListener('change', () => selectOutput(choice.value));
+  }
+  window.addEventListener('pageshow', restoreOutput);
+  restoreOutput();
 }
 
-const waveform = stage.querySelector('.voice-window__waveform');
 const waveformPeaks = {
   7: 4, 8: 20, 9: 20, 10: 14, 11: 10, 12: 4,
   22: 10, 23: 10, 35: 14, 36: 10, 37: 20, 38: 14,
@@ -30,12 +42,14 @@ const waveformPeaks = {
   80: 10, 81: 10, 82: 10, 113: 4, 114: 4, 115: 20,
   116: 20, 117: 14, 164: 4, 165: 20, 166: 14, 167: 10, 168: 4
 };
-const waveformBars = Array.from({ length: 209 }, (_, index) => {
-  const bar = document.createElement('span');
-  bar.style.height = `${waveformPeaks[index] ?? 2}px`;
-  return bar;
-});
-waveform.append(...waveformBars);
+for (const waveform of stage.querySelectorAll('.voice-window__waveform')) {
+  const bars = Array.from({ length: 209 }, (_, index) => {
+    const bar = document.createElement('span');
+    bar.style.height = `${waveformPeaks[index] ?? 2}px`;
+    return bar;
+  });
+  waveform.append(...bars);
+}
 
 const team = [
   {
