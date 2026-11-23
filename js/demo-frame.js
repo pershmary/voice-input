@@ -9,6 +9,19 @@ function showScenario({ scenario }) {
   }
 }
 
+for (const voiceWindow of voiceWindows) {
+  const insertLabel = voiceWindow.querySelector('.voice-window__insert');
+
+  function updateInsertLabel() {
+    const selected = voiceWindow.querySelector('input[name="voice-output"]:checked');
+    insertLabel.textContent = selected?.value === 'audio' ? 'Вставить аудио' : 'Вставить текст';
+  }
+
+  voiceWindow.addEventListener('change', updateInsertLabel);
+  window.addEventListener('pageshow', updateInsertLabel);
+  updateInsertLabel();
+}
+
 const waveform = stage.querySelector('.voice-window__waveform');
 const waveformPeaks = {
   7: 4, 8: 20, 9: 20, 10: 14, 11: 10, 12: 4,
