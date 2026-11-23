@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="vendor/ui-kit/components/toolbar/toolbar.css">
   <link rel="stylesheet" href="vendor/ui-kit/components/close-button/close-button.css">
   <link rel="stylesheet" href="css/fonts.css">
-  <link rel="stylesheet" href="css/demo-frame.css?v=voice-control-icons">
+  <link rel="stylesheet" href="css/demo-frame.css?v=voice-block-states">
   <link rel="stylesheet" href="css/scene-background.css">
   <link rel="stylesheet" href="css/voice-toolbar.css">
   <script defer src="vendor/ui-kit/components/demo-frame/demo-frame.js"></script>
@@ -125,9 +125,11 @@
       </div>
       <section class="voice-window" data-voice-scenario="radio-buttons" aria-label="Окно голосового ввода" hidden>
         <div class="voice-window__toolbar">
-          <span class="voice-window__radio" aria-hidden="true"></span>
-          <time class="voice-window__timer" datetime="PT12S">0:12</time>
-          <span class="voice-window__waveform" aria-hidden="true"></span>
+          <label class="voice-window__block voice-window__audio">
+            <input class="voice-window__radio" type="radio" name="voice-output" value="audio" aria-label="Аудио">
+            <time class="voice-window__timer" datetime="PT12S">0:12</time>
+            <span class="voice-window__waveform" aria-hidden="true"></span>
+          </label>
           <div class="voice-window__actions">
             <span class="voice-window__icon" aria-label="Пауза" role="img"><span aria-hidden="true">&#xE639;</span></span>
             <span class="voice-window__icon" aria-label="Начать заново" role="img"><span aria-hidden="true">&#xE629;</span></span>
@@ -135,10 +137,10 @@
           </div>
           <span class="voice-window__close" aria-label="Закрыть" role="img"></span>
         </div>
-        <p class="voice-window__transcript">
-          <span class="voice-window__radio voice-window__radio--selected" aria-hidden="true"></span>
+        <label class="voice-window__block voice-window__transcript">
+          <input class="voice-window__radio" type="radio" name="voice-output" value="text" aria-label="Текст" checked>
           <span>нужно отрисовать объединенный механизм голосового ввода и отправки аудиосообщения также нужно добавить возможность голосового ввода в любое поле на сайте по шорткату</span>
-        </p>
+        </label>
       </section>
     </main>
   </div>

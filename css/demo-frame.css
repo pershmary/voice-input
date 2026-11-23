@@ -130,32 +130,64 @@ body {
   display: flex;
   align-items: center;
   height: 44px;
-  padding: 0 20px 0 8px;
+  padding: 0 20px 0 4px;
+}
+
+.voice-window__block {
+  display: flex;
+  gap: 2px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.voice-window__block:hover {
+  background: var(--background-info_hover_background-color);
+  color: var(--text-text-color);
+}
+
+.voice-window__block:has(:checked) {
+  background: var(--background-background-color);
+  color: var(--text-text-color);
+  box-shadow: 0 0 3px rgb(0 0 0 / 10%);
+}
+
+.voice-window__audio {
+  flex: 1 1 auto;
+  align-items: center;
+  min-width: 0;
+  height: 32px;
+  padding: 0 8px 0 4px;
+}
+
+.voice-window__audio:has(:checked) {
+  box-shadow: 0 0 6px rgb(0 0 0 / 10%);
 }
 
 .voice-window__radio {
-  display: grid;
-  flex: 0 0 20px;
-  height: 24px;
-  place-items: center;
-}
-
-.voice-window__radio::before {
-  content: "";
+  appearance: none;
   box-sizing: border-box;
+  flex: 0 0 12px;
   width: 12px;
   height: 12px;
+  margin: 6px 4px;
   border: 1px solid var(--border-unaccented_border-color);
   border-radius: 50%;
+  cursor: inherit;
 }
 
-.voice-window__radio--selected::before {
+.voice-window__radio:checked {
   border-color: var(--border-info_border-color);
   background: radial-gradient(circle, var(--border-info_border-color) 3px, transparent 3.5px);
 }
 
+@media (forced-colors: active) {
+  .voice-window__radio {
+    appearance: auto;
+  }
+}
+
 .voice-window__timer {
-  margin: 0 12px 0 2px;
+  margin: 0 10px 0 0;
   color: var(--text-label_text-color);
   font-variant-numeric: lining-nums tabular-nums;
 }
@@ -170,6 +202,11 @@ body {
   opacity: 0.5;
 }
 
+.voice-window__audio:hover .voice-window__waveform,
+.voice-window__audio:has(:checked) .voice-window__waveform {
+  opacity: 1;
+}
+
 .voice-window__waveform span {
   flex: 0 0 1px;
   background: #4c3294;
@@ -179,7 +216,7 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-left: 28px;
+  margin-left: 20px;
   color: var(--icon-info_icon-color);
 }
 
@@ -236,13 +273,9 @@ body {
 }
 
 .voice-window__transcript {
-  display: flex;
   align-items: flex-start;
-  gap: 2px;
   margin: 0 4px;
-  padding: 2px 8px 8px 4px;
-  border-radius: 12px;
-  background: var(--background-background-color);
-  box-shadow: 0 0 3px rgb(0 0 0 / 10%);
+  padding: 8px 8px 8px 4px;
+  color: var(--text-label_contrast_text-color);
   line-height: 20px;
 }
