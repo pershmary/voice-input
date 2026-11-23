@@ -285,6 +285,10 @@ body {
   padding-bottom: 6px;
 }
 
+.voice-window--radio-buttons .voice-window__toolbar {
+  padding-left: 6px;
+}
+
 .voice-window--radio-buttons .voice-window__transcript {
   margin-inline: 6px;
 }
