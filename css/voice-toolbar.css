@@ -77,7 +77,6 @@
   position: relative;
   display: flex;
   gap: var(--offset-offset_3xs);
-  --tb-hover: var(--background-same-info_hover_same_background-color);
 }
 
 .voice-launch__main {
@@ -154,6 +153,7 @@
 .voice-launch__menu[hidden] { display: none; }
 
 .voice-launch__option {
+  --tb-hover: var(--background-same-info_hover_same_background-color);
   justify-content: flex-start;
   gap: var(--offset-offset_s);
   padding-inline: var(--offset-offset_m) calc(2 * var(--offset-offset_s));
