@@ -93,8 +93,16 @@
   font-size: var(--icon-icon_size-icon-size_xs);
 }
 
-.dictation-toolbar__pause time {
+.dictation-toolbar__pause.is-paused .tb__icon {
+  color: var(--icon-info_icon-color);
+}
+
+.dictation-toolbar__pause:not(.is-paused) time {
   font-variant-numeric: tabular-nums;
+}
+
+.dictation-toolbar__pause.is-paused time {
+  min-inline-size: 37px;
 }
 
 .dictation-toolbar__confirm-slot {

@@ -309,7 +309,8 @@ function setDictationPaused(paused) {
   runningSince = paused ? null : performance.now();
   pauseCaption.textContent = paused ? 'Продолжить' : 'Пауза';
   dictationPause.setAttribute('aria-label', pauseCaption.textContent);
-  pauseIcon.textContent = paused ? '\uEC80' : '\uE639';
+  dictationPause.classList.toggle('is-paused', paused);
+  pauseIcon.textContent = paused ? '\uE9B1' : '\uE639';
   updateDictation();
 }
 
