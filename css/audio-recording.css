@@ -113,7 +113,7 @@
   min-height: 72px;
 }
 
-.audio-recording__spinner {
+.voice-processing-spinner {
   --frame-duration: 71ms;
   position: relative;
   display: none;
@@ -122,18 +122,18 @@
   height: 16px;
 }
 
-.audio-recording[data-state="processing"] .audio-recording__spinner {
+.audio-recording[data-state="processing"] .voice-processing-spinner {
   display: block;
 }
 
-.audio-recording__spinner > span {
+.voice-processing-spinner > span {
   position: absolute;
   top: 0;
   left: 0;
   width: 1.5px;
   height: 4px;
   border-radius: 2px;
-  background: var(--text-text-color);
+  background: var(--voice-spinner-color, var(--text-text-color));
   transform-origin: top left;
   animation: audio-spinner-opacity calc(12 * var(--frame-duration)) linear infinite;
   animation-delay: calc(var(--phase) * var(--frame-duration));
@@ -142,18 +142,18 @@
 }
 
 /* Fixed petal geometry from the default component, scaled from 32 to 16 px. */
-.audio-recording__spinner span:nth-child(1) { --phase: 0; transform: matrix(1, 0, 0, 1, 7, 0.5); }
-.audio-recording__spinner span:nth-child(2) { --phase: -11; transform: matrix(0.86603, 0.5, -0.5, 0.86603, 10.86899, 0.99788); }
-.audio-recording__spinner span:nth-child(3) { --phase: -10; transform: matrix(-0.5, -0.86603, 0.86603, -0.5, 11.29456, 6.70674); }
-.audio-recording__spinner span:nth-child(4) { --phase: -9; transform: matrix(0, -1, 1, 0, 11.5, 8.5); }
-.audio-recording__spinner span:nth-child(5) { --phase: -8; transform: matrix(0.5, -0.86603, 0.86603, 0.5, 10.78761, 10.14888); }
-.audio-recording__spinner span:nth-child(6) { --phase: -7; transform: matrix(0.86603, -0.5, 0.5, 0.86603, 9.35449, 11.24936); --third-opacity: 0.8; }
-.audio-recording__spinner span:nth-child(7) { --phase: -6; transform: matrix(1, 0, 0, 1, 7.5, 11.5); }
-.audio-recording__spinner span:nth-child(8) { --phase: -5; transform: matrix(0.86603, 0.5, -0.5, 0.86603, 5.84668, 10.78906); }
-.audio-recording__spinner span:nth-child(9) { --phase: -4; transform: matrix(0.5, 0.86603, -0.86603, 0.5, 4.69998, 9.30582); }
-.audio-recording__spinner span:nth-child(10) { --phase: -3; transform: matrix(0, -1, 1, 0, 0.5, 9); }
-.audio-recording__spinner span:nth-child(11) { --phase: -2; transform: matrix(0.5, -0.86603, 0.86603, 0.5, 1.03589, 5.07892); }
-.audio-recording__spinner span:nth-child(12) { --phase: -1; transform: matrix(0.86603, -0.5, 0.5, 0.86603, 3.35345, 2.02554); }
+.voice-processing-spinner span:nth-child(1) { --phase: 0; transform: matrix(1, 0, 0, 1, 7, 0.5); }
+.voice-processing-spinner span:nth-child(2) { --phase: -11; transform: matrix(0.86603, 0.5, -0.5, 0.86603, 10.86899, 0.99788); }
+.voice-processing-spinner span:nth-child(3) { --phase: -10; transform: matrix(-0.5, -0.86603, 0.86603, -0.5, 11.29456, 6.70674); }
+.voice-processing-spinner span:nth-child(4) { --phase: -9; transform: matrix(0, -1, 1, 0, 11.5, 8.5); }
+.voice-processing-spinner span:nth-child(5) { --phase: -8; transform: matrix(0.5, -0.86603, 0.86603, 0.5, 10.78761, 10.14888); }
+.voice-processing-spinner span:nth-child(6) { --phase: -7; transform: matrix(0.86603, -0.5, 0.5, 0.86603, 9.35449, 11.24936); --third-opacity: 0.8; }
+.voice-processing-spinner span:nth-child(7) { --phase: -6; transform: matrix(1, 0, 0, 1, 7.5, 11.5); }
+.voice-processing-spinner span:nth-child(8) { --phase: -5; transform: matrix(0.86603, 0.5, -0.5, 0.86603, 5.84668, 10.78906); }
+.voice-processing-spinner span:nth-child(9) { --phase: -4; transform: matrix(0.5, 0.86603, -0.86603, 0.5, 4.69998, 9.30582); }
+.voice-processing-spinner span:nth-child(10) { --phase: -3; transform: matrix(0, -1, 1, 0, 0.5, 9); }
+.voice-processing-spinner span:nth-child(11) { --phase: -2; transform: matrix(0.5, -0.86603, 0.86603, 0.5, 1.03589, 5.07892); }
+.voice-processing-spinner span:nth-child(12) { --phase: -1; transform: matrix(0.86603, -0.5, 0.5, 0.86603, 3.35345, 2.02554); }
 
 @keyframes audio-spinner-opacity {
   0%, 100% { opacity: 1; }
@@ -171,7 +171,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .audio-recording__spinner > span {
+  .voice-processing-spinner > span {
     animation-play-state: paused;
   }
 }

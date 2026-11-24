@@ -11,13 +11,13 @@
   <link rel="stylesheet" href="vendor/ui-kit/components/button/button.css">
   <link rel="stylesheet" href="vendor/ui-kit/components/tumbler/tumbler.css">
   <link rel="stylesheet" href="css/fonts.css">
-  <link rel="stylesheet" href="css/demo-frame.css?v=toolbar-commands">
+  <link rel="stylesheet" href="css/demo-frame.css?v=unified-processing">
   <link rel="stylesheet" href="css/scene-background.css?v=description-baseline">
-  <link rel="stylesheet" href="css/voice-toolbar.css?v=voice-button-hover">
-  <link rel="stylesheet" href="css/audio-recording.css?v=remove-widget">
+  <link rel="stylesheet" href="css/voice-toolbar.css?v=unified-processing">
+  <link rel="stylesheet" href="css/audio-recording.css?v=unified-processing">
   <script defer src="vendor/ui-kit/components/demo-frame/demo-frame.js"></script>
   <script defer src="js/audio-recording.js?v=split-voice-button"></script>
-  <script defer src="js/demo-frame.js?v=toolbar-commands"></script>
+  <script defer src="js/demo-frame.js?v=unified-processing"></script>
 </head>
 <body>
   <template id="demo-panel-options-template">
@@ -89,7 +89,6 @@
           </div>
         </div>
       </div>
-      <button type="button" class="editor-transcript" id="editor-transcript" hidden>Нужно отрисовать объединенный механизм голосового ввода и отправки аудиосообщения. Также нужно добавить возможность голосового ввода в любое поле на сайте по шорткату</button>
       <div class="dictation-transcript" id="dictation-transcript" hidden>
         <p class="dictation-transcript__placeholder">Описание</p>
         <p class="dictation-transcript__draft" hidden></p>
@@ -150,7 +149,7 @@
           </div>
           <div class="audio-recording__status" role="status">
             <span class="audio-recording__message"></span>
-            <span class="audio-recording__spinner" aria-hidden="true">
+            <span class="voice-processing-spinner" aria-hidden="true">
               <span></span><span></span><span></span><span></span><span></span><span></span>
               <span></span><span></span><span></span><span></span><span></span><span></span>
             </span>
@@ -223,7 +222,7 @@
             <span class="tb__icon" aria-hidden="true">&#xe929;</span>
           </button>
           <span class="tb__sep" aria-hidden="true"></span>
-          <button type="button" class="tb__btn voice-toolbar__microphone" aria-label="Голосовой ввод" hidden>
+          <button type="button" class="tb__btn voice-toolbar__microphone" aria-label="Голосовой ввод" aria-expanded="false" hidden>
             <span class="tb__icon" aria-hidden="true">&#xe9b1;</span>
           </button>
           <div class="voice-launch">
@@ -268,7 +267,7 @@
             <span class="voice-window__icon" aria-label="Начать заново" role="img"><span aria-hidden="true">&#xE629;</span></span>
             <button type="button" class="voice-window__insert" data-insert-voice>Вставить текст</button>
           </div>
-          <span class="voice-window__close" aria-label="Закрыть" role="img"></span>
+          <button type="button" class="close-button close-button--external voice-window__dismiss" aria-label="Закрыть"></button>
         </div>
         <label class="voice-window__block voice-window__transcript">
           <input class="voice-window__radio" type="radio" name="voice-output" value="text" aria-label="Текст" checked>
@@ -344,7 +343,7 @@
               </button>
             </div>
           </div>
-          <span class="voice-window__close" aria-label="Закрыть" role="img"></span>
+          <button type="button" class="close-button close-button--external voice-window__dismiss" aria-label="Закрыть"></button>
         </div>
         <label class="voice-window__block voice-window__transcript">
           <input class="voice-window__radio" type="radio" name="toggle-voice-output" value="text" aria-label="Текст" checked>
@@ -403,6 +402,20 @@
             <span class="btn__icon" aria-hidden="true">&#xEB1A;</span>
           </button>
         </div>
+      </section>
+      <section class="voice-window voice-window--processing" id="voice-processing" aria-label="Обработка текста" hidden>
+        <div class="voice-window__toolbar">
+          <div class="voice-window__processing-status" role="status">
+            <span class="voice-processing-spinner" aria-hidden="true">
+              <span></span><span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span><span></span>
+            </span>
+            Расставляем знаки препинания и исправляем ошибки...
+          </div>
+          <button type="button" class="voice-window__skip">Пропустить</button>
+          <button type="button" class="close-button close-button--external voice-window__dismiss" aria-label="Закрыть"></button>
+        </div>
+        <p class="voice-window__transcript"></p>
       </section>
     </main>
   </div>

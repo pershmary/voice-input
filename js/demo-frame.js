@@ -1,77 +1,114 @@
 const canvas = document.getElementById('demo-canvas');
 const stage = document.getElementById('demo-stage');
 
-const voiceWindows = stage.querySelectorAll('[data-voice-scenario]');
+const voiceWindows = [...stage.querySelectorAll('[data-voice-scenario]')];
 const insertButtons = stage.querySelectorAll('[data-insert-voice]');
-const editorTranscript = document.getElementById('editor-transcript');
 const editorAudio = document.getElementById('editor-audio');
-editorAudio.querySelector('.editor-audio__transcript').textContent = editorTranscript.textContent;
+const processingWindow = document.getElementById('voice-processing');
+const processingDraft = processingWindow.querySelector('.voice-window__transcript');
+const skipProcessing = processingWindow.querySelector('.voice-window__skip');
+const rawText = voiceWindows[0].querySelector('.voice-window__transcript').textContent.trim();
+const processedText = 'Нужно отрисовать объединенный механизм голосового ввода и отправки аудиосообщения. Также нужно добавить возможность голосового ввода в любое поле на сайте по шорткату';
+editorAudio.querySelector('.editor-audio__transcript').textContent = processedText;
 
-let insertTrigger;
+let unifiedProcessingTimeout;
+
+function closeUnifiedWindow() {
+  clearTimeout(unifiedProcessingTimeout);
+  processingWindow.hidden = true;
+  for (const voiceWindow of voiceWindows) voiceWindow.hidden = true;
+  showFormatMenu(false);
+  unifiedMicrophone.setAttribute('aria-expanded', 'false');
+}
 
 function showScenario({ scenario }) {
   showVoiceLaunchMenu(false);
   audioRecording.clear();
+  closeUnifiedWindow();
   const compare = scenario === 'compare-audio';
   stage.classList.toggle('demo-stage--compare-audio', compare);
   finishDictation();
-  editorTranscript.hidden = true;
+  dictationTranscript.hidden = compare;
   editorAudio.hidden = !compare;
   editorAudio.disabled = compare;
   for (const button of insertButtons) button.disabled = compare;
-  showFormatMenu(false);
-  insertTrigger = undefined;
-  for (const voiceWindow of voiceWindows) {
-    voiceWindow.hidden = !compare && voiceWindow.dataset.voiceScenario !== scenario;
+  if (compare) {
+    for (const voiceWindow of voiceWindows) voiceWindow.hidden = false;
   }
 }
 
-function restoreVoiceWindow() {
-  const trigger = insertTrigger;
-  showScenario(frame.value);
-  trigger?.focus({ preventScroll: true });
+function openUnifiedWindow() {
+  const voiceWindow = voiceWindows.find(window => window.dataset.voiceScenario === windowScenario);
+  if (!voiceWindow || unifiedMicrophone.getAttribute('aria-expanded') === 'true') return;
+  finishDictation();
+  selectWindowOutput(voiceWindow, 'text');
+  selectMenuFormat(formatOptions[0]);
+  voiceWindow.hidden = false;
+  unifiedMicrophone.setAttribute('aria-expanded', 'true');
+  voiceWindow.focus({ preventScroll: true });
 }
 
-editorTranscript.addEventListener('click', restoreVoiceWindow);
-editorAudio.addEventListener('click', restoreVoiceWindow);
-stage.querySelector('.editor-audio-toolbar__delete').addEventListener('click', restoreVoiceWindow);
+function dismissUnifiedWindow() {
+  if (frame.value.scenario === 'compare-audio') return;
+  closeUnifiedWindow();
+  unifiedMicrophone.focus({ preventScroll: true });
+}
+
+function removeUnifiedAudio() {
+  editorAudio.hidden = true;
+  dictationTranscript.hidden = false;
+  unifiedMicrophone.focus({ preventScroll: true });
+}
+
+function finishUnifiedProcessing(text) {
+  const restoreFocus = processingWindow.contains(document.activeElement);
+  closeUnifiedWindow();
+  finishDictation(text);
+  if (restoreFocus) dictationResult.focus({ preventScroll: true });
+}
+
+function selectWindowOutput(voiceWindow, value) {
+  for (const choice of voiceWindow.querySelectorAll('input[type="radio"]')) {
+    choice.checked = choice.value === value;
+  }
+  const caption = value === 'audio' ? 'Вставить аудио' : 'Вставить текст';
+  const insertLabel = voiceWindow.querySelector('.voice-window__insert');
+  if (insertLabel) insertLabel.textContent = caption;
+  voiceWindow.querySelector('.voice-window__confirm')?.setAttribute('aria-label', caption);
+}
+
+editorAudio.addEventListener('click', removeUnifiedAudio);
+stage.querySelector('.editor-audio-toolbar__delete').addEventListener('click', removeUnifiedAudio);
+processingWindow.querySelector('.voice-window__dismiss').addEventListener('click', dismissUnifiedWindow);
+skipProcessing.addEventListener('click', () => finishUnifiedProcessing(rawText));
+processingDraft.textContent = rawText;
 
 for (const voiceWindow of voiceWindows) {
-  const insertLabel = voiceWindow.querySelector('.voice-window__insert');
-  const confirm = voiceWindow.querySelector('.voice-window__confirm');
-  const choices = voiceWindow.querySelectorAll('input[type="radio"]');
+  voiceWindow.tabIndex = -1;
+  voiceWindow.querySelector('.voice-window__dismiss').addEventListener('click', dismissUnifiedWindow);
 
   for (const insert of voiceWindow.querySelectorAll('[data-insert-voice]')) {
     insert.addEventListener('click', () => {
       const selectedAudio = voiceWindow.querySelector('input[value="audio"]:checked, [data-format="audio"][aria-pressed="true"]');
       const output = insert.dataset.insertVoice || (selectedAudio ? 'audio' : 'text');
-      const result = output === 'audio' ? editorAudio : editorTranscript;
-      insertTrigger = insert;
-      voiceWindow.hidden = true;
-      result.hidden = false;
-      result.focus({ preventScroll: true });
+      if (output === 'audio') {
+        closeUnifiedWindow();
+        dictationTranscript.hidden = true;
+        editorAudio.hidden = false;
+        editorAudio.focus({ preventScroll: true });
+      } else {
+        voiceWindow.hidden = true;
+        showFormatMenu(false);
+        processingWindow.hidden = false;
+        skipProcessing.focus({ preventScroll: true });
+        unifiedProcessingTimeout = setTimeout(() => finishUnifiedProcessing(processedText), processingDuration);
+      }
     });
   }
 
-  function selectOutput(value) {
-    for (const choice of choices) {
-      choice.checked = choice.value === value;
-    }
-    const caption = value === 'audio' ? 'Вставить аудио' : 'Вставить текст';
-    if (insertLabel) insertLabel.textContent = caption;
-    if (confirm) confirm.setAttribute('aria-label', caption);
+  for (const choice of voiceWindow.querySelectorAll('input[type="radio"]')) {
+    choice.addEventListener('change', () => selectWindowOutput(voiceWindow, choice.value));
   }
-
-  function restoreOutput() {
-    const selectedBlock = voiceWindow.querySelector('.voice-window__radio:checked');
-    selectOutput(selectedBlock?.value ?? 'text');
-  }
-
-  for (const choice of choices) {
-    choice.addEventListener('change', () => selectOutput(choice.value));
-  }
-  window.addEventListener('pageshow', restoreOutput);
-  restoreOutput();
 }
 
 const waveformPeaks = {
@@ -142,16 +179,20 @@ function closeFormatMenu() {
   menuTrigger.focus({ preventScroll: true });
 }
 
+function selectMenuFormat(option) {
+  const isAudio = option.dataset.format === 'audio';
+  for (const item of formatOptions) {
+    item.setAttribute('aria-pressed', String(item === option));
+  }
+  addButton.setAttribute('aria-label', isAudio ? 'Добавить аудио' : 'Добавить текст');
+  addIcon.textContent = option.querySelector('.voice-format-icon').textContent;
+}
+
 menuTrigger.addEventListener('click', () => showFormatMenu(formatMenu.hidden));
 menuClose.addEventListener('click', closeFormatMenu);
 for (const option of formatOptions) {
   option.addEventListener('click', () => {
-    const isAudio = option.dataset.format === 'audio';
-    for (const item of formatOptions) {
-      item.setAttribute('aria-pressed', String(item === option));
-    }
-    addButton.setAttribute('aria-label', isAudio ? 'Добавить аудио' : 'Добавить текст');
-    addIcon.textContent = option.querySelector('.voice-format-icon').textContent;
+    selectMenuFormat(option);
     closeFormatMenu();
   });
 }
@@ -249,14 +290,13 @@ function showApproach() {
   const unified = approach === 'unified';
   unifiedMicrophone.hidden = !unified;
   voiceLaunch.hidden = unified;
-  dictationTranscript.hidden = unified;
   windowGroup.hidden = !unified;
   comparisonGroup.hidden = !unified;
   frame.select(unified ? windowScenario : null);
 }
 
 approachGroup.addEventListener('change', showApproach);
-unifiedMicrophone.addEventListener('click', () => showScenario(frame.value));
+unifiedMicrophone.addEventListener('click', openUnifiedWindow);
 
 frame.panel.querySelectorAll('.df-team__label').forEach((label, index) => {
   const member = team[index];
@@ -277,12 +317,12 @@ const dictationPause = dictationToolbar.querySelector('.dictation-toolbar__pause
 const pauseCaption = dictationPause.querySelector('.tb__caption');
 const pauseIcon = dictationPause.querySelector('.tb__icon');
 const dictationTimer = dictationPause.querySelector('time');
-const rawWords = 'нужно отрисовать объединенный механизм голосового ввода и отправки аудиосообщения также нужно добавить возможность голосового ввода в любое поле на сайте по шорткату'.split(' ');
-const processedWords = editorTranscript.textContent.split(' ');
+const rawWords = rawText.split(' ');
+const processedWords = processedText.split(' ');
 
 const wordInterval = 500;
 const processingDuration = 2000;
-dictationTranscript.style.setProperty('--dictation-processing-duration', `${processingDuration}ms`);
+stage.style.setProperty('--dictation-processing-duration', `${processingDuration}ms`);
 let tickTimeout;
 let processingTimeout;
 let pauseWidthAnimation;
@@ -414,7 +454,8 @@ dictationToolbar.querySelector('.dictation-toolbar__confirm').addEventListener('
 });
 function clearDictation() {
   finishDictation();
-  voiceLaunchMain.focus({ preventScroll: true });
+  const microphone = approach === 'unified' ? unifiedMicrophone : voiceLaunchMain;
+  microphone.focus({ preventScroll: true });
 }
 
 dictationToolbar.querySelector('.dictation-toolbar__cancel').addEventListener('click', clearDictation);

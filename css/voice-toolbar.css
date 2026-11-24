@@ -270,7 +270,8 @@
   opacity: 0.4;
 }
 
-.dictation-transcript[aria-busy="true"] .dictation-transcript__draft {
+.dictation-transcript[aria-busy="true"] .dictation-transcript__draft,
+.voice-window--processing .voice-window__transcript {
   opacity: 1;
   color: transparent;
   background-image: linear-gradient(90deg, rgb(0 0 0 / 30%), rgb(0 0 0 / 50%), rgb(0 0 0 / 30%));
@@ -285,14 +286,16 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dictation-transcript[aria-busy="true"] .dictation-transcript__draft {
+  .dictation-transcript[aria-busy="true"] .dictation-transcript__draft,
+  .voice-window--processing .voice-window__transcript {
     animation: none;
     background-position: center;
   }
 }
 
 @media (forced-colors: active) {
-  .dictation-transcript[aria-busy="true"] .dictation-transcript__draft {
+  .dictation-transcript[aria-busy="true"] .dictation-transcript__draft,
+  .voice-window--processing .voice-window__transcript {
     animation: none;
     background-image: none;
     color: CanvasText;
