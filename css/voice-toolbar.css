@@ -81,6 +81,7 @@
 }
 
 .voice-launch__main {
+  width: var(--inline_height-inline_height_xl);
   border-start-start-radius: var(--border-radius-border-radius_3xl);
   border-end-start-radius: var(--border-radius-border-radius_3xl);
   border-start-end-radius: 0;
@@ -114,6 +115,7 @@
 }
 
 .voice-launch__wave {
+  box-sizing: border-box;
   display: grid;
   grid-template-columns: 5px 4.5px 4.5px 5px 1px;
   padding-inline: 2px;
