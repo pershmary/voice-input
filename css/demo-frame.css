@@ -295,14 +295,17 @@ body {
   line-height: 20px;
 }
 
-.voice-window--processing {
-  width: 732px;
-  right: 71px;
+.voice-window__processing-controls,
+.voice-window[data-processing] .voice-window__toolbar > :not(.voice-window__processing-controls, .voice-window__dismiss),
+.voice-window--menu-button[data-processing] .voice-window__dismiss {
+  display: none;
 }
 
-.voice-window--processing .voice-window__toolbar {
+.voice-window[data-processing] .voice-window__processing-controls {
+  display: flex;
+  flex: 1;
+  align-items: center;
   justify-content: space-between;
-  padding-inline: 8px 20px;
 }
 
 .voice-window__processing-status {
@@ -314,7 +317,7 @@ body {
   letter-spacing: -0.0141em;
 }
 
-.voice-window--processing .voice-processing-spinner {
+.voice-window__processing-controls .voice-processing-spinner {
   --voice-spinner-color: currentColor;
   display: block;
 }
@@ -654,6 +657,44 @@ body {
   flex: 1;
   min-width: 0;
   margin: 0;
+}
+
+.voice-window[data-processing] .voice-window__toolbar {
+  padding-inline: 14px 20px;
+}
+
+.voice-window--radio-buttons[data-processing] .voice-window__toolbar {
+  padding-left: 8px;
+}
+
+.voice-window--radio-buttons[data-processing] {
+  padding-bottom: 4px;
+}
+
+.voice-window--radio-buttons[data-processing] .voice-window__transcript {
+  margin-inline: 4px;
+  padding-top: 2px;
+}
+
+.voice-window--radio-buttons[data-processing] .voice-window__radio {
+  border: 0;
+  background: radial-gradient(circle, var(--background-contrast-info_color) 3.5px, transparent 4.5px);
+}
+
+.voice-window[data-processing] .voice-window__block {
+  cursor: default;
+}
+
+.voice-window--two-buttons[data-processing] .voice-window__text {
+  display: block;
+}
+
+.voice-window--split-window[data-processing] .voice-window__split-insert {
+  visibility: hidden;
+}
+
+.voice-window--menu-button[data-processing] :is(.voice-window__toolbar, .voice-window__transcript) {
+  padding-inline: 0 4px;
 }
 
 .voice-window__split-insert {

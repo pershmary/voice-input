@@ -4,10 +4,8 @@ const stage = document.getElementById('demo-stage');
 const voiceWindows = [...stage.querySelectorAll('[data-voice-scenario]')];
 const insertButtons = stage.querySelectorAll('[data-insert-voice]');
 const editorAudio = document.getElementById('editor-audio');
-const processingWindow = document.getElementById('voice-processing');
-const processingDraft = processingWindow.querySelector('.voice-window__transcript');
-const skipProcessing = processingWindow.querySelector('.voice-window__skip');
-const rawText = voiceWindows[0].querySelector('.voice-window__transcript').textContent.trim();
+const processingControls = document.getElementById('voice-processing-controls').content;
+const rawText = voiceWindows[0].querySelector('.voice-window__text').textContent.trim();
 const processedText = 'Нужно отрисовать объединенный механизм голосового ввода и отправки аудиосообщения. Также нужно добавить возможность голосового ввода в любое поле на сайте по шорткату';
 editorAudio.querySelector('.editor-audio__transcript').textContent = processedText;
 
@@ -15,8 +13,11 @@ let unifiedProcessingTimeout;
 
 function closeUnifiedWindow() {
   clearTimeout(unifiedProcessingTimeout);
-  processingWindow.hidden = true;
-  for (const voiceWindow of voiceWindows) voiceWindow.hidden = true;
+  for (const voiceWindow of voiceWindows) {
+    voiceWindow.hidden = true;
+    voiceWindow.removeAttribute('data-processing');
+    voiceWindow.querySelector('.voice-window__transcript input')?.removeAttribute('disabled');
+  }
   showFormatMenu(false);
   unifiedMicrophone.setAttribute('aria-expanded', 'false');
 }
@@ -60,8 +61,8 @@ function removeUnifiedAudio() {
   unifiedMicrophone.focus({ preventScroll: true });
 }
 
-function finishUnifiedProcessing(text) {
-  const restoreFocus = processingWindow.contains(document.activeElement);
+function finishUnifiedProcessing(voiceWindow, text) {
+  const restoreFocus = voiceWindow.contains(document.activeElement);
   closeUnifiedWindow();
   finishDictation(text);
   if (restoreFocus) dictationResult.focus({ preventScroll: true });
@@ -79,13 +80,12 @@ function selectWindowOutput(voiceWindow, value) {
 
 editorAudio.addEventListener('click', removeUnifiedAudio);
 stage.querySelector('.editor-audio-toolbar__delete').addEventListener('click', removeUnifiedAudio);
-processingWindow.querySelector('.voice-window__dismiss').addEventListener('click', dismissUnifiedWindow);
-skipProcessing.addEventListener('click', () => finishUnifiedProcessing(rawText));
-processingDraft.textContent = rawText;
-
 for (const voiceWindow of voiceWindows) {
   voiceWindow.tabIndex = -1;
+  voiceWindow.querySelector('.voice-window__toolbar').prepend(processingControls.cloneNode(true));
   voiceWindow.querySelector('.voice-window__dismiss').addEventListener('click', dismissUnifiedWindow);
+  const skipProcessing = voiceWindow.querySelector('.voice-window__skip');
+  skipProcessing.addEventListener('click', () => finishUnifiedProcessing(voiceWindow, rawText));
 
   for (const insert of voiceWindow.querySelectorAll('[data-insert-voice]')) {
     insert.addEventListener('click', () => {
@@ -97,11 +97,11 @@ for (const voiceWindow of voiceWindows) {
         editorAudio.hidden = false;
         editorAudio.focus({ preventScroll: true });
       } else {
-        voiceWindow.hidden = true;
         showFormatMenu(false);
-        processingWindow.hidden = false;
+        voiceWindow.setAttribute('data-processing', '');
+        voiceWindow.querySelector('.voice-window__transcript input')?.setAttribute('disabled', '');
         skipProcessing.focus({ preventScroll: true });
-        unifiedProcessingTimeout = setTimeout(() => finishUnifiedProcessing(processedText), processingDuration);
+        unifiedProcessingTimeout = setTimeout(() => finishUnifiedProcessing(voiceWindow, processedText), processingDuration);
       }
     });
   }
