@@ -13,11 +13,11 @@
   <link rel="stylesheet" href="css/fonts.css">
   <link rel="stylesheet" href="css/demo-frame.css?v=command-buttons">
   <link rel="stylesheet" href="css/scene-background.css?v=description-baseline">
-  <link rel="stylesheet" href="css/voice-toolbar.css?v=toolbar-transitions">
-  <link rel="stylesheet" href="css/audio-recording.css">
+  <link rel="stylesheet" href="css/voice-toolbar.css?v=audio-layout">
+  <link rel="stylesheet" href="css/audio-recording.css?v=audio-layout">
   <script defer src="vendor/ui-kit/components/demo-frame/demo-frame.js"></script>
-  <script defer src="js/audio-recording.js"></script>
-  <script defer src="js/demo-frame.js?v=toolbar-transitions"></script>
+  <script defer src="js/audio-recording.js?v=audio-layout"></script>
+  <script defer src="js/demo-frame.js?v=audio-layout"></script>
 </head>
 <body>
   <template id="demo-panel-options-template">
@@ -120,7 +120,7 @@
           <img src="assets/voice-toolbar/close.svg" alt="">
         </button>
       </div>
-      <div class="audio-recording" id="audio-recording" data-state="idle">
+      <div class="audio-recording" id="audio-recording" data-state="idle" hidden>
         <div class="tb tb--style-info recording-toolbar audio-recording__toolbar" role="toolbar" aria-label="Тулбар записи аудио" hidden>
           <button type="button" class="tb__btn is-selected recording-toolbar__pause" data-audio-action="pause" aria-label="Пауза">
             <span class="tb__icon" aria-hidden="true">&#xE639;</span>

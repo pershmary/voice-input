@@ -76,14 +76,14 @@
 }
 
 .recording-toolbar {
-  position: absolute;
-  left: 814px;
   border: 1px solid var(--tb-bd);
   box-shadow: 0 0 var(--blur-shadow-blur_c) var(--color-shadow-color_c);
 }
 
 .dictation-toolbar {
+  position: absolute;
   top: 120px;
+  left: 814px;
 }
 
 .recording-toolbar .recording-toolbar__pause {

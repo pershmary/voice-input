@@ -1,5 +1,8 @@
 .audio-recording {
-  display: contents;
+  position: absolute;
+  top: 113px;
+  left: 814px;
+  width: 719px;
 }
 
 .demo-stage:has(.audio-recording__toolbar:not([hidden])) .voice-toolbar {
@@ -7,19 +10,20 @@
 }
 
 .audio-recording__toolbar {
-  top: 113px;
+  position: absolute;
+  top: 0;
+  left: 0;
   z-index: 1;
 }
 
-.audio-recording button[hidden] {
+.audio-recording [hidden] {
   display: none;
 }
 
 .audio-recording__editor {
   position: absolute;
-  top: 160px;
-  left: 814px;
-  width: 719px;
+  top: 47px;
+  width: 100%;
   font-size: var(--font-font-size-font-size_m);
   letter-spacing: -0.0141em;
 }
@@ -89,6 +93,10 @@
 
 .audio-recording__status:empty {
   position: absolute;
+}
+
+.audio-recording[data-state="idle"] .audio-recording__status:not(:empty) {
+  background: var(--background-background-color);
 }
 
 .audio-recording__widget:not([hidden]) + .audio-recording__status:not(:empty) {

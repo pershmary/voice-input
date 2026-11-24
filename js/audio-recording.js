@@ -18,11 +18,14 @@ function mountAudioRecording(root, trigger) {
 
   function setState(state, message = '') {
     const paused = state === 'paused';
+    const starting = state === 'starting';
     const capturing = paused || state === 'recording';
     const showPlayer = ['processing', 'ready', 'unavailable'].includes(state);
     root.dataset.state = state;
-    toolbar.hidden = !capturing;
-    widget.hidden = !capturing && !showPlayer;
+    root.hidden = state === 'idle' && !message;
+    toolbar.hidden = !capturing && !starting;
+    widget.hidden = toolbar.hidden && !showPlayer;
+    actions.pause.disabled = actions.restart.disabled = actions.confirm.disabled = starting;
     actions.preview.hidden = !paused;
     actions.play.hidden = !showPlayer;
     actions.speed.hidden = !showPlayer;
@@ -138,6 +141,8 @@ function mountAudioRecording(root, trigger) {
     const current = { context, elapsed: 0, peaks: [], segments: [], rate: 1 };
     session = current;
     setState('starting', 'Подключение микрофона…');
+    updateTime(0, true);
+    drawWaveform([], true);
     try {
       const ready = context.resume().then(() => true, () => false);
       const stream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1 } });
