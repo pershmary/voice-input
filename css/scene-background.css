@@ -138,6 +138,19 @@
   left: -8px;
 }
 
+.scene-background__editor-divider-cover {
+  position: absolute;
+  top: 164px;
+  left: 62px;
+  width: 720px;
+  height: 1px;
+  background: var(--background-background-color);
+}
+
+.demo-stage:has(.editor-audio:not([hidden])) .scene-background__editor-divider-cover {
+  display: none;
+}
+
 .scene-background__task-body::after {
   /* Участок с плейсхолдером на фоновой картинке карточки задачи. */
   content: "";

@@ -137,16 +137,6 @@
   letter-spacing: -0.0141em;
 }
 
-.dictation-transcript::before {
-  content: "";
-  position: absolute;
-  top: -2px;
-  left: -1px;
-  width: 722px;
-  height: 2px;
-  background: var(--background-background-color);
-}
-
 .dictation-transcript__draft,
 .dictation-transcript__result {
   position: relative;
