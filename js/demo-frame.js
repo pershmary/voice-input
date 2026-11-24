@@ -272,7 +272,10 @@ const rawWords = 'нужно отрисовать объединенный ме�
 const processedWords = editorTranscript.textContent.split(' ');
 
 const wordInterval = 500;
+const processingDuration = 2000;
+dictationTranscript.style.setProperty('--dictation-processing-duration', `${processingDuration}ms`);
 let tickTimeout;
+let processingTimeout;
 let elapsed = 0;
 let runningSince = null;
 
@@ -311,10 +314,16 @@ function startDictation() {
   setDictationPaused(false);
 }
 
-function finishDictation(text = '') {
+function stopDictation() {
   clearTimeout(tickTimeout);
   runningSince = null;
   dictationToolbar.hidden = true;
+}
+
+function finishDictation(text = '') {
+  stopDictation();
+  clearTimeout(processingTimeout);
+  dictationTranscript.removeAttribute('aria-busy');
   dictationDraft.hidden = true;
   dictationDraft.textContent = '';
   dictationResult.textContent = text;
@@ -332,7 +341,14 @@ dictationPause.addEventListener('click', () => setDictationPaused(runningSince !
 dictationToolbar.querySelector('.dictation-toolbar__restart').addEventListener('click', startDictation);
 dictationToolbar.querySelector('.dictation-toolbar__confirm').addEventListener('click', () => {
   const wordCount = dictationDraft.textContent.match(/\S+/g)?.length ?? 0;
-  finishDictation(processedWords.slice(0, wordCount).join(' '));
+  if (wordCount === 0) {
+    finishDictation();
+  } else {
+    stopDictation();
+    dictationTranscript.setAttribute('aria-busy', 'true');
+    const text = processedWords.slice(0, wordCount).join(' ');
+    processingTimeout = setTimeout(() => finishDictation(text), processingDuration);
+  }
   dictationStart.focus({ preventScroll: true });
 });
 function clearDictation() {

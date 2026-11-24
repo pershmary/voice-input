@@ -67,7 +67,7 @@
   content: none;
 }
 
-.demo-stage:has(.dictation-toolbar:not([hidden])) .voice-toolbar,
+.demo-stage:has(.dictation-toolbar:not([hidden]), .dictation-transcript[aria-busy="true"]) .voice-toolbar,
 .dictation-toolbar[hidden] {
   display: none;
 }
@@ -153,6 +153,35 @@
 
 .dictation-transcript__draft {
   opacity: 0.4;
+}
+
+.dictation-transcript[aria-busy="true"] .dictation-transcript__draft {
+  opacity: 1;
+  color: transparent;
+  background-image: linear-gradient(90deg, rgb(0 0 0 / 30%), rgb(0 0 0 / 50%), rgb(0 0 0 / 30%));
+  background-size: 200% 100%;
+  background-clip: text;
+  animation: dictation-processing var(--dictation-processing-duration) linear both;
+}
+
+@keyframes dictation-processing {
+  from { background-position: right center; }
+  to { background-position: left center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dictation-transcript[aria-busy="true"] .dictation-transcript__draft {
+    animation: none;
+    background-position: center;
+  }
+}
+
+@media (forced-colors: active) {
+  .dictation-transcript[aria-busy="true"] .dictation-transcript__draft {
+    animation: none;
+    background-image: none;
+    color: CanvasText;
+  }
 }
 
 .dictation-transcript__result:not([hidden]) {
