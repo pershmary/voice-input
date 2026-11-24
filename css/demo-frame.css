@@ -74,16 +74,6 @@ body {
   display: none;
 }
 
-.df-panel .demo-dictation-start {
-  align-self: flex-start;
-  padding-inline: var(--btn-px);
-  color: var(--btn-fg);
-}
-
-.demo-dictation-start[hidden] {
-  display: none;
-}
-
 .df-panel .df-group {
   display: flex;
   align-items: center;
@@ -96,6 +86,17 @@ body {
 .df-panel .df-options {
   gap: 0;
   padding: 6px;
+}
+
+.df-panel .demo-command-buttons {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.df-panel .demo-command-buttons .btn {
+  padding-inline: var(--btn-px);
+  color: var(--btn-fg);
 }
 
 .df-panel :is(.df-radio.is-on, .demo-approach-option:has(:checked)) .df-radio__box::before {

@@ -12,7 +12,7 @@ let insertTrigger;
 function showScenario({ scenario }) {
   const compare = scenario === 'compare-audio';
   stage.classList.toggle('demo-stage--compare-audio', compare);
-  setDictationScenario(scenario === 'voice-input');
+  finishDictation();
   editorTranscript.hidden = true;
   editorAudio.hidden = !compare;
   editorAudio.disabled = compare;
@@ -184,15 +184,8 @@ const windowScenarios = [
   { id: 'split-window', title: 'Окно из двух частей' },
   { id: 'menu-button', title: 'Двойная кнопка' }
 ];
-const commandScenarios = [
-  { id: 'voice-input', title: 'Голосовой ввод' },
-  { id: 'audio-recording', title: 'Запись аудио' }
-];
-const scenarioByApproach = {
-  unified: windowScenarios[0].id,
-  commands: commandScenarios[0].id
-};
-let approach = 'unified';
+let windowScenario = windowScenarios[0].id;
+let approach;
 
 const frame = DemoFrame.mount({
   stage,
@@ -207,16 +200,14 @@ const frame = DemoFrame.mount({
     { id: 'monitor', icon: 'monitor', label: 'Монитор', size: '1600х900', name: 'монитор' }
   ],
   scenarios: [
-    { group: 'Варианты окна', items: windowScenarios },
-    { group: 'Механика', items: commandScenarios }
+    { group: 'Варианты окна', items: windowScenarios }
   ],
   bottomScenarios: [
     { id: 'compare-audio', title: 'Окно ввода и виджет "Аудио"' }
   ],
   team,
-  value: { scenario: scenarioByApproach.unified },
   onChange(value) {
-    scenarioByApproach[approach] = value.scenario;
+    if (approach === 'unified') windowScenario = value.scenario;
     showScenario(value);
   }
 });
@@ -231,38 +222,33 @@ const scenarioCard = frame.panel.querySelector('.df-panel__top .df-card--scen');
 scenarioCard.removeAttribute('role');
 scenarioCard.removeAttribute('aria-label');
 
-const [windowGroup, commandGroup] = Array.from(scenarioCard.querySelectorAll('.df-group'), heading => {
-  const group = document.createElement('div');
-  group.className = 'demo-scenario-group';
-  group.setAttribute('role', 'radiogroup');
-  group.setAttribute('aria-label', heading.textContent);
-  const options = heading.nextElementSibling;
-  heading.before(group);
-  group.append(heading, options);
-  return group;
-});
-commandGroup.hidden = true;
-
-const dictationStart = document.createElement('button');
-dictationStart.type = 'button';
-dictationStart.className = 'btn btn--same btn--style-info btn--size-m demo-dictation-start';
-dictationStart.textContent = 'Запустить голосовой ввод';
-commandGroup.after(dictationStart);
+const windowGroup = document.createElement('div');
+windowGroup.className = 'demo-scenario-group';
+windowGroup.setAttribute('role', 'radiogroup');
+windowGroup.setAttribute('aria-label', scenarioCard.querySelector('.df-group').textContent);
+windowGroup.append(...scenarioCard.children);
 
 const comparisonGroup = frame.panel.querySelector('.df-card--bottom');
 comparisonGroup.setAttribute('aria-label', 'Сравнение');
 
-const approachGroup = document.getElementById('demo-approach-template').content.firstElementChild.cloneNode(true);
-scenarioCard.prepend(approachGroup);
-approachGroup.addEventListener('change', event => {
-  approach = event.target.value;
+const panelOptions = document.getElementById('demo-panel-options-template').content.cloneNode(true);
+const approachGroup = panelOptions.querySelector('[role="radiogroup"]');
+const commandGroup = panelOptions.querySelector('.demo-command-group');
+const dictationStart = commandGroup.querySelector('[data-command="voice-input"]');
+const audioStart = commandGroup.querySelector('[data-command="audio-recording"]');
+scenarioCard.append(panelOptions, windowGroup);
+
+function showApproach() {
+  approach = approachGroup.querySelector('input:checked').value;
   const unified = approach === 'unified';
   stage.classList.toggle('demo-stage--commands', !unified);
   windowGroup.hidden = !unified;
   commandGroup.hidden = unified;
   comparisonGroup.hidden = !unified;
-  frame.select(scenarioByApproach[approach]);
-});
+  frame.select(unified ? windowScenario : null);
+}
+
+approachGroup.addEventListener('change', showApproach);
 
 frame.panel.querySelectorAll('.df-team__label').forEach((label, index) => {
   const member = team[index];
@@ -336,15 +322,12 @@ function finishDictation(text = '') {
   dictationTranscript.hidden = !text;
 }
 
-function setDictationScenario(active) {
-  finishDictation();
-  dictationStart.hidden = !active;
-}
-
 dictationStart.addEventListener('click', () => {
+  frame.select(dictationStart.dataset.command);
   startDictation();
   dictationPause.focus({ preventScroll: true });
 });
+audioStart.addEventListener('click', () => frame.select(audioStart.dataset.command));
 dictationPause.addEventListener('click', () => setDictationPaused(runningSince !== null));
 dictationToolbar.querySelector('.dictation-toolbar__restart').addEventListener('click', startDictation);
 dictationToolbar.querySelector('.dictation-toolbar__confirm').addEventListener('click', () => {
@@ -360,7 +343,7 @@ function clearDictation() {
 dictationToolbar.querySelector('.dictation-toolbar__cancel').addEventListener('click', clearDictation);
 dictationResult.addEventListener('click', clearDictation);
 
-showScenario(frame.value);
+showApproach();
 
 const toolbar = document.getElementById('voice-toolbar');
 toolbar.querySelector('.voice-toolbar__close').addEventListener('click', () => {

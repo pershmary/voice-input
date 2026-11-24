@@ -11,27 +11,34 @@
   <link rel="stylesheet" href="vendor/ui-kit/components/button/button.css">
   <link rel="stylesheet" href="vendor/ui-kit/components/tumbler/tumbler.css">
   <link rel="stylesheet" href="css/fonts.css">
-  <link rel="stylesheet" href="css/demo-frame.css?v=dictation">
+  <link rel="stylesheet" href="css/demo-frame.css?v=command-buttons">
   <link rel="stylesheet" href="css/scene-background.css?v=idle-editor">
   <link rel="stylesheet" href="css/voice-toolbar.css?v=idle-editor">
   <script defer src="vendor/ui-kit/components/demo-frame/demo-frame.js"></script>
-  <script defer src="js/demo-frame.js?v=idle-editor"></script>
+  <script defer src="js/demo-frame.js?v=command-buttons"></script>
 </head>
 <body>
-  <template id="demo-approach-template">
+  <template id="demo-panel-options-template">
     <div class="demo-scenario-group" role="radiogroup" aria-labelledby="demo-approach-title">
       <div class="df-group" id="demo-approach-title">Подход</div>
       <div class="df-options">
         <label class="demo-approach-option">
-          <input type="radio" name="demo-approach" value="unified" checked>
-          <span class="df-radio__box" aria-hidden="true"></span>
-          <span class="df-radio__text">Единое окно</span>
-        </label>
-        <label class="demo-approach-option">
-          <input type="radio" name="demo-approach" value="commands">
+          <input type="radio" name="demo-approach" value="commands" checked>
           <span class="df-radio__box" aria-hidden="true"></span>
           <span class="df-radio__text">2 команды</span>
         </label>
+        <label class="demo-approach-option">
+          <input type="radio" name="demo-approach" value="unified">
+          <span class="df-radio__box" aria-hidden="true"></span>
+          <span class="df-radio__text">Единое окно</span>
+        </label>
+      </div>
+    </div>
+    <div class="demo-scenario-group demo-command-group" role="group" aria-labelledby="demo-command-title">
+      <div class="df-group" id="demo-command-title">Механика</div>
+      <div class="df-options demo-command-buttons">
+        <button type="button" class="btn btn--same btn--style-info btn--size-m" data-command="voice-input">Голосовой ввод</button>
+        <button type="button" class="btn btn--same btn--style-info btn--size-m" data-command="audio-recording">Запись аудио</button>
       </div>
     </div>
   </template>
