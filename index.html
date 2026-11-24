@@ -14,9 +14,9 @@
   <link rel="stylesheet" href="css/demo-frame.css?v=command-buttons">
   <link rel="stylesheet" href="css/scene-background.css?v=description-baseline">
   <link rel="stylesheet" href="css/voice-toolbar.css?v=audio-layout">
-  <link rel="stylesheet" href="css/audio-recording.css?v=audio-layout">
+  <link rel="stylesheet" href="css/audio-recording.css?v=processing-spinner">
   <script defer src="vendor/ui-kit/components/demo-frame/demo-frame.js"></script>
-  <script defer src="js/audio-recording.js?v=waveform-direction"></script>
+  <script defer src="js/audio-recording.js?v=processing-spinner"></script>
   <script defer src="js/demo-frame.js?v=audio-layout"></script>
 </head>
 <body>
@@ -155,7 +155,13 @@
               <span class="editor-audio__more" aria-hidden="true"><span></span><span></span><span></span></span>
             </button>
           </div>
-          <div class="audio-recording__status" role="status"></div>
+          <div class="audio-recording__status" role="status">
+            <span class="audio-recording__message"></span>
+            <span class="audio-recording__spinner" aria-hidden="true">
+              <span></span><span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span><span></span>
+            </span>
+          </div>
         </div>
       </div>
       <div class="editor-audio-panel">

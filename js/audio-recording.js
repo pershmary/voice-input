@@ -1,7 +1,7 @@
 function mountAudioRecording(root, trigger) {
   const toolbar = root.querySelector('.audio-recording__toolbar');
   const widget = root.querySelector('.audio-recording__widget');
-  const status = root.querySelector('.audio-recording__status');
+  const statusMessage = root.querySelector('.audio-recording__message');
   const transcript = root.querySelector('.audio-recording__transcript');
   const waveform = root.querySelector('canvas');
   const drawing = waveform.getContext('2d');
@@ -33,7 +33,7 @@ function mountAudioRecording(root, trigger) {
     actions.pause.setAttribute('aria-label', pauseCaption.textContent);
     actions.pause.classList.toggle('is-paused', paused);
     pauseIcon.textContent = paused ? '\uE9B1' : '\uE639';
-    status.textContent = message;
+    statusMessage.textContent = message;
   }
 
   function updateTime(ms, capturing) {
