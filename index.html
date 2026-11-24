@@ -14,9 +14,9 @@
   <link rel="stylesheet" href="css/demo-frame.css?v=command-buttons">
   <link rel="stylesheet" href="css/scene-background.css?v=description-baseline">
   <link rel="stylesheet" href="css/voice-toolbar.css?v=audio-layout">
-  <link rel="stylesheet" href="css/audio-recording.css?v=processing-spinner">
+  <link rel="stylesheet" href="css/audio-recording.css?v=remove-widget">
   <script defer src="vendor/ui-kit/components/demo-frame/demo-frame.js"></script>
-  <script defer src="js/audio-recording.js?v=processing-spinner"></script>
+  <script defer src="js/audio-recording.js?v=remove-widget"></script>
   <script defer src="js/demo-frame.js?v=audio-layout"></script>
 </head>
 <body>
@@ -143,7 +143,7 @@
           </button>
         </div>
         <div class="audio-recording__editor" role="group" aria-label="Описание">
-          <div class="audio-recording__widget" role="group" aria-label="Аудио" hidden>
+          <div class="audio-recording__widget" role="group" aria-label="Аудио" aria-keyshortcuts="Backspace Delete" hidden>
             <div class="editor-audio__controls">
               <time class="audio-recording__duration" datetime="PT0S">00:00</time>
               <canvas class="audio-recording__waveform" width="576" height="20" aria-hidden="true"></canvas>

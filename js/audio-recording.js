@@ -25,6 +25,8 @@ function mountAudioRecording(root, trigger) {
     root.hidden = state === 'idle' && !message;
     toolbar.hidden = !capturing && !starting;
     widget.hidden = toolbar.hidden && !showPlayer;
+    if (state === 'ready') widget.tabIndex = 0;
+    else widget.removeAttribute('tabindex');
     actions.pause.disabled = actions.restart.disabled = actions.confirm.disabled = starting;
     actions.preview.hidden = !paused;
     actions.play.hidden = !showPlayer;
@@ -315,9 +317,22 @@ function mountAudioRecording(root, trigger) {
     beginSegment(current);
   });
 
-  actions.cancel.addEventListener('click', () => {
+  function dismissRecording() {
     clear();
     trigger.focus({ preventScroll: true });
+  }
+
+  actions.cancel.addEventListener('click', dismissRecording);
+
+  widget.addEventListener('click', event => {
+    if (root.dataset.state !== 'ready' || event.target.closest('button')) return;
+    dismissRecording();
+  });
+
+  widget.addEventListener('keydown', event => {
+    if (root.dataset.state !== 'ready' || (event.key !== 'Backspace' && event.key !== 'Delete')) return;
+    event.preventDefault();
+    dismissRecording();
   });
 
   actions.preview.addEventListener('click', () => togglePlayback(actions.preview));
@@ -370,6 +385,7 @@ function mountAudioRecording(root, trigger) {
         transcript.classList.add('is-collapsed');
         actions.more.hidden = false;
       }
+      if (document.activeElement === trigger) widget.focus({ preventScroll: true });
     } catch {
       if (session === current) setState('unavailable', 'Не удалось распознать запись.');
     }

@@ -46,6 +46,14 @@
   content: "";
 }
 
+.demo-stage:has(.audio-recording__widget:not([hidden])) .dictation-transcript__placeholder {
+  visibility: hidden;
+}
+
+.audio-recording[data-state="ready"] .audio-recording__widget {
+  cursor: pointer;
+}
+
 .audio-recording:has(.audio-recording__toolbar:not([hidden])) .audio-recording__widget {
   width: 412px;
   padding: 0 8px;
