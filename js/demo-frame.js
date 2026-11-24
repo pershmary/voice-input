@@ -257,6 +257,7 @@ scenarioCard.prepend(approachGroup);
 approachGroup.addEventListener('change', event => {
   approach = event.target.value;
   const unified = approach === 'unified';
+  stage.classList.toggle('demo-stage--commands', !unified);
   windowGroup.hidden = !unified;
   commandGroup.hidden = unified;
   comparisonGroup.hidden = !unified;
@@ -338,7 +339,6 @@ function finishDictation(text = '') {
 function setDictationScenario(active) {
   finishDictation();
   dictationStart.hidden = !active;
-  stage.classList.toggle('demo-stage--dictation', active);
 }
 
 dictationStart.addEventListener('click', () => {

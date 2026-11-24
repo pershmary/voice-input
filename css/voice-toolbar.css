@@ -67,7 +67,7 @@
   content: none;
 }
 
-.demo-stage--dictation .voice-toolbar,
+.demo-stage:has(.dictation-toolbar:not([hidden])) .voice-toolbar,
 .dictation-toolbar[hidden] {
   display: none;
 }
