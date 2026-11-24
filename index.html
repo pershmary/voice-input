@@ -13,9 +13,9 @@
   <link rel="stylesheet" href="css/fonts.css">
   <link rel="stylesheet" href="css/demo-frame.css?v=command-buttons">
   <link rel="stylesheet" href="css/scene-background.css?v=idle-editor">
-  <link rel="stylesheet" href="css/voice-toolbar.css?v=dictation-text-position">
+  <link rel="stylesheet" href="css/voice-toolbar.css?v=editor-close-disabled">
   <script defer src="vendor/ui-kit/components/demo-frame/demo-frame.js"></script>
-  <script defer src="js/demo-frame.js?v=dictation-processing"></script>
+  <script defer src="js/demo-frame.js?v=editor-close-disabled"></script>
 </head>
 <body>
   <template id="demo-panel-options-template">
@@ -192,7 +192,7 @@
             <span class="tb__icon" aria-hidden="true">&#xeab4;</span>
           </button>
         </div>
-        <button type="button" class="close-button close-button--link-button voice-toolbar__close" aria-label="Закрыть панель редактора">
+        <button type="button" class="close-button close-button--link-button voice-toolbar__close" aria-label="Закрыть панель редактора" disabled>
           <img src="assets/voice-toolbar/close.svg" alt="">
         </button>
       </div>

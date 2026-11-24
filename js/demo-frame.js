@@ -360,8 +360,3 @@ dictationToolbar.querySelector('.dictation-toolbar__cancel').addEventListener('c
 dictationResult.addEventListener('click', clearDictation);
 
 showApproach();
-
-const toolbar = document.getElementById('voice-toolbar');
-toolbar.querySelector('.voice-toolbar__close').addEventListener('click', () => {
-  toolbar.hidden = true;
-});

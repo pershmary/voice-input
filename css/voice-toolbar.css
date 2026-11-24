@@ -61,6 +61,7 @@
 
 .voice-toolbar .voice-toolbar__close {
   --clb-size: var(--inline_height-inline_height_xl);
+  cursor: default;
 }
 
 .voice-toolbar__close::before {
