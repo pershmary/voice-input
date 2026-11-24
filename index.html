@@ -13,9 +13,9 @@
   <link rel="stylesheet" href="css/fonts.css">
   <link rel="stylesheet" href="css/demo-frame.css?v=dictation">
   <link rel="stylesheet" href="css/scene-background.css?v=compare-audio">
-  <link rel="stylesheet" href="css/voice-toolbar.css?v=dictation">
+  <link rel="stylesheet" href="css/voice-toolbar.css?v=dismiss-dictation-text">
   <script defer src="vendor/ui-kit/components/demo-frame/demo-frame.js"></script>
-  <script defer src="js/demo-frame.js?v=dictation-switch"></script>
+  <script defer src="js/demo-frame.js?v=dismiss-dictation-text"></script>
 </head>
 <body>
   <template id="demo-approach-template">
@@ -87,7 +87,10 @@
         </div>
       </div>
       <button type="button" class="editor-transcript" id="editor-transcript" hidden>Нужно отрисовать объединенный механизм голосового ввода и отправки аудиосообщения. Также нужно добавить возможность голосового ввода в любое поле на сайте по шорткату</button>
-      <div class="dictation-transcript" id="dictation-transcript" hidden><p></p></div>
+      <div class="dictation-transcript" id="dictation-transcript" hidden>
+        <p class="dictation-transcript__draft" hidden></p>
+        <button type="button" class="dictation-transcript__result" title="Убрать обработанный текст" hidden></button>
+      </div>
       <div class="tb tb--style-info dictation-toolbar" id="dictation-toolbar" role="toolbar" aria-label="Тулбар голосового ввода" hidden>
         <button type="button" class="tb__btn is-selected dictation-toolbar__pause" aria-label="Пауза">
           <span class="tb__icon" aria-hidden="true">&#xE639;</span>

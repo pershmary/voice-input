@@ -275,7 +275,8 @@ canvas.prepend(frame.root);
 
 const dictationToolbar = document.getElementById('dictation-toolbar');
 const dictationTranscript = document.getElementById('dictation-transcript');
-const dictationText = dictationTranscript.querySelector('p');
+const dictationDraft = dictationTranscript.querySelector('.dictation-transcript__draft');
+const dictationResult = dictationTranscript.querySelector('.dictation-transcript__result');
 const dictationPause = dictationToolbar.querySelector('.dictation-toolbar__pause');
 const pauseCaption = dictationPause.querySelector('.tb__caption');
 const pauseIcon = dictationPause.querySelector('.tb__icon');
@@ -295,7 +296,7 @@ function updateDictation() {
   const secondsLabel = String(seconds % 60).padStart(2, '0');
   dictationTimer.textContent = `${minutesLabel}:${secondsLabel}`;
   dictationTimer.dateTime = `PT${seconds}S`;
-  dictationText.textContent = rawWords.slice(0, seconds).join(' ');
+  dictationDraft.textContent = rawWords.slice(0, seconds).join(' ');
   if (runningSince !== null) {
     tickTimeout = setTimeout(updateDictation, wordInterval - activeTime % wordInterval);
   }
@@ -313,7 +314,9 @@ function setDictationPaused(paused) {
 
 function startDictation() {
   elapsed = 0;
-  dictationTranscript.classList.add('is-draft');
+  dictationResult.hidden = true;
+  dictationResult.textContent = '';
+  dictationDraft.hidden = false;
   dictationTranscript.hidden = false;
   dictationToolbar.hidden = false;
   setDictationPaused(false);
@@ -323,8 +326,10 @@ function finishDictation(text = '') {
   clearTimeout(tickTimeout);
   runningSince = null;
   dictationToolbar.hidden = true;
-  dictationTranscript.classList.remove('is-draft');
-  dictationText.textContent = text;
+  dictationDraft.hidden = true;
+  dictationDraft.textContent = '';
+  dictationResult.textContent = text;
+  dictationResult.hidden = !text;
   dictationTranscript.hidden = !text;
 }
 
@@ -341,14 +346,17 @@ dictationStart.addEventListener('click', () => {
 dictationPause.addEventListener('click', () => setDictationPaused(runningSince !== null));
 dictationToolbar.querySelector('.dictation-toolbar__restart').addEventListener('click', startDictation);
 dictationToolbar.querySelector('.dictation-toolbar__confirm').addEventListener('click', () => {
-  const wordCount = dictationText.textContent.match(/\S+/g)?.length ?? 0;
+  const wordCount = dictationDraft.textContent.match(/\S+/g)?.length ?? 0;
   finishDictation(processedWords.slice(0, wordCount).join(' '));
   dictationStart.focus({ preventScroll: true });
 });
-dictationToolbar.querySelector('.dictation-toolbar__cancel').addEventListener('click', () => {
+function clearDictation() {
   finishDictation();
   dictationStart.focus({ preventScroll: true });
-});
+}
+
+dictationToolbar.querySelector('.dictation-toolbar__cancel').addEventListener('click', clearDictation);
+dictationResult.addEventListener('click', clearDictation);
 
 showScenario(frame.value);
 

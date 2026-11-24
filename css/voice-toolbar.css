@@ -137,11 +137,24 @@
   background: var(--background-background-color);
 }
 
-.dictation-transcript p {
+.dictation-transcript__draft,
+.dictation-transcript__result {
   position: relative;
   margin: -4px 0 0;
 }
 
-.dictation-transcript.is-draft p {
+.dictation-transcript__draft {
   opacity: 0.4;
+}
+
+.dictation-transcript__result:not([hidden]) {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+  cursor: pointer;
 }
