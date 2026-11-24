@@ -88,17 +88,6 @@ body {
   padding: 6px;
 }
 
-.df-panel .demo-command-buttons {
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.df-panel .demo-command-buttons .btn {
-  padding-inline: var(--btn-px);
-  color: var(--btn-fg);
-}
-
 .df-panel :is(.df-radio.is-on, .demo-approach-option:has(:checked)) .df-radio__box::before {
   border: 0;
   background: url("../assets/system-panel/selected-radio.svg") center no-repeat;
