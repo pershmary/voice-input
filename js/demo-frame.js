@@ -10,6 +10,7 @@ editorAudio.querySelector('.editor-audio__transcript').textContent = editorTrans
 let insertTrigger;
 
 function showScenario({ scenario }) {
+  showVoiceLaunchMenu(false);
   audioRecording.clear();
   const compare = scenario === 'compare-audio';
   stage.classList.toggle('demo-stage--compare-audio', compare);
@@ -237,6 +238,12 @@ const approachGroup = panelOptions.querySelector('[role="radiogroup"]');
 const commandGroup = panelOptions.querySelector('.demo-command-group');
 const dictationStart = commandGroup.querySelector('[data-command="voice-input"]');
 const audioStart = commandGroup.querySelector('[data-command="audio-recording"]');
+const voiceLaunch = stage.querySelector('.voice-launch');
+const voiceLaunchMain = voiceLaunch.querySelector('.voice-launch__main');
+const voiceLaunchToggle = voiceLaunch.querySelector('.voice-launch__toggle');
+const voiceLaunchMenu = voiceLaunch.querySelector('.voice-launch__menu');
+const voiceLaunchOptions = voiceLaunchMenu.querySelectorAll('[data-command]');
+let voiceLaunchCommand = dictationStart.dataset.command;
 scenarioCard.append(panelOptions, windowGroup);
 
 function showApproach() {
@@ -346,16 +353,58 @@ function finishDictation(text = '') {
   dictationPlaceholder.hidden = Boolean(text);
 }
 
-const audioRecording = mountAudioRecording(document.getElementById('audio-recording'), audioStart);
+const audioRecording = mountAudioRecording(document.getElementById('audio-recording'));
+let dictationTrigger = dictationStart;
 
-dictationStart.addEventListener('click', () => {
-  frame.select(dictationStart.dataset.command);
-  startDictation();
-  dictationPause.focus({ preventScroll: true });
+function launchVoiceCommand(command, trigger) {
+  if (approach === 'unified') {
+    approachGroup.querySelector('input[value="commands"]').checked = true;
+    showApproach();
+  }
+  frame.select(command);
+  if (command === dictationStart.dataset.command) {
+    dictationTrigger = trigger;
+    startDictation();
+    dictationPause.focus({ preventScroll: true });
+  } else {
+    audioRecording.start(trigger);
+  }
+}
+
+function showVoiceLaunchMenu(show) {
+  voiceLaunchMenu.hidden = !show;
+  voiceLaunchToggle.setAttribute('aria-expanded', String(show));
+  if (show) voiceLaunchOptions[0].focus({ preventScroll: true });
+}
+
+function dismissVoiceLaunchMenu() {
+  showVoiceLaunchMenu(false);
+  voiceLaunchToggle.focus({ preventScroll: true });
+}
+
+dictationStart.addEventListener('click', () => launchVoiceCommand(dictationStart.dataset.command, dictationStart));
+audioStart.addEventListener('click', () => launchVoiceCommand(audioStart.dataset.command, audioStart));
+voiceLaunchMain.addEventListener('click', () => launchVoiceCommand(voiceLaunchCommand, voiceLaunchMain));
+voiceLaunchToggle.addEventListener('click', () => showVoiceLaunchMenu(voiceLaunchMenu.hidden));
+voiceLaunchMenu.querySelector('.voice-launch__dismiss').addEventListener('click', dismissVoiceLaunchMenu);
+
+for (const option of voiceLaunchOptions) {
+  option.addEventListener('click', () => {
+    voiceLaunchCommand = option.dataset.command;
+    voiceLaunchMain.setAttribute('aria-label', option.querySelector('.tb__caption').textContent);
+    voiceLaunchMain.replaceChildren(option.querySelector('.tb__icon').cloneNode(true));
+    voiceLaunchMain.focus({ preventScroll: true });
+    launchVoiceCommand(voiceLaunchCommand, voiceLaunchMain);
+  });
+}
+
+document.addEventListener('click', event => {
+  if (!voiceLaunchMenu.hidden && !voiceLaunch.contains(event.target)) showVoiceLaunchMenu(false);
 });
-audioStart.addEventListener('click', () => {
-  frame.select(audioStart.dataset.command);
-  audioRecording.start();
+voiceLaunch.addEventListener('keydown', event => {
+  if (event.key !== 'Escape' || voiceLaunchMenu.hidden) return;
+  event.preventDefault();
+  dismissVoiceLaunchMenu();
 });
 dictationPause.addEventListener('click', () => setDictationPaused(runningSince !== null));
 dictationToolbar.querySelector('.dictation-toolbar__restart').addEventListener('click', startDictation);
@@ -369,11 +418,11 @@ dictationToolbar.querySelector('.dictation-toolbar__confirm').addEventListener('
     const text = processedWords.slice(0, wordCount).join(' ');
     processingTimeout = setTimeout(() => finishDictation(text), processingDuration);
   }
-  dictationStart.focus({ preventScroll: true });
+  dictationTrigger.focus({ preventScroll: true });
 });
 function clearDictation() {
   finishDictation();
-  dictationStart.focus({ preventScroll: true });
+  dictationTrigger.focus({ preventScroll: true });
 }
 
 dictationToolbar.querySelector('.dictation-toolbar__cancel').addEventListener('click', clearDictation);

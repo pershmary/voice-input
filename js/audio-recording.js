@@ -1,4 +1,4 @@
-function mountAudioRecording(root, trigger) {
+function mountAudioRecording(root) {
   const toolbar = root.querySelector('.audio-recording__toolbar');
   const widget = root.querySelector('.audio-recording__widget');
   const statusMessage = root.querySelector('.audio-recording__message');
@@ -15,6 +15,7 @@ function mountAudioRecording(root, trigger) {
   const speeds = [1, 1.25, 1.5, 2];
 
   let session;
+  let trigger;
 
   function setState(state, message = '') {
     const paused = state === 'paused';
@@ -136,8 +137,9 @@ function mountAudioRecording(root, trigger) {
     current.segment = null;
   }
 
-  async function start() {
+  async function start(launchButton) {
     clear();
+    trigger = launchButton;
     if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder || !window.AudioContext) {
       setState('idle', 'Запись аудио недоступна в этом браузере.');
       return;
@@ -168,6 +170,7 @@ function mountAudioRecording(root, trigger) {
       if (session !== current) return;
       clear();
       setState('idle', 'Не удалось включить микрофон.');
+      trigger.focus({ preventScroll: true });
     }
   }
 

@@ -13,11 +13,11 @@
   <link rel="stylesheet" href="css/fonts.css">
   <link rel="stylesheet" href="css/demo-frame.css?v=command-buttons">
   <link rel="stylesheet" href="css/scene-background.css?v=description-baseline">
-  <link rel="stylesheet" href="css/voice-toolbar.css?v=audio-layout">
+  <link rel="stylesheet" href="css/voice-toolbar.css?v=split-voice-button">
   <link rel="stylesheet" href="css/audio-recording.css?v=remove-widget">
   <script defer src="vendor/ui-kit/components/demo-frame/demo-frame.js"></script>
-  <script defer src="js/audio-recording.js?v=remove-widget"></script>
-  <script defer src="js/demo-frame.js?v=audio-layout"></script>
+  <script defer src="js/audio-recording.js?v=split-voice-button"></script>
+  <script defer src="js/demo-frame.js?v=split-voice-button"></script>
 </head>
 <body>
   <template id="demo-panel-options-template">
@@ -230,9 +230,25 @@
             <span class="tb__icon" aria-hidden="true">&#xe929;</span>
           </button>
           <span class="tb__sep" aria-hidden="true"></span>
-          <button type="button" class="tb__btn" aria-label="Голосовой ввод" disabled>
-            <span class="tb__icon" aria-hidden="true">&#xe9b1;</span>
-          </button>
+          <div class="voice-launch">
+            <button type="button" class="tb__btn voice-launch__main" aria-label="Диктовать">
+              <span class="tb__icon voice-launch__wave" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></span>
+            </button>
+            <button type="button" class="tb__btn voice-launch__toggle" aria-label="Выбрать голосовое действие" aria-expanded="false" aria-controls="voice-launch-menu">
+              <span class="tb__arrow" aria-hidden="true"></span>
+            </button>
+            <div class="voice-launch__menu" id="voice-launch-menu" role="group" aria-label="Голосовые действия" hidden>
+              <button type="button" class="tb__btn voice-launch__option" data-command="voice-input">
+                <span class="tb__icon voice-launch__wave" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></span>
+                <span class="tb__caption">Диктовать</span>
+              </button>
+              <button type="button" class="tb__btn voice-launch__option" data-command="audio-recording">
+                <span class="tb__icon" aria-hidden="true">&#xe9b1;</span>
+                <span class="tb__caption">Записать аудио</span>
+              </button>
+              <button type="button" class="close-button close-button--external voice-launch__dismiss" aria-label="Закрыть меню"></button>
+            </div>
+          </div>
           <button type="button" class="tb__btn" aria-label="SabyGPT" disabled>
             <span class="voice-toolbar__assistant"><img src="assets/voice-toolbar/assistant.svg" alt=""></span>
           </button>
