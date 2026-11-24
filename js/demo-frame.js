@@ -241,7 +241,7 @@ scenarioCard.append(panelOptions, windowGroup);
 function showApproach() {
   approach = approachGroup.querySelector('input:checked').value;
   const unified = approach === 'unified';
-  stage.classList.toggle('demo-stage--commands', !unified);
+  dictationTranscript.hidden = unified;
   windowGroup.hidden = !unified;
   commandGroup.hidden = unified;
   comparisonGroup.hidden = !unified;
@@ -262,6 +262,7 @@ canvas.prepend(frame.root);
 
 const dictationToolbar = document.getElementById('dictation-toolbar');
 const dictationTranscript = document.getElementById('dictation-transcript');
+const dictationPlaceholder = dictationTranscript.querySelector('.dictation-transcript__placeholder');
 const dictationDraft = dictationTranscript.querySelector('.dictation-transcript__draft');
 const dictationResult = dictationTranscript.querySelector('.dictation-transcript__result');
 const dictationPause = dictationToolbar.querySelector('.dictation-toolbar__pause');
@@ -306,10 +307,10 @@ function setDictationPaused(paused) {
 
 function startDictation() {
   elapsed = 0;
+  dictationPlaceholder.hidden = true;
   dictationResult.hidden = true;
   dictationResult.textContent = '';
   dictationDraft.hidden = false;
-  dictationTranscript.hidden = false;
   dictationToolbar.hidden = false;
   setDictationPaused(false);
 }
@@ -328,7 +329,7 @@ function finishDictation(text = '') {
   dictationDraft.textContent = '';
   dictationResult.textContent = text;
   dictationResult.hidden = !text;
-  dictationTranscript.hidden = !text;
+  dictationPlaceholder.hidden = Boolean(text);
 }
 
 dictationStart.addEventListener('click', () => {
