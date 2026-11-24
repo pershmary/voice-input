@@ -284,19 +284,20 @@ const dictationTimer = dictationPause.querySelector('time');
 const rawWords = 'нужно отрисовать объединенный механизм голосового ввода и отправки аудиосообщения также нужно добавить возможность голосового ввода в любое поле на сайте по шорткату'.split(' ');
 const processedWords = editorTranscript.textContent.split(' ');
 
-const wordInterval = 1000;
+const wordInterval = 500;
 let tickTimeout;
 let elapsed = 0;
 let runningSince = null;
 
 function updateDictation() {
   const activeTime = elapsed + (runningSince === null ? 0 : performance.now() - runningSince);
-  const seconds = Math.floor(activeTime / wordInterval);
+  const seconds = Math.floor(activeTime / 1000);
+  const wordCount = Math.floor(activeTime / wordInterval);
   const minutesLabel = String(Math.floor(seconds / 60)).padStart(2, '0');
   const secondsLabel = String(seconds % 60).padStart(2, '0');
   dictationTimer.textContent = `${minutesLabel}:${secondsLabel}`;
   dictationTimer.dateTime = `PT${seconds}S`;
-  dictationDraft.textContent = rawWords.slice(0, seconds).join(' ');
+  dictationDraft.textContent = rawWords.slice(0, wordCount).join(' ');
   if (runningSince !== null) {
     tickTimeout = setTimeout(updateDictation, wordInterval - activeTime % wordInterval);
   }
