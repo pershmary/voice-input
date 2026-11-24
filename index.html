@@ -11,13 +11,30 @@
   <link rel="stylesheet" href="vendor/ui-kit/components/button/button.css">
   <link rel="stylesheet" href="vendor/ui-kit/components/tumbler/tumbler.css">
   <link rel="stylesheet" href="css/fonts.css">
-  <link rel="stylesheet" href="css/demo-frame.css?v=compare-audio">
+  <link rel="stylesheet" href="css/demo-frame.css?v=approach">
   <link rel="stylesheet" href="css/scene-background.css?v=compare-audio">
   <link rel="stylesheet" href="css/voice-toolbar.css">
   <script defer src="vendor/ui-kit/components/demo-frame/demo-frame.js"></script>
-  <script defer src="js/demo-frame.js?v=compare-audio"></script>
+  <script defer src="js/demo-frame.js?v=approach"></script>
 </head>
 <body>
+  <template id="demo-approach-template">
+    <div class="demo-scenario-group" role="radiogroup" aria-labelledby="demo-approach-title">
+      <div class="df-group" id="demo-approach-title">Подход</div>
+      <div class="df-options">
+        <label class="demo-approach-option">
+          <input type="radio" name="demo-approach" value="unified" checked>
+          <span class="df-radio__box" aria-hidden="true"></span>
+          <span class="df-radio__text">Единое окно</span>
+        </label>
+        <label class="demo-approach-option">
+          <input type="radio" name="demo-approach" value="commands">
+          <span class="df-radio__box" aria-hidden="true"></span>
+          <span class="df-radio__text">2 команды</span>
+        </label>
+      </div>
+    </div>
+  </template>
   <div class="demo-canvas" id="demo-canvas">
     <main class="demo-stage" id="demo-stage" aria-label="Сцена демо">
       <div class="scene-background" aria-hidden="true">
@@ -287,7 +304,6 @@
           <button type="button" class="btn btn--filled btn--style-info btn--size-m btn--icon voice-window__split-insert" data-insert-voice="audio" aria-label="Вставить аудио">
             <span class="btn__icon" aria-hidden="true">&#xEB1A;</span>
           </button>
-          <button type="button" class="close-button close-button--external voice-window__dismiss" aria-label="Закрыть"></button>
         </div>
         <div class="voice-window__transcript">
           <p>
@@ -297,6 +313,7 @@
             <span class="btn__icon" aria-hidden="true">&#xEB1A;</span>
           </button>
         </div>
+        <button type="button" class="close-button close-button--external voice-window__dismiss" aria-label="Закрыть"></button>
       </section>
     </main>
   </div>

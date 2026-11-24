@@ -11,7 +11,10 @@ let insertTrigger;
 
 function showScenario({ scenario }) {
   const compare = scenario === 'compare-audio';
+  const command = commandScenarios.find(item => item.id === scenario);
+  const windowScenario = command ? 'split-window' : scenario;
   stage.classList.toggle('demo-stage--compare-audio', compare);
+  stage.dataset.command = command?.id ?? '';
   editorTranscript.hidden = true;
   editorAudio.hidden = !compare;
   editorAudio.disabled = compare;
@@ -19,7 +22,7 @@ function showScenario({ scenario }) {
   showFormatMenu(false);
   insertTrigger = undefined;
   for (const voiceWindow of voiceWindows) {
-    voiceWindow.hidden = !compare && voiceWindow.dataset.voiceScenario !== scenario;
+    voiceWindow.hidden = !compare && voiceWindow.dataset.voiceScenario !== windowScenario;
   }
 }
 
@@ -176,6 +179,23 @@ const team = [
   { label: 'Разработка', name: 'Киямов Тимур', icon: 'development' }
 ];
 
+const windowScenarios = [
+  { id: 'radio-buttons', title: 'Радиокнопки' },
+  { id: 'toggle', title: 'Тумблер' },
+  { id: 'two-buttons', title: '2 кнопки' },
+  { id: 'split-window', title: 'Окно из двух частей' },
+  { id: 'menu-button', title: 'Двойная кнопка' }
+];
+const commandScenarios = [
+  { id: 'voice-input', title: 'Голосовой ввод' },
+  { id: 'audio-recording', title: 'Запись аудио' }
+];
+const scenarioByApproach = {
+  unified: windowScenarios[0].id,
+  commands: commandScenarios[0].id
+};
+let approach = 'unified';
+
 const frame = DemoFrame.mount({
   stage,
   viewport: canvas,
@@ -189,23 +209,18 @@ const frame = DemoFrame.mount({
     { id: 'monitor', icon: 'monitor', label: 'Монитор', size: '1600х900', name: 'монитор' }
   ],
   scenarios: [
-    {
-      group: 'Варианты окна',
-      items: [
-        { id: 'radio-buttons', title: 'Радиокнопки' },
-        { id: 'menu-button', title: 'Кнопка с меню в 3-х точках' },
-        { id: 'toggle', title: 'Тумблер' },
-        { id: 'two-buttons', title: '2 кнопки' },
-        { id: 'split-window', title: 'Окно из двух частей' }
-      ]
-    }
+    { group: 'Варианты окна', items: windowScenarios },
+    { group: 'Механика', items: commandScenarios }
   ],
   bottomScenarios: [
     { id: 'compare-audio', title: 'Окно ввода и виджет "Аудио"' }
   ],
   team,
-  value: { scenario: 'radio-buttons' },
-  onChange: showScenario
+  value: { scenario: scenarioByApproach.unified },
+  onChange(value) {
+    scenarioByApproach[approach] = value.scenario;
+    showScenario(value);
+  }
 });
 
 showScenario(frame.value);
@@ -216,8 +231,35 @@ headDescription.textContent = 'Голосовой ввод позволяет н
 frame.head.append(headDescription);
 
 frame.panel.setAttribute('aria-label', 'Системная область');
-frame.panel.querySelector('.df-panel__top [role="radiogroup"]').setAttribute('aria-label', 'Варианты окна');
-frame.panel.querySelector('.df-card--bottom').setAttribute('aria-label', 'Сравнение');
+const scenarioCard = frame.panel.querySelector('.df-panel__top .df-card--scen');
+scenarioCard.removeAttribute('role');
+scenarioCard.removeAttribute('aria-label');
+
+const [windowGroup, commandGroup] = Array.from(scenarioCard.querySelectorAll('.df-group'), heading => {
+  const group = document.createElement('div');
+  group.className = 'demo-scenario-group';
+  group.setAttribute('role', 'radiogroup');
+  group.setAttribute('aria-label', heading.textContent);
+  const options = heading.nextElementSibling;
+  heading.before(group);
+  group.append(heading, options);
+  return group;
+});
+commandGroup.hidden = true;
+
+const comparisonGroup = frame.panel.querySelector('.df-card--bottom');
+comparisonGroup.setAttribute('aria-label', 'Сравнение');
+
+const approachGroup = document.getElementById('demo-approach-template').content.firstElementChild.cloneNode(true);
+scenarioCard.prepend(approachGroup);
+approachGroup.addEventListener('change', event => {
+  approach = event.target.value;
+  const unified = approach === 'unified';
+  windowGroup.hidden = !unified;
+  commandGroup.hidden = unified;
+  comparisonGroup.hidden = !unified;
+  frame.select(scenarioByApproach[approach]);
+});
 
 frame.panel.querySelectorAll('.df-team__label').forEach((label, index) => {
   const member = team[index];

@@ -64,6 +64,16 @@ body {
   background: #f2f2f2;
 }
 
+.demo-scenario-group:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.df-panel .df-card--bottom[hidden] {
+  display: none;
+}
+
 .df-panel .df-group {
   display: flex;
   align-items: center;
@@ -78,10 +88,37 @@ body {
   padding: 6px;
 }
 
-.df-panel .df-radio.is-on .df-radio__box::before {
+.df-panel :is(.df-radio.is-on, .demo-approach-option:has(:checked)) .df-radio__box::before {
   border: 0;
   background: url("../assets/system-panel/selected-radio.svg") center no-repeat;
   box-shadow: none;
+}
+
+.demo-approach-option {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  cursor: pointer;
+}
+
+.demo-approach-option input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.demo-approach-option:has(:checked) .df-radio__text {
+  color: var(--components-toggle-selected_text-color_switcher);
+}
+
+.demo-approach-option:has(:focus-visible) {
+  outline: 2px solid var(--border-info_border-color);
+  outline-offset: -2px;
+}
+
+.demo-approach-option:not(:has(:checked)):hover .df-radio__text {
+  text-decoration: underline;
 }
 
 .df-panel .df-team {
@@ -610,6 +647,15 @@ body {
 .voice-window__split-insert {
   --btn-h: 26px;
   flex: none;
+}
+
+.demo-stage[data-command="voice-input"] .voice-window--split-window {
+  padding-top: 6px;
+}
+
+.demo-stage[data-command="voice-input"] .voice-window--split-window .voice-window__toolbar,
+.demo-stage[data-command="audio-recording"] .voice-window--split-window .voice-window__transcript {
+  display: none;
 }
 
 .demo-stage--compare-audio {
