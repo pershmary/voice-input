@@ -148,7 +148,7 @@
 .dictation-transcript__draft,
 .dictation-transcript__result {
   position: relative;
-  margin: -4px 0 0;
+  margin: 0;
 }
 
 .dictation-transcript__draft {
@@ -185,6 +185,7 @@
 }
 
 .dictation-transcript__result:not([hidden]) {
+  appearance: none;
   display: block;
   padding: 0;
   border: 0;
