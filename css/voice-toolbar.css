@@ -146,6 +146,7 @@
 .dictation-transcript__draft,
 .dictation-transcript__result {
   position: relative;
+  top: -8px;
   margin: 0;
 }
 
