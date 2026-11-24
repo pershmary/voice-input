@@ -274,7 +274,6 @@ frame.panel.querySelectorAll('.df-team__label').forEach((label, index) => {
 canvas.prepend(frame.root);
 
 const dictationToolbar = document.getElementById('dictation-toolbar');
-const audioRecordingRadio = commandGroup.querySelector('[data-scenario="audio-recording"]');
 const dictationTranscript = document.getElementById('dictation-transcript');
 const dictationText = dictationTranscript.querySelector('p');
 const dictationPause = dictationToolbar.querySelector('.dictation-toolbar__pause');
@@ -314,7 +313,6 @@ function setDictationPaused(paused) {
 
 function startDictation() {
   elapsed = 0;
-  audioRecordingRadio.disabled = true;
   dictationTranscript.classList.add('is-draft');
   dictationTranscript.hidden = false;
   dictationToolbar.hidden = false;
@@ -324,7 +322,6 @@ function startDictation() {
 function finishDictation(text = '') {
   clearTimeout(tickTimeout);
   runningSince = null;
-  audioRecordingRadio.disabled = false;
   dictationToolbar.hidden = true;
   dictationTranscript.classList.remove('is-draft');
   dictationText.textContent = text;
