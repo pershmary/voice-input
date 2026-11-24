@@ -348,6 +348,7 @@ body {
 
 .voice-window--radio-buttons .voice-window__transcript {
   margin-inline: 6px;
+  padding: 2px 8px 8px 2px;
 }
 
 .voice-window--toggle {
@@ -665,10 +666,6 @@ body {
 
 .voice-window--radio-buttons[data-processing] .voice-window__toolbar {
   padding-left: 8px;
-}
-
-.voice-window--radio-buttons[data-processing] .voice-window__transcript {
-  padding: 2px 8px 8px 2px;
 }
 
 .voice-window--radio-buttons[data-processing] .voice-window__radio {
