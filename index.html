@@ -11,11 +11,11 @@
   <link rel="stylesheet" href="vendor/ui-kit/components/button/button.css">
   <link rel="stylesheet" href="vendor/ui-kit/components/tumbler/tumbler.css">
   <link rel="stylesheet" href="css/fonts.css">
-  <link rel="stylesheet" href="css/demo-frame.css?v=approach">
+  <link rel="stylesheet" href="css/demo-frame.css?v=command-scenarios">
   <link rel="stylesheet" href="css/scene-background.css?v=compare-audio">
   <link rel="stylesheet" href="css/voice-toolbar.css">
   <script defer src="vendor/ui-kit/components/demo-frame/demo-frame.js"></script>
-  <script defer src="js/demo-frame.js?v=approach"></script>
+  <script defer src="js/demo-frame.js?v=command-scenarios"></script>
 </head>
 <body>
   <template id="demo-approach-template">
@@ -304,6 +304,7 @@
           <button type="button" class="btn btn--filled btn--style-info btn--size-m btn--icon voice-window__split-insert" data-insert-voice="audio" aria-label="Вставить аудио">
             <span class="btn__icon" aria-hidden="true">&#xEB1A;</span>
           </button>
+          <button type="button" class="close-button close-button--external voice-window__dismiss" aria-label="Закрыть"></button>
         </div>
         <div class="voice-window__transcript">
           <p>
@@ -313,7 +314,6 @@
             <span class="btn__icon" aria-hidden="true">&#xEB1A;</span>
           </button>
         </div>
-        <button type="button" class="close-button close-button--external voice-window__dismiss" aria-label="Закрыть"></button>
       </section>
     </main>
   </div>

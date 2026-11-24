@@ -11,10 +11,7 @@ let insertTrigger;
 
 function showScenario({ scenario }) {
   const compare = scenario === 'compare-audio';
-  const command = commandScenarios.find(item => item.id === scenario);
-  const windowScenario = command ? 'split-window' : scenario;
   stage.classList.toggle('demo-stage--compare-audio', compare);
-  stage.dataset.command = command?.id ?? '';
   editorTranscript.hidden = true;
   editorAudio.hidden = !compare;
   editorAudio.disabled = compare;
@@ -22,7 +19,7 @@ function showScenario({ scenario }) {
   showFormatMenu(false);
   insertTrigger = undefined;
   for (const voiceWindow of voiceWindows) {
-    voiceWindow.hidden = !compare && voiceWindow.dataset.voiceScenario !== windowScenario;
+    voiceWindow.hidden = !compare && voiceWindow.dataset.voiceScenario !== scenario;
   }
 }
 

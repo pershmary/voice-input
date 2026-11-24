@@ -649,15 +649,6 @@ body {
   flex: none;
 }
 
-.demo-stage[data-command="voice-input"] .voice-window--split-window {
-  padding-top: 6px;
-}
-
-.demo-stage[data-command="voice-input"] .voice-window--split-window .voice-window__toolbar,
-.demo-stage[data-command="audio-recording"] .voice-window--split-window .voice-window__transcript {
-  display: none;
-}
-
 .demo-stage--compare-audio {
   display: grid;
   grid-template-columns: 746px 704px;
