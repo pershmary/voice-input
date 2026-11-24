@@ -667,13 +667,8 @@ body {
   padding-left: 8px;
 }
 
-.voice-window--radio-buttons[data-processing] {
-  padding-bottom: 4px;
-}
-
 .voice-window--radio-buttons[data-processing] .voice-window__transcript {
-  margin-inline: 4px;
-  padding-top: 2px;
+  padding: 2px 8px 8px 2px;
 }
 
 .voice-window--radio-buttons[data-processing] .voice-window__radio {
