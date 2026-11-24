@@ -66,3 +66,82 @@
 .voice-toolbar__close::before {
   content: none;
 }
+
+.demo-stage--dictation .voice-toolbar,
+.dictation-toolbar[hidden] {
+  display: none;
+}
+
+.dictation-toolbar {
+  position: absolute;
+  top: 120px;
+  left: 814px;
+  border: 1px solid var(--tb-bd);
+  box-shadow: 0 0 var(--blur-shadow-blur_c) var(--color-shadow-color_c);
+}
+
+.dictation-toolbar .dictation-toolbar__pause {
+  gap: var(--offset-offset_2xs);
+  padding-inline: var(--offset-offset_xs);
+}
+
+.dictation-toolbar__pause .tb__icon {
+  width: var(--icon-icon_size-icon-size_xs);
+  height: var(--icon-icon_size-icon-size_xs);
+  color: var(--icon-danger_icon-color);
+  font-family: var(--icon-font-family-xs_icon_font-family);
+  font-size: var(--icon-icon_size-icon-size_xs);
+}
+
+.dictation-toolbar__pause time {
+  font-variant-numeric: tabular-nums;
+}
+
+.dictation-toolbar__confirm-slot {
+  display: grid;
+  width: var(--inline_height-inline_height_xl);
+  height: var(--inline_height-inline_height_xl);
+  place-items: center;
+}
+
+.dictation-toolbar .dictation-toolbar__cancel {
+  --clb-size: var(--inline_height-inline_height_xl);
+}
+
+.dictation-toolbar__cancel::before {
+  content: none;
+}
+
+.dictation-transcript {
+  position: absolute;
+  top: 165px;
+  left: 814px;
+  box-sizing: border-box;
+  width: 704px;
+  min-height: 44px;
+  border-bottom: 1px solid var(--border-unaccented_border-color);
+  background: var(--background-background-color);
+  color: var(--text-text-color);
+  font-size: var(--font-font-size-font-size_m);
+  line-height: 20px;
+  letter-spacing: -0.0141em;
+}
+
+.dictation-transcript::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -1px;
+  width: 722px;
+  height: 2px;
+  background: var(--background-background-color);
+}
+
+.dictation-transcript p {
+  position: relative;
+  margin: -4px 0 0;
+}
+
+.dictation-transcript.is-draft p {
+  opacity: 0.4;
+}

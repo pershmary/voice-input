@@ -74,6 +74,16 @@ body {
   display: none;
 }
 
+.df-panel .demo-dictation-start {
+  align-self: flex-start;
+  padding-inline: var(--btn-px);
+  color: var(--btn-fg);
+}
+
+.demo-dictation-start[hidden] {
+  display: none;
+}
+
 .df-panel .df-group {
   display: flex;
   align-items: center;

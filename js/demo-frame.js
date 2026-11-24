@@ -12,6 +12,7 @@ let insertTrigger;
 function showScenario({ scenario }) {
   const compare = scenario === 'compare-audio';
   stage.classList.toggle('demo-stage--compare-audio', compare);
+  setDictationScenario(scenario === 'voice-input');
   editorTranscript.hidden = true;
   editorAudio.hidden = !compare;
   editorAudio.disabled = compare;
@@ -220,8 +221,6 @@ const frame = DemoFrame.mount({
   }
 });
 
-showScenario(frame.value);
-
 const headDescription = document.createElement('p');
 headDescription.className = 'demo-head-description';
 headDescription.textContent = 'Голосовой ввод позволяет набирать текст голосом в БТР и полях ввода. В БТР пользователь может решить, в каком виде сохранить набранный текст: аудио или обычный текст';
@@ -243,6 +242,12 @@ const [windowGroup, commandGroup] = Array.from(scenarioCard.querySelectorAll('.d
   return group;
 });
 commandGroup.hidden = true;
+
+const dictationStart = document.createElement('button');
+dictationStart.type = 'button';
+dictationStart.className = 'btn btn--same btn--style-info btn--size-m demo-dictation-start';
+dictationStart.textContent = 'Запустить голосовой ввод';
+commandGroup.after(dictationStart);
 
 const comparisonGroup = frame.panel.querySelector('.df-card--bottom');
 comparisonGroup.setAttribute('aria-label', 'Сравнение');
@@ -267,6 +272,88 @@ frame.panel.querySelectorAll('.df-team__label').forEach((label, index) => {
 });
 
 canvas.prepend(frame.root);
+
+const dictationToolbar = document.getElementById('dictation-toolbar');
+const audioRecordingRadio = commandGroup.querySelector('[data-scenario="audio-recording"]');
+const dictationTranscript = document.getElementById('dictation-transcript');
+const dictationText = dictationTranscript.querySelector('p');
+const dictationPause = dictationToolbar.querySelector('.dictation-toolbar__pause');
+const pauseCaption = dictationPause.querySelector('.tb__caption');
+const pauseIcon = dictationPause.querySelector('.tb__icon');
+const dictationTimer = dictationPause.querySelector('time');
+const rawWords = 'нужно отрисовать объединенный механизм голосового ввода и отправки аудиосообщения также нужно добавить возможность голосового ввода в любое поле на сайте по шорткату'.split(' ');
+const processedWords = editorTranscript.textContent.split(' ');
+
+const wordInterval = 1000;
+let tickTimeout;
+let elapsed = 0;
+let runningSince = null;
+
+function updateDictation() {
+  const activeTime = elapsed + (runningSince === null ? 0 : performance.now() - runningSince);
+  const seconds = Math.floor(activeTime / wordInterval);
+  const minutesLabel = String(Math.floor(seconds / 60)).padStart(2, '0');
+  const secondsLabel = String(seconds % 60).padStart(2, '0');
+  dictationTimer.textContent = `${minutesLabel}:${secondsLabel}`;
+  dictationTimer.dateTime = `PT${seconds}S`;
+  dictationText.textContent = rawWords.slice(0, seconds).join(' ');
+  if (runningSince !== null) {
+    tickTimeout = setTimeout(updateDictation, wordInterval - activeTime % wordInterval);
+  }
+}
+
+function setDictationPaused(paused) {
+  clearTimeout(tickTimeout);
+  if (paused) elapsed += performance.now() - runningSince;
+  runningSince = paused ? null : performance.now();
+  pauseCaption.textContent = paused ? 'Продолжить' : 'Пауза';
+  dictationPause.setAttribute('aria-label', pauseCaption.textContent);
+  pauseIcon.textContent = paused ? '\uEC80' : '\uE639';
+  updateDictation();
+}
+
+function startDictation() {
+  elapsed = 0;
+  audioRecordingRadio.disabled = true;
+  dictationTranscript.classList.add('is-draft');
+  dictationTranscript.hidden = false;
+  dictationToolbar.hidden = false;
+  setDictationPaused(false);
+}
+
+function finishDictation(text = '') {
+  clearTimeout(tickTimeout);
+  runningSince = null;
+  audioRecordingRadio.disabled = false;
+  dictationToolbar.hidden = true;
+  dictationTranscript.classList.remove('is-draft');
+  dictationText.textContent = text;
+  dictationTranscript.hidden = !text;
+}
+
+function setDictationScenario(active) {
+  finishDictation();
+  dictationStart.hidden = !active;
+  stage.classList.toggle('demo-stage--dictation', active);
+}
+
+dictationStart.addEventListener('click', () => {
+  startDictation();
+  dictationPause.focus({ preventScroll: true });
+});
+dictationPause.addEventListener('click', () => setDictationPaused(runningSince !== null));
+dictationToolbar.querySelector('.dictation-toolbar__restart').addEventListener('click', startDictation);
+dictationToolbar.querySelector('.dictation-toolbar__confirm').addEventListener('click', () => {
+  const wordCount = dictationText.textContent.match(/\S+/g)?.length ?? 0;
+  finishDictation(processedWords.slice(0, wordCount).join(' '));
+  dictationStart.focus({ preventScroll: true });
+});
+dictationToolbar.querySelector('.dictation-toolbar__cancel').addEventListener('click', () => {
+  finishDictation();
+  dictationStart.focus({ preventScroll: true });
+});
+
+showScenario(frame.value);
 
 const toolbar = document.getElementById('voice-toolbar');
 toolbar.querySelector('.voice-toolbar__close').addEventListener('click', () => {

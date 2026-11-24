@@ -11,11 +11,11 @@
   <link rel="stylesheet" href="vendor/ui-kit/components/button/button.css">
   <link rel="stylesheet" href="vendor/ui-kit/components/tumbler/tumbler.css">
   <link rel="stylesheet" href="css/fonts.css">
-  <link rel="stylesheet" href="css/demo-frame.css?v=command-scenarios">
+  <link rel="stylesheet" href="css/demo-frame.css?v=dictation">
   <link rel="stylesheet" href="css/scene-background.css?v=compare-audio">
-  <link rel="stylesheet" href="css/voice-toolbar.css">
+  <link rel="stylesheet" href="css/voice-toolbar.css?v=dictation">
   <script defer src="vendor/ui-kit/components/demo-frame/demo-frame.js"></script>
-  <script defer src="js/demo-frame.js?v=command-scenarios"></script>
+  <script defer src="js/demo-frame.js?v=dictation"></script>
 </head>
 <body>
   <template id="demo-approach-template">
@@ -87,6 +87,25 @@
         </div>
       </div>
       <button type="button" class="editor-transcript" id="editor-transcript" hidden>Нужно отрисовать объединенный механизм голосового ввода и отправки аудиосообщения. Также нужно добавить возможность голосового ввода в любое поле на сайте по шорткату</button>
+      <div class="dictation-transcript" id="dictation-transcript" hidden><p></p></div>
+      <div class="tb tb--style-info dictation-toolbar" id="dictation-toolbar" role="toolbar" aria-label="Тулбар голосового ввода" hidden>
+        <button type="button" class="tb__btn is-selected dictation-toolbar__pause" aria-label="Пауза">
+          <span class="tb__icon" aria-hidden="true">&#xE639;</span>
+          <span class="tb__caption">Пауза</span>
+          <time datetime="PT0S">00:00</time>
+        </button>
+        <button type="button" class="tb__btn dictation-toolbar__restart" aria-label="Начать заново">
+          <span class="tb__icon" aria-hidden="true">&#xE629;</span>
+        </button>
+        <div class="dictation-toolbar__confirm-slot">
+          <button type="button" class="btn btn--filled btn--style-success btn--size-m btn--icon dictation-toolbar__confirm" aria-label="Подтвердить ввод">
+            <span class="btn__icon" aria-hidden="true">&#xE75E;</span>
+          </button>
+        </div>
+        <button type="button" class="close-button close-button--link-button dictation-toolbar__cancel" aria-label="Отменить ввод">
+          <img src="assets/voice-toolbar/close.svg" alt="">
+        </button>
+      </div>
       <div class="editor-audio-panel">
         <div class="tb tb--style-info editor-audio-toolbar" role="toolbar" aria-label="Панель виджета «Аудио»">
           <button type="button" class="tb__btn editor-audio-toolbar__size" aria-label="Размер виджета: большой" disabled>
