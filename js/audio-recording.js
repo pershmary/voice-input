@@ -50,12 +50,15 @@ function mountAudioRecording(root, trigger) {
     waveform.width = width;
     drawing.fillStyle = '#4c3294';
     const bars = Math.floor(width / 3);
-    const recent = capturing ? peaks.slice(-bars) : peaks;
     for (let index = 0; index < bars; index++) {
-      const first = capturing ? index : Math.floor(index * recent.length / bars);
-      const last = capturing ? index + 1 : Math.max(first + 1, Math.floor((index + 1) * recent.length / bars));
       let peak = 0;
-      for (let sample = first; sample < last; sample++) peak = Math.max(peak, recent[sample] ?? 0);
+      if (capturing) {
+        peak = peaks[peaks.length - 1 - index] ?? 0;
+      } else {
+        const first = Math.floor(index * peaks.length / bars);
+        const end = Math.max(first + 1, Math.floor((index + 1) * peaks.length / bars));
+        for (let sample = first; sample < end; sample++) peak = Math.max(peak, peaks[sample] ?? 0);
+      }
       const height = Math.max(2, Math.min(20, Math.round(peak * 28)));
       drawing.fillRect(index * 3, (20 - height) / 2, 1, height);
     }
