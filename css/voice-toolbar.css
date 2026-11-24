@@ -21,7 +21,9 @@
   overflow: visible;
 }
 
-.voice-toolbar[hidden] {
+.voice-toolbar[hidden],
+.voice-toolbar__microphone[hidden],
+.voice-launch[hidden] {
   display: none;
 }
 

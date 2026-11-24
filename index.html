@@ -13,11 +13,11 @@
   <link rel="stylesheet" href="css/fonts.css">
   <link rel="stylesheet" href="css/demo-frame.css?v=command-buttons">
   <link rel="stylesheet" href="css/scene-background.css?v=description-baseline">
-  <link rel="stylesheet" href="css/voice-toolbar.css?v=split-voice-button">
+  <link rel="stylesheet" href="css/voice-toolbar.css?v=unified-microphone">
   <link rel="stylesheet" href="css/audio-recording.css?v=remove-widget">
   <script defer src="vendor/ui-kit/components/demo-frame/demo-frame.js"></script>
   <script defer src="js/audio-recording.js?v=split-voice-button"></script>
-  <script defer src="js/demo-frame.js?v=split-voice-button"></script>
+  <script defer src="js/demo-frame.js?v=unified-microphone"></script>
 </head>
 <body>
   <template id="demo-panel-options-template">
@@ -230,6 +230,9 @@
             <span class="tb__icon" aria-hidden="true">&#xe929;</span>
           </button>
           <span class="tb__sep" aria-hidden="true"></span>
+          <button type="button" class="tb__btn voice-toolbar__microphone" aria-label="Голосовой ввод" hidden>
+            <span class="tb__icon" aria-hidden="true">&#xe9b1;</span>
+          </button>
           <div class="voice-launch">
             <button type="button" class="tb__btn voice-launch__main" aria-label="Диктовать">
               <span class="tb__icon voice-launch__wave" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></span>

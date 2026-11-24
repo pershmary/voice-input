@@ -238,6 +238,7 @@ const approachGroup = panelOptions.querySelector('[role="radiogroup"]');
 const commandGroup = panelOptions.querySelector('.demo-command-group');
 const dictationStart = commandGroup.querySelector('[data-command="voice-input"]');
 const audioStart = commandGroup.querySelector('[data-command="audio-recording"]');
+const unifiedMicrophone = stage.querySelector('.voice-toolbar__microphone');
 const voiceLaunch = stage.querySelector('.voice-launch');
 const voiceLaunchMain = voiceLaunch.querySelector('.voice-launch__main');
 const voiceLaunchToggle = voiceLaunch.querySelector('.voice-launch__toggle');
@@ -249,6 +250,8 @@ scenarioCard.append(panelOptions, windowGroup);
 function showApproach() {
   approach = approachGroup.querySelector('input:checked').value;
   const unified = approach === 'unified';
+  unifiedMicrophone.hidden = !unified;
+  voiceLaunch.hidden = unified;
   dictationTranscript.hidden = unified;
   windowGroup.hidden = !unified;
   commandGroup.hidden = unified;
@@ -257,6 +260,7 @@ function showApproach() {
 }
 
 approachGroup.addEventListener('change', showApproach);
+unifiedMicrophone.addEventListener('click', () => showScenario(frame.value));
 
 frame.panel.querySelectorAll('.df-team__label').forEach((label, index) => {
   const member = team[index];
@@ -357,10 +361,6 @@ const audioRecording = mountAudioRecording(document.getElementById('audio-record
 let dictationTrigger = dictationStart;
 
 function launchVoiceCommand(command, trigger) {
-  if (approach === 'unified') {
-    approachGroup.querySelector('input[value="commands"]').checked = true;
-    showApproach();
-  }
   frame.select(command);
   if (command === dictationStart.dataset.command) {
     dictationTrigger = trigger;
