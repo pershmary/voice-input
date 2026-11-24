@@ -70,7 +70,7 @@
   content: none;
 }
 
-.demo-stage:has(.dictation-toolbar:not([hidden]), .dictation-transcript[aria-busy="true"]) .voice-toolbar,
+.demo-stage:has(.dictation-toolbar:not([hidden])) .voice-toolbar,
 .dictation-toolbar[hidden] {
   display: none;
 }
@@ -84,8 +84,10 @@
 }
 
 .dictation-toolbar .dictation-toolbar__pause {
+  justify-content: flex-start;
   gap: var(--offset-offset_2xs);
   padding-inline: var(--offset-offset_xs);
+  overflow: hidden;
 }
 
 .dictation-toolbar__pause .tb__icon {

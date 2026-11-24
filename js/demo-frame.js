@@ -277,6 +277,7 @@ const processingDuration = 2000;
 dictationTranscript.style.setProperty('--dictation-processing-duration', `${processingDuration}ms`);
 let tickTimeout;
 let processingTimeout;
+let pauseWidthAnimation;
 let elapsed = 0;
 let runningSince = null;
 
@@ -295,6 +296,10 @@ function updateDictation() {
 }
 
 function setDictationPaused(paused) {
+  const animateWidth = dictationPause.classList.contains('is-paused') !== paused
+    && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const previousWidth = animateWidth ? getComputedStyle(dictationPause).width : null;
+  pauseWidthAnimation?.cancel();
   clearTimeout(tickTimeout);
   if (paused) elapsed += performance.now() - runningSince;
   runningSince = paused ? null : performance.now();
@@ -303,6 +308,13 @@ function setDictationPaused(paused) {
   dictationPause.classList.toggle('is-paused', paused);
   pauseIcon.textContent = paused ? '\uE9B1' : '\uE639';
   updateDictation();
+  if (animateWidth) {
+    const width = getComputedStyle(dictationPause).width;
+    pauseWidthAnimation = dictationPause.animate([{ width: previousWidth }, { width }], {
+      duration: 180,
+      easing: 'ease-in-out'
+    });
+  }
 }
 
 function startDictation() {
@@ -317,6 +329,7 @@ function startDictation() {
 
 function stopDictation() {
   clearTimeout(tickTimeout);
+  pauseWidthAnimation?.cancel();
   runningSince = null;
   dictationToolbar.hidden = true;
 }
