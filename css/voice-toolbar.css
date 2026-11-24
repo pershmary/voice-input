@@ -12,10 +12,12 @@
 
 .voice-toolbar {
   position: absolute;
-  top: 128px;
+  top: 118px;
   right: 67px;
   width: 718px;
   justify-content: space-between;
+  border: 1px solid var(--tb-bd);
+  box-shadow: 0 0 var(--blur-shadow-blur_c) var(--color-shadow-color_c);
 }
 
 .voice-toolbar[hidden] {
