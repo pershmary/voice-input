@@ -71,26 +71,29 @@
 }
 
 .demo-stage:has(.dictation-toolbar:not([hidden])) .voice-toolbar,
-.dictation-toolbar[hidden] {
+.recording-toolbar[hidden] {
   display: none;
 }
 
-.dictation-toolbar {
+.recording-toolbar {
   position: absolute;
-  top: 120px;
   left: 814px;
   border: 1px solid var(--tb-bd);
   box-shadow: 0 0 var(--blur-shadow-blur_c) var(--color-shadow-color_c);
 }
 
-.dictation-toolbar .dictation-toolbar__pause {
+.dictation-toolbar {
+  top: 120px;
+}
+
+.recording-toolbar .recording-toolbar__pause {
   justify-content: flex-start;
   gap: var(--offset-offset_2xs);
   padding-inline: var(--offset-offset_xs);
   overflow: hidden;
 }
 
-.dictation-toolbar__pause .tb__icon {
+.recording-toolbar__pause .tb__icon {
   width: var(--icon-icon_size-icon-size_xs);
   height: var(--icon-icon_size-icon-size_xs);
   color: var(--icon-danger_icon-color);
@@ -98,30 +101,30 @@
   font-size: var(--icon-icon_size-icon-size_xs);
 }
 
-.dictation-toolbar__pause.is-paused .tb__icon {
+.recording-toolbar__pause.is-paused .tb__icon {
   color: var(--icon-info_icon-color);
 }
 
-.dictation-toolbar__pause:not(.is-paused) time {
+.recording-toolbar__pause:not(.is-paused) time {
   font-variant-numeric: tabular-nums;
 }
 
-.dictation-toolbar__pause.is-paused time {
+.recording-toolbar__pause.is-paused time {
   min-inline-size: 37px;
 }
 
-.dictation-toolbar__confirm-slot {
+.recording-toolbar__confirm-slot {
   display: grid;
   width: var(--inline_height-inline_height_xl);
   height: var(--inline_height-inline_height_xl);
   place-items: center;
 }
 
-.dictation-toolbar .dictation-toolbar__cancel {
+.recording-toolbar .recording-toolbar__cancel {
   --clb-size: var(--inline_height-inline_height_xl);
 }
 
-.dictation-toolbar__cancel::before {
+.recording-toolbar__cancel::before {
   content: none;
 }
 

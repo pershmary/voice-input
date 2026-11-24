@@ -10,6 +10,7 @@ editorAudio.querySelector('.editor-audio__transcript').textContent = editorTrans
 let insertTrigger;
 
 function showScenario({ scenario }) {
+  audioRecording.clear();
   const compare = scenario === 'compare-audio';
   stage.classList.toggle('demo-stage--compare-audio', compare);
   finishDictation();
@@ -345,12 +346,17 @@ function finishDictation(text = '') {
   dictationPlaceholder.hidden = Boolean(text);
 }
 
+const audioRecording = mountAudioRecording(document.getElementById('audio-recording'), audioStart);
+
 dictationStart.addEventListener('click', () => {
   frame.select(dictationStart.dataset.command);
   startDictation();
   dictationPause.focus({ preventScroll: true });
 });
-audioStart.addEventListener('click', () => frame.select(audioStart.dataset.command));
+audioStart.addEventListener('click', () => {
+  frame.select(audioStart.dataset.command);
+  audioRecording.start();
+});
 dictationPause.addEventListener('click', () => setDictationPaused(runningSince !== null));
 dictationToolbar.querySelector('.dictation-toolbar__restart').addEventListener('click', startDictation);
 dictationToolbar.querySelector('.dictation-toolbar__confirm').addEventListener('click', () => {

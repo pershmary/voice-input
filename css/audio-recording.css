@@ -1,0 +1,165 @@
+.audio-recording {
+  display: contents;
+}
+
+.demo-stage:has(.audio-recording__toolbar:not([hidden])) .voice-toolbar {
+  display: none;
+}
+
+.audio-recording__toolbar {
+  top: 113px;
+  z-index: 1;
+}
+
+.audio-recording button[hidden] {
+  display: none;
+}
+
+.audio-recording__editor {
+  position: absolute;
+  top: 160px;
+  left: 814px;
+  width: 719px;
+  font-size: var(--font-font-size-font-size_m);
+  letter-spacing: -0.0141em;
+}
+
+.audio-recording__widget {
+  position: relative;
+  box-sizing: border-box;
+  width: 704px;
+  padding: 6px 6px 12px 8px;
+  border-radius: 20px;
+  box-shadow: 0 0 3px var(--color-shadow-color_d);
+  background: var(--background-background-color);
+}
+
+.audio-recording__widget::after {
+  position: absolute;
+  inset: -1px;
+  border: 1px solid var(--border-info_border-color);
+  pointer-events: none;
+  content: "";
+}
+
+.audio-recording:has(.audio-recording__toolbar:not([hidden])) .audio-recording__widget {
+  width: 412px;
+  padding: 0 8px;
+  border-radius: 26px;
+}
+
+.audio-recording:has(.audio-recording__toolbar:not([hidden])) time {
+  flex-basis: auto;
+  white-space: nowrap;
+}
+
+.audio-recording__waveform {
+  display: block;
+  flex: 1;
+  min-width: 0;
+  height: 20px;
+}
+
+.audio-recording .editor-audio__speed,
+.audio-recording .editor-audio__play,
+.audio-recording__more {
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+}
+
+.audio-recording .editor-audio__speed {
+  background: transparent;
+  font: inherit;
+}
+
+.audio-recording .editor-audio__play:disabled,
+.audio-recording .editor-audio__speed:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.audio-recording__status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-unaccented_text-color);
+  line-height: 20px;
+}
+
+.audio-recording__status:empty {
+  position: absolute;
+}
+
+.audio-recording__widget:not([hidden]) + .audio-recording__status:not(:empty) {
+  position: absolute;
+  inset: 42px auto auto 8px;
+}
+
+.audio-recording[data-state="processing"] .audio-recording__widget,
+.audio-recording[data-state="unavailable"] .audio-recording__widget {
+  min-height: 72px;
+}
+
+.audio-recording[data-state="processing"] .audio-recording__status::after {
+  width: 12px;
+  height: 12px;
+  border: 2px dotted currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: audio-recording-spin 0.9s steps(12) infinite;
+  content: "";
+}
+
+@keyframes audio-recording-spin {
+  to { transform: rotate(1turn); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .audio-recording[data-state="processing"] .audio-recording__status::after {
+    animation: none;
+  }
+}
+
+.audio-recording__transcript {
+  margin: 4px 0 0;
+  overflow: auto;
+  overflow-wrap: anywhere;
+  line-height: 20px;
+  max-height: 66px;
+}
+
+.audio-recording__transcript.is-collapsed {
+  max-height: 32px;
+  overflow: hidden;
+  mask-image: linear-gradient(#000 17px, transparent);
+}
+
+.audio-recording__more {
+  display: block;
+  background: transparent;
+}
+
+.audio-recording__more .editor-audio__more {
+  align-items: center;
+  height: 10px;
+  margin: 0;
+}
+
+/* The original task image resumes beneath the taller description field. */
+.demo-stage:has(.audio-recording:is([data-state="processing"], [data-state="ready"], [data-state="unavailable"])) .scene-background__task-body img {
+  clip-path: inset(0 0 calc(100% - 218px) 0);
+}
+
+.demo-stage:has(.audio-recording:is([data-state="processing"], [data-state="ready"], [data-state="unavailable"])) .scene-background__task-body::after {
+  inset: 308px 0 0;
+  width: auto;
+  height: auto;
+  background: url("../assets/scene/task-panel.png") no-repeat -8px -218px;
+}
+
+.audio-recording:is([data-state="processing"], [data-state="ready"], [data-state="unavailable"]) .audio-recording__editor {
+  height: 148px;
+  border-bottom: 1px solid #d2d6da;
+  background: var(--background-background-color);
+}

@@ -1,0 +1,372 @@
+function mountAudioRecording(root, trigger) {
+  const toolbar = root.querySelector('.audio-recording__toolbar');
+  const widget = root.querySelector('.audio-recording__widget');
+  const status = root.querySelector('.audio-recording__status');
+  const transcript = root.querySelector('.audio-recording__transcript');
+  const waveform = root.querySelector('canvas');
+  const drawing = waveform.getContext('2d');
+  const actions = Object.fromEntries(
+    Array.from(root.querySelectorAll('[data-audio-action]'), button => [button.dataset.audioAction, button])
+  );
+  const pauseIcon = actions.pause.querySelector('.tb__icon');
+  const pauseCaption = actions.pause.querySelector('.tb__caption');
+  const toolbarTime = actions.pause.querySelector('time');
+  const widgetTime = widget.querySelector('time');
+  const speeds = [1, 1.25, 1.5, 2];
+
+  let session;
+
+  function setState(state, message = '') {
+    const paused = state === 'paused';
+    const capturing = paused || state === 'recording';
+    const showPlayer = ['processing', 'ready', 'unavailable'].includes(state);
+    root.dataset.state = state;
+    toolbar.hidden = !capturing;
+    widget.hidden = !capturing && !showPlayer;
+    actions.preview.hidden = !paused;
+    actions.play.hidden = !showPlayer;
+    actions.speed.hidden = !showPlayer;
+    pauseCaption.textContent = paused ? 'Продолжить' : 'Пауза';
+    actions.pause.setAttribute('aria-label', pauseCaption.textContent);
+    actions.pause.classList.toggle('is-paused', paused);
+    pauseIcon.textContent = paused ? '\uE9B1' : '\uE639';
+    status.textContent = message;
+  }
+
+  function updateTime(ms, capturing) {
+    const seconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const remainder = String(seconds % 60).padStart(2, '0');
+    toolbarTime.textContent = `${String(minutes).padStart(2, '0')}:${remainder}`;
+    widgetTime.textContent = capturing ? toolbarTime.textContent : `${minutes}:${remainder}`;
+    toolbarTime.dateTime = widgetTime.dateTime = `PT${seconds}S`;
+  }
+
+  function drawWaveform(peaks, capturing) {
+    const width = waveform.clientWidth;
+    waveform.width = width;
+    drawing.fillStyle = '#4c3294';
+    const bars = Math.floor(width / 3);
+    const recent = capturing ? peaks.slice(-bars) : peaks;
+    for (let index = 0; index < bars; index++) {
+      const first = capturing ? index : Math.floor(index * recent.length / bars);
+      const last = capturing ? index + 1 : Math.max(first + 1, Math.floor((index + 1) * recent.length / bars));
+      let peak = 0;
+      for (let sample = first; sample < last; sample++) peak = Math.max(peak, recent[sample] ?? 0);
+      const height = Math.max(2, Math.min(20, Math.round(peak * 28)));
+      drawing.fillRect(index * 3, (20 - height) / 2, 1, height);
+    }
+  }
+
+  function stopPlayback(current) {
+    const player = current.player;
+    if (!player) return;
+    current.player = null;
+    player.source?.stop();
+    player.source?.disconnect();
+    player.button.setAttribute('aria-label', player.caption);
+    player.icon.textContent = player.button === actions.preview ? '\uEAB3' : '\uEC80';
+  }
+
+  function releaseMicrophone(current) {
+    finishSegment(current);
+    for (const track of current.stream?.getTracks() ?? []) track.stop();
+    current.stream = null;
+  }
+
+  function clear() {
+    const previous = session;
+    session = null;
+    if (previous) {
+      clearInterval(previous.timer);
+      stopPlayback(previous);
+      previous.cancelRecognition?.();
+      releaseMicrophone(previous);
+      if (previous.context.state !== 'closed') void previous.context.close().catch(() => {});
+    }
+    transcript.hidden = true;
+    transcript.textContent = '';
+    transcript.classList.remove('is-collapsed');
+    actions.more.hidden = true;
+    actions.more.setAttribute('aria-expanded', 'false');
+    actions.more.setAttribute('aria-label', 'Показать всю расшифровку');
+    actions.play.disabled = actions.speed.disabled = true;
+    setState('idle');
+  }
+
+  function beginSegment(current) {
+    const recorder = new MediaRecorder(current.stream);
+    const chunks = [];
+    const finished = new Promise(resolve => {
+      recorder.ondataavailable = ({ data }) => { if (data.size) chunks.push(data); };
+      recorder.onstop = () => resolve(new Blob(chunks, { type: recorder.mimeType }));
+      recorder.onerror = () => resolve(null);
+    });
+    recorder.start();
+    current.segment = recorder;
+    current.segments.push(finished);
+    current.audio = null;
+    current.started = performance.now();
+    setState('recording');
+    const update = () => {
+      current.analyser.getFloatTimeDomainData(current.samples);
+      let peak = 0;
+      for (const sample of current.samples) peak = Math.max(peak, Math.abs(sample));
+      current.peaks.push(peak);
+      updateTime(current.elapsed + performance.now() - current.started, true);
+      drawWaveform(current.peaks, true);
+    };
+    update();
+    current.timer = setInterval(update, 70);
+  }
+
+  function finishSegment(current) {
+    if (!current.segment) return;
+    current.elapsed += performance.now() - current.started;
+    clearInterval(current.timer);
+    if (current.segment.state !== 'inactive') current.segment.stop();
+    current.segment = null;
+  }
+
+  async function start() {
+    clear();
+    if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder || !window.AudioContext) {
+      setState('idle', 'Запись аудио недоступна в этом браузере.');
+      return;
+    }
+    const context = new AudioContext();
+    const current = { context, elapsed: 0, peaks: [], segments: [], rate: 1 };
+    session = current;
+    setState('starting', 'Подключение микрофона…');
+    try {
+      const ready = context.resume().then(() => true, () => false);
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1 } });
+      if (session !== current) {
+        stream.getTracks().forEach(track => track.stop());
+        return;
+      }
+      current.stream = stream;
+      if (!await ready) throw new Error('Audio context did not start');
+      if (session !== current) return;
+      current.analyser = context.createAnalyser();
+      current.analyser.fftSize = 512;
+      current.samples = new Float32Array(current.analyser.fftSize);
+      context.createMediaStreamSource(stream).connect(current.analyser);
+      beginSegment(current);
+      actions.pause.focus({ preventScroll: true });
+    } catch {
+      if (session !== current) return;
+      clear();
+      setState('idle', 'Не удалось включить микрофон.');
+    }
+  }
+
+  function prepareAudio(current) {
+    return current.audio ??= decodeSegments(current.context, current.segments);
+  }
+
+  async function decodeSegments(context, recordings) {
+    const blobs = await Promise.all(recordings);
+    const decoded = await Promise.all(blobs.filter(blob => blob?.size).map(async blob => {
+      return context.decodeAudioData(await blob.arrayBuffer()).catch(() => null);
+    }));
+    const segments = decoded.filter(Boolean);
+    if (!segments.length) return null;
+    const frames = segments.reduce((total, segment) => total + segment.length, 0);
+    const buffer = context.createBuffer(1, frames, context.sampleRate);
+    let offset = 0;
+    for (const segment of segments) {
+      buffer.copyToChannel(segment.getChannelData(0), 0, offset);
+      offset += segment.length;
+    }
+    return buffer;
+  }
+
+  async function togglePlayback(button) {
+    const current = session;
+    if (!current) return;
+    if (current.player) {
+      stopPlayback(current);
+      return;
+    }
+    const player = {
+      button,
+      caption: button.getAttribute('aria-label'),
+      icon: button.firstElementChild
+    };
+    current.player = player;
+    try {
+      await current.context.resume();
+      const buffer = await prepareAudio(current);
+      if (session !== current || current.player !== player) return;
+      if (!buffer) {
+        stopPlayback(current);
+        return;
+      }
+      const source = current.context.createBufferSource();
+      source.buffer = buffer;
+      source.playbackRate.value = current.rate;
+      source.connect(current.context.destination);
+      source.onended = () => {
+        if (current.player !== player) return;
+        player.source = null;
+        source.disconnect();
+        stopPlayback(current);
+      };
+      source.start();
+      player.source = source;
+      button.setAttribute('aria-label', 'Остановить воспроизведение');
+      player.icon.textContent = '\uE639';
+    } catch {
+      if (current.player === player) stopPlayback(current);
+    }
+  }
+
+  async function recognizeAudio(current, buffer) {
+    // Use the track-aware interface so recognition receives the saved recording.
+    const Recognition = window.SpeechRecognition;
+    if (!Recognition) throw new Error('SpeechRecognition is unavailable');
+    const language = 'ru-RU';
+    const local = await Recognition.available?.({ langs: [language], processLocally: true }).catch(() => null);
+    if (session !== current) return '';
+
+    return new Promise((resolve, reject) => {
+      const context = current.context;
+      const destination = context.createMediaStreamDestination();
+      const track = destination.stream.getAudioTracks()[0];
+      const source = context.createBufferSource();
+      source.buffer = buffer;
+      source.connect(destination);
+
+      const recognition = new Recognition();
+      recognition.lang = language;
+      if (local === 'available') recognition.processLocally = true;
+      recognition.continuous = true;
+      const results = [];
+      let timer;
+
+      function finish(error) {
+        clearTimeout(timer);
+        current.cancelRecognition = null;
+        recognition.onstart = recognition.onresult = recognition.onerror = recognition.onend = null;
+        source.onended = null;
+        source.disconnect();
+        track.stop();
+        if (error) {
+          recognition.abort();
+          reject(error);
+        } else {
+          resolve(results.filter(Boolean).join(' ').trim());
+        }
+      }
+
+      current.cancelRecognition = () => finish(new Error('Recognition was cancelled'));
+      recognition.onresult = event => {
+        for (let index = event.resultIndex; index < event.results.length; index++) {
+          if (event.results[index].isFinal) results[index] = event.results[index][0].transcript.trim();
+        }
+      };
+      recognition.onstart = () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => finish(new Error('Recognition timed out')), (buffer.duration + 15) * 1000);
+        source.start();
+      };
+      source.onended = () => recognition.stop();
+      recognition.onend = () => finish();
+      recognition.onerror = event => {
+        if (event.error !== 'no-speech') finish(new Error(event.error));
+      };
+      timer = setTimeout(() => finish(new Error('Recognition did not start')), 12000);
+      try {
+        recognition.start(track);
+      } catch (error) {
+        finish(error);
+      }
+    });
+  }
+
+  actions.pause.addEventListener('click', () => {
+    const current = session;
+    if (root.dataset.state === 'paused') {
+      stopPlayback(current);
+      beginSegment(current);
+    } else {
+      finishSegment(current);
+      setState('paused');
+      updateTime(current.elapsed, true);
+    }
+  });
+
+  actions.restart.addEventListener('click', () => {
+    const current = session;
+    stopPlayback(current);
+    finishSegment(current);
+    current.segments = [];
+    current.elapsed = 0;
+    current.peaks = [];
+    beginSegment(current);
+  });
+
+  actions.cancel.addEventListener('click', () => {
+    clear();
+    trigger.focus({ preventScroll: true });
+  });
+
+  actions.preview.addEventListener('click', () => togglePlayback(actions.preview));
+  actions.play.addEventListener('click', () => togglePlayback(actions.play));
+  actions.speed.addEventListener('click', () => {
+    const current = session;
+    current.rate = speeds[(speeds.indexOf(current.rate) + 1) % speeds.length];
+    actions.speed.textContent = `${current.rate}x`;
+    actions.speed.setAttribute('aria-label', `Скорость воспроизведения: ${current.rate}×`);
+    if (current.player?.source) current.player.source.playbackRate.value = current.rate;
+  });
+
+  actions.more.addEventListener('click', () => {
+    const expanded = !transcript.classList.toggle('is-collapsed');
+    actions.more.setAttribute('aria-expanded', String(expanded));
+    actions.more.setAttribute('aria-label', expanded ? 'Свернуть расшифровку' : 'Показать всю расшифровку');
+  });
+
+  actions.confirm.addEventListener('click', async () => {
+    const current = session;
+    stopPlayback(current);
+    finishSegment(current);
+    releaseMicrophone(current);
+    actions.speed.textContent = '1x';
+    actions.speed.setAttribute('aria-label', 'Скорость воспроизведения: 1×');
+    setState('processing', 'Идет распознавание');
+    trigger.focus({ preventScroll: true });
+    updateTime(current.elapsed, false);
+    drawWaveform(current.peaks, false);
+
+    try {
+      const buffer = await prepareAudio(current);
+      if (session !== current) return;
+      if (!buffer) {
+        setState('unavailable', 'Запись пустая.');
+        return;
+      }
+      updateTime(buffer.duration * 1000, false);
+      actions.play.disabled = actions.speed.disabled = false;
+      const text = await recognizeAudio(current, buffer);
+      if (session !== current) return;
+      if (!text) {
+        setState('unavailable', 'Речь не распознана.');
+        return;
+      }
+      transcript.textContent = text;
+      transcript.hidden = false;
+      setState('ready');
+      if (transcript.scrollHeight > 32) {
+        transcript.classList.add('is-collapsed');
+        actions.more.hidden = false;
+      }
+    } catch {
+      if (session === current) setState('unavailable', 'Не удалось распознать запись.');
+    }
+  });
+
+  window.addEventListener('pagehide', clear);
+  return { start, clear };
+}

@@ -14,7 +14,9 @@
   <link rel="stylesheet" href="css/demo-frame.css?v=command-buttons">
   <link rel="stylesheet" href="css/scene-background.css?v=description-baseline">
   <link rel="stylesheet" href="css/voice-toolbar.css?v=toolbar-transitions">
+  <link rel="stylesheet" href="css/audio-recording.css">
   <script defer src="vendor/ui-kit/components/demo-frame/demo-frame.js"></script>
+  <script defer src="js/audio-recording.js"></script>
   <script defer src="js/demo-frame.js?v=toolbar-transitions"></script>
 </head>
 <body>
@@ -100,8 +102,8 @@
         <p class="dictation-transcript__draft" hidden></p>
         <button type="button" class="dictation-transcript__result" title="Убрать обработанный текст" hidden></button>
       </div>
-      <div class="tb tb--style-info dictation-toolbar" id="dictation-toolbar" role="toolbar" aria-label="Тулбар голосового ввода" hidden>
-        <button type="button" class="tb__btn is-selected dictation-toolbar__pause" aria-label="Пауза">
+      <div class="tb tb--style-info recording-toolbar dictation-toolbar" id="dictation-toolbar" role="toolbar" aria-label="Тулбар голосового ввода" hidden>
+        <button type="button" class="tb__btn is-selected recording-toolbar__pause dictation-toolbar__pause" aria-label="Пауза">
           <span class="tb__icon" aria-hidden="true">&#xE639;</span>
           <span class="tb__caption">Пауза</span>
           <time datetime="PT0S">00:00</time>
@@ -109,14 +111,52 @@
         <button type="button" class="tb__btn dictation-toolbar__restart" aria-label="Начать заново">
           <span class="tb__icon" aria-hidden="true">&#xE629;</span>
         </button>
-        <div class="dictation-toolbar__confirm-slot">
+        <div class="recording-toolbar__confirm-slot">
           <button type="button" class="btn btn--filled btn--style-success btn--size-m btn--icon dictation-toolbar__confirm" aria-label="Подтвердить ввод">
             <span class="btn__icon" aria-hidden="true">&#xE75E;</span>
           </button>
         </div>
-        <button type="button" class="close-button close-button--link-button dictation-toolbar__cancel" aria-label="Отменить ввод">
+        <button type="button" class="close-button close-button--link-button recording-toolbar__cancel dictation-toolbar__cancel" aria-label="Отменить ввод">
           <img src="assets/voice-toolbar/close.svg" alt="">
         </button>
+      </div>
+      <div class="audio-recording" id="audio-recording" data-state="idle">
+        <div class="tb tb--style-info recording-toolbar audio-recording__toolbar" role="toolbar" aria-label="Тулбар записи аудио" hidden>
+          <button type="button" class="tb__btn is-selected recording-toolbar__pause" data-audio-action="pause" aria-label="Пауза">
+            <span class="tb__icon" aria-hidden="true">&#xE639;</span>
+            <span class="tb__caption">Пауза</span>
+            <time datetime="PT0S">00:00</time>
+          </button>
+          <button type="button" class="tb__btn" data-audio-action="restart" aria-label="Начать заново">
+            <span class="tb__icon" aria-hidden="true">&#xE629;</span>
+          </button>
+          <button type="button" class="tb__btn" data-audio-action="preview" aria-label="Прослушать запись" hidden>
+            <span class="tb__icon" aria-hidden="true">&#xEAB3;</span>
+          </button>
+          <div class="recording-toolbar__confirm-slot">
+            <button type="button" class="btn btn--filled btn--style-success btn--size-m btn--icon" data-audio-action="confirm" aria-label="Подтвердить ввод">
+              <span class="btn__icon" aria-hidden="true">&#xE75E;</span>
+            </button>
+          </div>
+          <button type="button" class="close-button close-button--link-button recording-toolbar__cancel" data-audio-action="cancel" aria-label="Отменить ввод">
+            <img src="assets/voice-toolbar/close.svg" alt="">
+          </button>
+        </div>
+        <div class="audio-recording__editor" role="group" aria-label="Описание">
+          <div class="audio-recording__widget" role="group" aria-label="Аудио" hidden>
+            <div class="editor-audio__controls">
+              <time class="audio-recording__duration" datetime="PT0S">00:00</time>
+              <canvas class="audio-recording__waveform" width="576" height="20" aria-hidden="true"></canvas>
+              <button type="button" class="editor-audio__speed" data-audio-action="speed" aria-label="Скорость воспроизведения: 1×" hidden>1x</button>
+              <button type="button" class="editor-audio__play" data-audio-action="play" aria-label="Воспроизвести аудио" hidden><span aria-hidden="true">&#xEC80;</span></button>
+            </div>
+            <p class="audio-recording__transcript" id="audio-recording-transcript" hidden></p>
+            <button type="button" class="audio-recording__more" data-audio-action="more" aria-label="Показать всю расшифровку" aria-controls="audio-recording-transcript" aria-expanded="false" hidden>
+              <span class="editor-audio__more" aria-hidden="true"><span></span><span></span><span></span></span>
+            </button>
+          </div>
+          <div class="audio-recording__status" role="status"></div>
+        </div>
       </div>
       <div class="editor-audio-panel">
         <div class="tb tb--style-info editor-audio-toolbar" role="toolbar" aria-label="Панель виджета «Аудио»">
