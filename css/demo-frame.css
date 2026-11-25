@@ -251,7 +251,7 @@ body {
 }
 
 .voice-window__text--placeholder {
-  color: var(--text-label_text-color);
+  color: var(--components-input-placeholder-color_inputtext);
 }
 
 .voice-window__actions {

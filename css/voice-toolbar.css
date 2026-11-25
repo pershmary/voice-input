@@ -212,8 +212,7 @@
   opacity: 1;
 }
 
-.dictation-transcript:read-only::placeholder,
-.demo-stage:has(.voice-toolbar__microphone[aria-expanded="true"]) #dictation-transcript::placeholder {
+.dictation-transcript:read-only::placeholder {
   color: transparent;
 }
 

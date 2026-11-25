@@ -23,7 +23,7 @@
   width: 412px;
   padding: 6px 6px 12px 8px;
   border-radius: 20px;
-  box-shadow: 0 0 3px var(--color-shadow-color_d);
+  box-shadow: 0 0 var(--blur-shadow-blur_d) var(--color-shadow-color_d);
   background: var(--background-background-color);
 }
 
@@ -75,7 +75,6 @@
 .audio-recording:is([data-state="starting"], [data-state="recording"]) .audio-recording__widget {
   padding: 0 0 0 8px;
   border-radius: 26px;
-  box-shadow: 0 0 calc(var(--blur-shadow-blur_c) / 2) var(--color-shadow-color_c);
 }
 
 .audio-recording:is([data-state="starting"], [data-state="recording"]) time {
