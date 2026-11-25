@@ -1,5 +1,29 @@
-function mountAudioRecording(root) {
-  const toolbar = root.querySelector('.audio-recording__toolbar');
+function bindAudioWidgetSelection(widget, remove, isSelectable) {
+  const clearSelection = () => widget.removeAttribute('data-audio-selected');
+
+  widget.addEventListener('click', event => {
+    const button = event.target.closest('button');
+    if (!isSelectable() || (button && button !== widget)) return;
+    widget.setAttribute('data-audio-selected', '');
+    widget.focus({ preventScroll: true });
+  });
+
+  widget.addEventListener('keydown', event => {
+    if (!isSelectable() || !['Backspace', 'Delete'].includes(event.key)) return;
+    event.preventDefault();
+    clearSelection();
+    remove();
+  });
+
+  document.addEventListener('click', event => {
+    if (!widget.contains(event.target)) clearSelection();
+  });
+
+  return clearSelection;
+}
+
+function mountAudioRecording(root, onPermissionUnavailable) {
+  const editor = root.querySelector('.audio-recording__editor');
   const widget = root.querySelector('.audio-recording__widget');
   const statusMessage = root.querySelector('.audio-recording__message');
   const transcript = root.querySelector('.audio-recording__transcript');
@@ -8,44 +32,40 @@ function mountAudioRecording(root) {
   const actions = Object.fromEntries(
     Array.from(root.querySelectorAll('[data-audio-action]'), button => [button.dataset.audioAction, button])
   );
-  const pauseIcon = actions.pause.querySelector('.tb__icon');
-  const pauseCaption = actions.pause.querySelector('.tb__caption');
-  const toolbarTime = actions.pause.querySelector('time');
   const widgetTime = widget.querySelector('time');
   const speeds = [1, 1.25, 1.5, 2];
+  const clearSelection = bindAudioWidgetSelection(widget, dismissRecording, () => root.dataset.state === 'ready');
 
   let session;
   let trigger;
 
+  const stage = root.closest('.demo-stage');
+  const editorResize = new ResizeObserver(([entry]) => {
+    stage.style.setProperty('--audio-editor-height', `${entry.contentRect.height}px`);
+  });
+  editorResize.observe(editor);
+
   function setState(state, message = '') {
-    const paused = state === 'paused';
     const starting = state === 'starting';
-    const capturing = paused || state === 'recording';
+    const recording = state === 'recording';
     const showPlayer = ['processing', 'ready', 'unavailable'].includes(state);
     root.dataset.state = state;
     root.hidden = state === 'idle' && !message;
-    toolbar.hidden = !capturing && !starting;
-    widget.hidden = toolbar.hidden && !showPlayer;
+    widget.hidden = !starting && !recording && !showPlayer;
     if (state === 'ready') widget.tabIndex = 0;
     else widget.removeAttribute('tabindex');
-    actions.pause.disabled = actions.restart.disabled = actions.confirm.disabled = starting;
-    actions.preview.hidden = !paused;
-    actions.play.hidden = !showPlayer;
-    actions.speed.hidden = !showPlayer;
-    pauseCaption.textContent = paused ? 'Продолжить' : 'Пауза';
-    actions.pause.setAttribute('aria-label', pauseCaption.textContent);
-    actions.pause.classList.toggle('is-paused', paused);
-    pauseIcon.textContent = paused ? '\uE9B1' : '\uE639';
+    actions.stop.hidden = actions.cancel.hidden = !starting && !recording;
+    actions.stop.disabled = !recording;
+    actions.play.hidden = actions.speed.hidden = !showPlayer;
     statusMessage.textContent = message;
   }
 
-  function updateTime(ms, capturing) {
+  function updateTime(ms) {
     const seconds = Math.floor(ms / 1000);
     const minutes = Math.floor(seconds / 60);
     const remainder = String(seconds % 60).padStart(2, '0');
-    toolbarTime.textContent = `${String(minutes).padStart(2, '0')}:${remainder}`;
-    widgetTime.textContent = capturing ? toolbarTime.textContent : `${minutes}:${remainder}`;
-    toolbarTime.dateTime = widgetTime.dateTime = `PT${seconds}S`;
+    widgetTime.textContent = `${minutes}:${remainder}`;
+    widgetTime.dateTime = `PT${seconds}S`;
   }
 
   function drawWaveform(peaks, capturing) {
@@ -74,7 +94,7 @@ function mountAudioRecording(root) {
     player.source?.stop();
     player.source?.disconnect();
     player.button.setAttribute('aria-label', player.caption);
-    player.icon.textContent = player.button === actions.preview ? '\uEAB3' : '\uEC80';
+    player.icon.textContent = '\uEC80';
   }
 
   function releaseMicrophone(current) {
@@ -84,9 +104,11 @@ function mountAudioRecording(root) {
   }
 
   function clear() {
+    clearSelection();
     const previous = session;
     session = null;
     if (previous) {
+      clearTimeout(previous.permissionTimeout);
       clearInterval(previous.timer);
       stopPlayback(previous);
       previous.cancelRecognition?.();
@@ -98,7 +120,7 @@ function mountAudioRecording(root) {
     transcript.classList.remove('is-collapsed');
     actions.more.hidden = true;
     actions.more.setAttribute('aria-expanded', 'false');
-    actions.more.setAttribute('aria-label', 'Показать всю расшифровку');
+    actions.more.setAttribute('aria-label', 'Развернуть расшифровку');
     actions.play.disabled = actions.speed.disabled = true;
     setState('idle');
   }
@@ -122,7 +144,7 @@ function mountAudioRecording(root) {
       let peak = 0;
       for (const sample of current.samples) peak = Math.max(peak, Math.abs(sample));
       current.peaks.push(peak);
-      updateTime(current.elapsed + performance.now() - current.started, true);
+      updateTime(current.elapsed + performance.now() - current.started);
       drawWaveform(current.peaks, true);
     };
     update();
@@ -147,9 +169,14 @@ function mountAudioRecording(root) {
     const context = new AudioContext();
     const current = { context, elapsed: 0, peaks: [], segments: [], rate: 1 };
     session = current;
-    setState('starting', 'Подключение микрофона…');
-    updateTime(0, true);
+    setState('starting');
+    updateTime(0);
     drawWaveform([], true);
+    const abandonPermissionRequest = () => {
+      clear();
+      onPermissionUnavailable();
+    };
+    current.permissionTimeout = setTimeout(abandonPermissionRequest, 30000);
     try {
       const ready = context.resume().then(() => true, () => false);
       const stream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1 } });
@@ -157,6 +184,7 @@ function mountAudioRecording(root) {
         stream.getTracks().forEach(track => track.stop());
         return;
       }
+      clearTimeout(current.permissionTimeout);
       current.stream = stream;
       if (!await ready) throw new Error('Audio context did not start');
       if (session !== current) return;
@@ -165,9 +193,14 @@ function mountAudioRecording(root) {
       current.samples = new Float32Array(current.analyser.fftSize);
       context.createMediaStreamSource(stream).connect(current.analyser);
       beginSegment(current);
-      actions.pause.focus({ preventScroll: true });
-    } catch {
+      actions.stop.focus({ preventScroll: true });
+    } catch (error) {
       if (session !== current) return;
+      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError' ||
+          error.name === 'AbortError') {
+        abandonPermissionRequest();
+        return;
+      }
       clear();
       setState('idle', 'Не удалось включить микрофон.');
       trigger.focus({ preventScroll: true });
@@ -298,28 +331,6 @@ function mountAudioRecording(root) {
     });
   }
 
-  actions.pause.addEventListener('click', () => {
-    const current = session;
-    if (root.dataset.state === 'paused') {
-      stopPlayback(current);
-      beginSegment(current);
-    } else {
-      finishSegment(current);
-      setState('paused');
-      updateTime(current.elapsed, true);
-    }
-  });
-
-  actions.restart.addEventListener('click', () => {
-    const current = session;
-    stopPlayback(current);
-    finishSegment(current);
-    current.segments = [];
-    current.elapsed = 0;
-    current.peaks = [];
-    beginSegment(current);
-  });
-
   function dismissRecording() {
     clear();
     trigger.focus({ preventScroll: true });
@@ -327,18 +338,6 @@ function mountAudioRecording(root) {
 
   actions.cancel.addEventListener('click', dismissRecording);
 
-  widget.addEventListener('click', event => {
-    if (root.dataset.state !== 'ready' || event.target.closest('button')) return;
-    dismissRecording();
-  });
-
-  widget.addEventListener('keydown', event => {
-    if (root.dataset.state !== 'ready' || (event.key !== 'Backspace' && event.key !== 'Delete')) return;
-    event.preventDefault();
-    dismissRecording();
-  });
-
-  actions.preview.addEventListener('click', () => togglePlayback(actions.preview));
   actions.play.addEventListener('click', () => togglePlayback(actions.play));
   actions.speed.addEventListener('click', () => {
     const current = session;
@@ -351,19 +350,18 @@ function mountAudioRecording(root) {
   actions.more.addEventListener('click', () => {
     const expanded = !transcript.classList.toggle('is-collapsed');
     actions.more.setAttribute('aria-expanded', String(expanded));
-    actions.more.setAttribute('aria-label', expanded ? 'Свернуть расшифровку' : 'Показать всю расшифровку');
+    actions.more.setAttribute('aria-label', expanded ? 'Свернуть расшифровку' : 'Развернуть расшифровку');
   });
 
-  actions.confirm.addEventListener('click', async () => {
+  actions.stop.addEventListener('click', async () => {
+    if (root.dataset.state !== 'recording') return;
     const current = session;
-    stopPlayback(current);
-    finishSegment(current);
     releaseMicrophone(current);
     actions.speed.textContent = '1x';
     actions.speed.setAttribute('aria-label', 'Скорость воспроизведения: 1×');
     setState('processing', 'Идет распознавание');
     trigger.focus({ preventScroll: true });
-    updateTime(current.elapsed, false);
+    updateTime(current.elapsed);
     drawWaveform(current.peaks, false);
 
     try {
@@ -373,7 +371,7 @@ function mountAudioRecording(root) {
         setState('unavailable', 'Запись пустая.');
         return;
       }
-      updateTime(buffer.duration * 1000, false);
+      updateTime(buffer.duration * 1000);
       actions.play.disabled = actions.speed.disabled = false;
       const text = await recognizeAudio(current, buffer);
       if (session !== current) return;

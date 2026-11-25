@@ -5,15 +5,8 @@
   width: 719px;
 }
 
-.demo-stage:has(.audio-recording__toolbar:not([hidden])) .voice-toolbar {
+.demo-stage:has(.audio-recording:is([data-state="starting"], [data-state="recording"])) .voice-toolbar {
   display: none;
-}
-
-.audio-recording__toolbar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
 }
 
 .audio-recording [hidden] {
@@ -31,19 +24,11 @@
 .audio-recording__widget {
   position: relative;
   box-sizing: border-box;
-  width: 704px;
+  width: 412px;
   padding: 6px 6px 12px 8px;
   border-radius: 20px;
   box-shadow: 0 0 3px var(--color-shadow-color_d);
   background: var(--background-background-color);
-}
-
-.audio-recording__widget::after {
-  position: absolute;
-  inset: -1px;
-  border: 1px solid var(--border-info_border-color);
-  pointer-events: none;
-  content: "";
 }
 
 .demo-stage:has(.audio-recording__widget:not([hidden])) .dictation-transcript__placeholder {
@@ -54,15 +39,76 @@
   cursor: pointer;
 }
 
-.audio-recording:has(.audio-recording__toolbar:not([hidden])) .audio-recording__widget {
-  width: 412px;
-  padding: 0 8px;
-  border-radius: 26px;
+:is(.audio-recording[data-state="ready"] .audio-recording__widget, .editor-audio:enabled):hover::after,
+:is(.audio-recording__widget, .editor-audio)[data-audio-selected]::after {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--audio-selection-border, color-mix(in srgb, var(--border-info_border-color) 60%, transparent));
+  border-radius: 2px;
+  pointer-events: none;
+  content: "";
 }
 
-.audio-recording:has(.audio-recording__toolbar:not([hidden])) time {
+:is(.audio-recording__widget, .editor-audio)[data-audio-selected] {
+  --audio-selection-border: var(--border-info_border-color);
+}
+
+.audio-selection-tip {
+  position: absolute;
+  z-index: 1;
+  top: 487px;
+  /* Center in the 796px task body beside the 52px sidebar. */
+  right: calc(52px + 796px / 2 - 0.5px);
+  display: none;
+  padding: 8px 16px;
+  transform: translateX(50%);
+  border: 1px solid #6cc;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 3px #6cc;
+  color: #000;
+  font-size: var(--font-font-size-font-size_xl);
+  letter-spacing: -0.0141em;
+  white-space: nowrap;
+}
+
+.demo-stage:has(:is(.audio-recording__widget, .editor-audio)[data-audio-selected]:not([hidden])) .audio-selection-tip {
+  display: block;
+}
+
+.audio-recording:is([data-state="starting"], [data-state="recording"]) .audio-recording__widget {
+  padding: 0 0 0 8px;
+  border-radius: 26px;
+  box-shadow: 0 0 calc(var(--blur-shadow-blur_c) / 2) var(--color-shadow-color_c);
+}
+
+.audio-recording:is([data-state="starting"], [data-state="recording"]) time {
   flex-basis: auto;
   white-space: nowrap;
+}
+
+.audio-recording__cancel {
+  display: grid;
+  flex: 0 0 16px;
+  height: 16px;
+  margin-right: 12px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--icon-label_icon-color);
+  font: 16px/1 "cbuc-icons";
+  cursor: pointer;
+}
+
+.audio-recording .audio-recording__stop {
+  margin-left: 8px;
+  box-shadow: 0 0 calc(var(--blur-shadow-blur_d) / 2) var(--color-shadow-color_d);
+  font-size: 14px;
+}
+
+.audio-recording .audio-recording__stop:disabled {
+  cursor: default;
 }
 
 .audio-recording__waveform {
@@ -85,7 +131,7 @@
   font: inherit;
 }
 
-.audio-recording .editor-audio__play:disabled,
+.audio-recording [data-audio-action="play"]:disabled,
 .audio-recording .editor-audio__speed:disabled {
   cursor: default;
   opacity: 0.6;
@@ -178,15 +224,15 @@
 
 .audio-recording__transcript {
   margin: 4px 0 0;
-  overflow: auto;
+  /* Controls, spacing, and padding take 64px of the 140px widget limit. */
+  max-height: 3lh;
+  overflow: hidden;
   overflow-wrap: anywhere;
   line-height: 20px;
-  max-height: 66px;
 }
 
 .audio-recording__transcript.is-collapsed {
   max-height: 32px;
-  overflow: hidden;
   mask-image: linear-gradient(#000 17px, transparent);
 }
 
@@ -207,14 +253,15 @@
 }
 
 .demo-stage:has(.audio-recording:is([data-state="processing"], [data-state="ready"], [data-state="unavailable"])) .scene-background__task-body::after {
-  inset: 308px 0 0;
+  inset: calc(160px + var(--audio-editor-height, 148px)) 0 0;
   width: auto;
   height: auto;
   background: url("../assets/scene/task-panel.png") no-repeat -8px -218px;
 }
 
 .audio-recording:is([data-state="processing"], [data-state="ready"], [data-state="unavailable"]) .audio-recording__editor {
-  height: 148px;
+  box-sizing: content-box;
+  min-height: 148px;
   border-bottom: 1px solid #d2d6da;
   background: var(--background-background-color);
 }

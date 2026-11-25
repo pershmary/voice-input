@@ -292,14 +292,6 @@
   cursor: pointer;
 }
 
-.editor-audio::after {
-  position: absolute;
-  inset: -1px;
-  border: 1px solid var(--border-info_border-color);
-  pointer-events: none;
-  content: "";
-}
-
 .editor-audio__controls {
   display: flex;
   align-items: center;
@@ -367,8 +359,7 @@
 }
 
 .demo-stage--compare-audio .scene-background,
-.demo-stage--compare-audio .editor-audio-toolbar,
-.demo-stage--compare-audio .editor-audio::after {
+.demo-stage--compare-audio .editor-audio-toolbar {
   display: none;
 }
 
