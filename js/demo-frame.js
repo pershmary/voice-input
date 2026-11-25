@@ -24,6 +24,7 @@ function closeUnifiedWindow() {
 
 function showScenario({ scenario }) {
   audioRecording.clear();
+  clearEditorAudioSelection();
   closeUnifiedWindow();
   const compare = scenario === 'compare-audio';
   stage.classList.toggle('demo-stage--compare-audio', compare);
@@ -55,6 +56,7 @@ function dismissUnifiedWindow() {
 }
 
 function removeUnifiedAudio() {
+  clearEditorAudioSelection();
   editorAudio.hidden = true;
   dictationTranscript.hidden = false;
   unifiedMicrophone.focus({ preventScroll: true });
@@ -77,7 +79,9 @@ function selectWindowOutput(voiceWindow, value) {
   voiceWindow.querySelector('.voice-window__confirm')?.setAttribute('aria-label', caption);
 }
 
-editorAudio.addEventListener('click', removeUnifiedAudio);
+const clearEditorAudioSelection = bindAudioWidgetSelection(
+  editorAudio, removeUnifiedAudio, () => !editorAudio.hidden && !editorAudio.disabled
+);
 stage.querySelector('.editor-audio-toolbar__delete').addEventListener('click', removeUnifiedAudio);
 for (const voiceWindow of voiceWindows) {
   voiceWindow.tabIndex = -1;
@@ -389,7 +393,9 @@ function finishDictation(text = '') {
   dictationPlaceholder.hidden = Boolean(text);
 }
 
-const audioRecording = mountAudioRecording(document.getElementById('audio-recording'));
+const audioRecording = mountAudioRecording(document.getElementById('audio-recording'), () => {
+  dictationTranscript.focus({ preventScroll: true });
+});
 
 dictationButton.addEventListener('click', () => {
   frame.select('voice-input');
