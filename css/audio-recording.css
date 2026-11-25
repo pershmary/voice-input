@@ -5,10 +5,6 @@
   width: 719px;
 }
 
-.demo-stage:has(.audio-recording:is([data-state="starting"], [data-state="recording"])) .voice-toolbar {
-  display: none;
-}
-
 .audio-recording [hidden] {
   display: none;
 }
