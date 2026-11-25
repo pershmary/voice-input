@@ -70,10 +70,6 @@ body {
   gap: 4px;
 }
 
-.df-panel .df-card--bottom[hidden] {
-  display: none;
-}
-
 .df-panel .df-group {
   display: flex;
   align-items: center;
@@ -246,7 +242,16 @@ body {
 
 .voice-window__waveform span {
   flex: 0 0 1px;
+  height: var(--waveform-height);
   background: #4c3294;
+}
+
+.voice-window[data-recording-preview] .voice-window__waveform span {
+  height: var(--recording-height, 2px);
+}
+
+.voice-window__text--placeholder {
+  color: var(--text-label_text-color);
 }
 
 .voice-window__actions {
@@ -261,7 +266,21 @@ body {
   display: grid;
   width: 26px;
   height: 26px;
+  flex: 0 0 26px;
   place-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--icon-info_icon-color);
+  cursor: pointer;
+}
+
+.voice-window__icon:disabled {
+  cursor: default;
+}
+
+.voice-window:not([data-recording-paused]) .voice-window__paused-play {
+  display: none;
 }
 
 .voice-window__icon > span {
@@ -338,17 +357,22 @@ body {
 }
 
 .voice-window--radio-buttons {
+  --transcript-inset: 6px;
   right: 71px;
-  padding-bottom: 6px;
+  padding-bottom: var(--transcript-inset);
 }
 
 .voice-window--radio-buttons .voice-window__toolbar {
-  padding-left: 6px;
+  padding-left: var(--transcript-inset);
 }
 
 .voice-window--radio-buttons .voice-window__transcript {
-  margin-inline: 6px;
-  padding: 2px 8px 8px 2px;
+  margin-inline: var(--transcript-inset);
+  padding: 2px 8px 4px 4px;
+}
+
+.voice-window--radio-buttons .voice-window__transcript > .voice-window__text {
+  padding-top: 2px;
 }
 
 .voice-window--toggle {
@@ -402,6 +426,12 @@ body {
 .voice-window--toggle .voice-window__icon--pause > span {
   position: relative;
   inset: 1px auto auto 0.5px;
+}
+
+.voice-window--toggle .voice-window__paused-play > span {
+  padding-bottom: 0;
+  line-height: 1;
+  transform: translateX(1px);
 }
 
 .voice-window__format {
@@ -470,6 +500,14 @@ body {
 .voice-window__playback .btn {
   width: 32px;
   height: 32px;
+}
+
+.voice-window--radio-buttons .voice-window__actions > .btn--size-xl {
+  flex: 0 0 var(--btn-h);
+}
+
+.voice-window--radio-buttons .voice-window__paused-play:disabled {
+  --btn-ic: var(--icon-info_icon-color);
 }
 
 .voice-window__insert-options {
@@ -545,6 +583,23 @@ body {
 .voice-window__menu-group {
   position: relative;
   margin-left: 8px;
+}
+
+.voice-window__menu-group--radio {
+  flex: none;
+  width: 148px;
+  margin-left: 0;
+}
+
+.voice-window__menu-group--radio .voice-window__menu-button > .btn {
+  --btn-h: 26px;
+}
+
+.voice-window__menu-group--radio .voice-window__add {
+  flex: 1 1 0;
+  justify-content: flex-start;
+  padding-left: 12px;
+  font-size: inherit;
 }
 
 .voice-window__menu-button {

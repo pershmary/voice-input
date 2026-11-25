@@ -262,25 +262,8 @@
   background: var(--background-background-color);
 }
 
-/* The widget toolbar occupies the editor toolbar's place while audio is inserted. */
-.demo-stage:has(.editor-audio:not([hidden])) .voice-toolbar,
-.editor-audio-panel:has(.editor-audio[hidden]) .editor-audio-toolbar {
+.demo-stage:has(.editor-audio:not([hidden])) .voice-toolbar {
   display: none;
-}
-
-.editor-audio-toolbar {
-  position: absolute;
-  top: -42px;
-  left: 0;
-}
-
-.editor-audio-toolbar .editor-audio-toolbar__size {
-  width: 115px;
-}
-
-.editor-audio-toolbar .tb__btn:disabled {
-  --tb-bg: transparent;
-  cursor: default;
 }
 
 .editor-audio {
@@ -368,8 +351,7 @@
   background: var(--icon-label_icon-color);
 }
 
-.demo-stage--compare-audio .scene-background,
-.demo-stage--compare-audio .editor-audio-toolbar {
+.demo-stage--compare-audio .scene-background {
   display: none;
 }
 

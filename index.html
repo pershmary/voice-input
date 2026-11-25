@@ -11,13 +11,13 @@
   <link rel="stylesheet" href="vendor/ui-kit/components/button/button.css">
   <link rel="stylesheet" href="vendor/ui-kit/components/tumbler/tumbler.css">
   <link rel="stylesheet" href="css/fonts.css">
-  <link rel="stylesheet" href="css/demo-frame.css?v=editor-state">
-  <link rel="stylesheet" href="css/scene-background.css?v=continuous-sidebar-divider">
-  <link rel="stylesheet" href="css/voice-toolbar.css?v=toolbar-transition-150ms">
-  <link rel="stylesheet" href="css/audio-recording.css?v=equal-audio-spacing">
+  <link rel="stylesheet" href="css/demo-frame.css?v=toggle-play-icon-offset">
+  <link rel="stylesheet" href="css/scene-background.css?v=unified-audio-without-toolbar">
+  <link rel="stylesheet" href="css/voice-toolbar.css?v=editor-focus">
+  <link rel="stylesheet" href="css/audio-recording.css?v=unified-audio-without-toolbar">
   <script defer src="vendor/ui-kit/components/demo-frame/demo-frame.js"></script>
   <script defer src="js/audio-recording.js?v=audio-selection-without-transcript"></script>
-  <script defer src="js/demo-frame.js?v=toolbar-transition"></script>
+  <script defer src="js/demo-frame.js?v=radio-ui-kit-xl"></script>
 </head>
 <body>
   <template id="demo-panel-options-template">
@@ -36,7 +36,7 @@
         </label>
       </div>
     </div>
-    <div class="demo-scenario-group" role="radiogroup" aria-labelledby="demo-editor-state-title" hidden>
+    <div class="demo-scenario-group" role="radiogroup" aria-labelledby="demo-editor-state-title">
       <div class="df-group" id="demo-editor-state-title">Состояние редактора</div>
       <div class="df-options">
         <label class="demo-panel-option">
@@ -155,19 +155,6 @@
         </div>
       </div>
       <div class="editor-audio-panel">
-        <div class="tb tb--style-info editor-audio-toolbar" role="toolbar" aria-label="Панель виджета «Аудио»">
-          <button type="button" class="tb__btn editor-audio-toolbar__size" aria-label="Размер виджета: большой" disabled>
-            <span class="tb__icon" aria-hidden="true">&#xEBDF;</span>
-            <span class="tb__caption">Большое</span>
-            <span class="tb__arrow" aria-hidden="true"></span>
-          </button>
-          <button type="button" class="tb__btn tb__btn--delete editor-audio-toolbar__delete" aria-label="Удалить аудио">
-            <span class="tb__icon" aria-hidden="true">&#xEB72;</span>
-          </button>
-          <button type="button" class="tb__btn" aria-label="Ещё" disabled>
-            <span class="tb__icon" aria-hidden="true">&#xEAB4;</span>
-          </button>
-        </div>
         <button type="button" class="editor-audio" id="editor-audio" aria-label="Аудио, 12 секунд" aria-keyshortcuts="Backspace Delete" hidden>
           <span class="editor-audio__controls" aria-hidden="true">
             <time datetime="PT12S">0:12</time>
@@ -248,8 +235,8 @@
             <span class="voice-window__waveform" aria-hidden="true"></span>
           </label>
           <div class="voice-window__actions">
-            <span class="voice-window__icon" aria-label="Пауза" role="img"><span aria-hidden="true">&#xE639;</span></span>
-            <span class="voice-window__icon" aria-label="Начать заново" role="img"><span aria-hidden="true">&#xE629;</span></span>
+            <button type="button" class="btn btn--link btn--style-info btn--icon btn--size-xl" data-unified-pause aria-label="Пауза"><span class="btn__icon" aria-hidden="true">&#xE639;</span></button>
+            <button type="button" class="btn btn--link btn--style-info btn--icon btn--size-xl" data-unified-restart aria-label="Сброс"><span class="btn__icon" aria-hidden="true">&#xE629;</span></button>
             <button type="button" class="voice-window__insert" data-insert-voice>Вставить текст</button>
           </div>
           <button type="button" class="close-button close-button--external voice-window__dismiss" aria-label="Закрыть"></button>
@@ -266,10 +253,10 @@
             <span class="voice-window__waveform" data-waveform="menu" aria-hidden="true"></span>
           </div>
           <div class="voice-window__playback">
-            <button type="button" class="btn btn--link btn--style-info btn--icon" aria-label="Пауза">
+            <button type="button" class="btn btn--link btn--style-info btn--icon" data-unified-pause aria-label="Пауза">
               <span class="btn__icon" aria-hidden="true">&#xE639;</span>
             </button>
-            <button type="button" class="btn btn--link btn--style-info btn--icon" aria-label="Начать заново">
+            <button type="button" class="btn btn--link btn--style-info btn--icon" data-unified-restart aria-label="Сброс">
               <span class="btn__icon" aria-hidden="true">&#xE629;</span>
             </button>
           </div>
@@ -310,8 +297,8 @@
             <span class="voice-window__waveform" aria-hidden="true"></span>
           </label>
           <div class="voice-window__actions">
-            <span class="voice-window__icon voice-window__icon--pause" aria-label="Пауза" role="img"><span aria-hidden="true">&#xE639;</span></span>
-            <span class="voice-window__icon" aria-label="Начать заново" role="img"><span aria-hidden="true">&#xE629;</span></span>
+            <button type="button" class="voice-window__icon voice-window__icon--pause" data-unified-pause aria-label="Пауза"><span aria-hidden="true">&#xE639;</span></button>
+            <button type="button" class="voice-window__icon" data-unified-restart aria-label="Сброс"><span aria-hidden="true">&#xE629;</span></button>
             <div class="voice-window__format">
               <div class="tumbler tumbler--size-l" role="radiogroup" aria-label="Формат вставки">
                 <label class="tumbler__item">
@@ -342,10 +329,10 @@
             <span class="voice-window__waveform" aria-hidden="true"></span>
           </div>
           <div class="voice-window__playback">
-            <button type="button" class="btn btn--link btn--style-info btn--icon" aria-label="Пауза">
+            <button type="button" class="btn btn--link btn--style-info btn--icon" data-unified-pause aria-label="Пауза">
               <span class="btn__icon" aria-hidden="true">&#xE639;</span>
             </button>
-            <button type="button" class="btn btn--link btn--style-info btn--icon" aria-label="Начать заново">
+            <button type="button" class="btn btn--link btn--style-info btn--icon" data-unified-restart aria-label="Сброс">
               <span class="btn__icon" aria-hidden="true">&#xE629;</span>
             </button>
           </div>
@@ -367,10 +354,10 @@
             <span class="voice-window__waveform" aria-hidden="true"></span>
           </div>
           <div class="voice-window__playback">
-            <button type="button" class="btn btn--link btn--style-info btn--icon" aria-label="Пауза">
+            <button type="button" class="btn btn--link btn--style-info btn--icon" data-unified-pause aria-label="Пауза">
               <span class="btn__icon" aria-hidden="true">&#xE639;</span>
             </button>
-            <button type="button" class="btn btn--link btn--style-info btn--icon" aria-label="Начать заново">
+            <button type="button" class="btn btn--link btn--style-info btn--icon" data-unified-restart aria-label="Сброс">
               <span class="btn__icon" aria-hidden="true">&#xE629;</span>
             </button>
           </div>
@@ -389,6 +376,11 @@
         </div>
       </section>
       <div class="audio-selection-tip">Backspace или Delete</div>
+      <template id="voice-paused-play">
+        <button type="button" class="voice-window__icon voice-window__paused-play" aria-label="Воспроизвести аудио" disabled>
+          <span aria-hidden="true">&#xEC80;</span>
+        </button>
+      </template>
       <template id="voice-processing-controls">
         <div class="voice-window__processing-controls">
           <div class="voice-window__processing-status" role="status">

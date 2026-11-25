@@ -1,6 +1,30 @@
 const canvas = document.getElementById('demo-canvas');
 const stage = document.getElementById('demo-stage');
 
+const radioMenuScenario = 'radio-menu-button';
+const radioWindow = stage.querySelector('[data-voice-scenario="radio-buttons"]');
+const radioMenuWindow = radioWindow.cloneNode(true);
+radioMenuWindow.dataset.voiceScenario = radioMenuScenario;
+for (const radio of radioMenuWindow.querySelectorAll('input[type="radio"]')) {
+  radio.name = 'radio-menu-voice-output';
+}
+
+const radioMenuGroup = stage.querySelector('.voice-window__menu-group').cloneNode(true);
+radioMenuGroup.classList.add('voice-window__menu-group--radio');
+const radioMenuInsert = radioMenuGroup.querySelector('.voice-window__add');
+radioMenuInsert.querySelector('.voice-format-icon').remove();
+radioMenuInsert.querySelector('.btn__caption').textContent = 'Вставить текст';
+radioMenuInsert.removeAttribute('aria-label');
+const radioMenu = radioMenuGroup.querySelector('.voice-window__menu');
+const radioMenuTitle = radioMenu.querySelector('.voice-window__menu-title');
+radioMenuTitle.firstElementChild.textContent = 'Вставить';
+radioMenuTitle.id = 'radio-voice-format-title';
+radioMenu.id = 'radio-voice-format-menu';
+radioMenu.setAttribute('aria-labelledby', radioMenuTitle.id);
+radioMenuGroup.querySelector('.voice-window__menu-trigger').setAttribute('aria-controls', radioMenu.id);
+radioMenuWindow.querySelector('.voice-window__insert').replaceWith(radioMenuGroup);
+radioWindow.after(radioMenuWindow);
+
 const voiceWindows = [...stage.querySelectorAll('[data-voice-scenario]')];
 const insertButtons = stage.querySelectorAll('[data-insert-voice]');
 const editorAudio = document.getElementById('editor-audio');
@@ -12,15 +36,102 @@ const sampleText = `${sampleOpening} По проекту добавим возм
 editorAudio.querySelector('.editor-audio__transcript').textContent = processedText;
 
 let unifiedProcessingTimeout;
+let unifiedRecordingInterval;
+let toggleUnifiedRecordingPause;
+
+function setUnifiedRecordingPaused(voiceWindow, paused) {
+  voiceWindow.toggleAttribute('data-recording-paused', paused);
+  const button = voiceWindow.querySelector('[data-unified-pause]');
+  button.setAttribute('aria-label', paused ? 'Продолжить' : 'Пауза');
+  button.firstElementChild.textContent = paused ? '\uE9B1' : '\uE639';
+}
+
+function startUnifiedRecording(voiceWindow) {
+  clearInterval(unifiedRecordingInterval);
+  setUnifiedRecordingPaused(voiceWindow, false);
+  const transcript = voiceWindow.querySelector('.voice-window__text');
+  const timer = voiceWindow.querySelector('.voice-window__timer');
+  const bars = [...voiceWindow.querySelector('.voice-window__waveform').children];
+  const words = rawText.split(/\s+/);
+  const duration = 12000;
+  const sampleInterval = 80;
+  let startedAt = performance.now();
+  let recordedTime = 0;
+  let displayedSeconds = -1;
+  let displayedWords = -1;
+
+  voiceWindow.setAttribute('data-recording-preview', '');
+  for (const bar of bars) bar.style.removeProperty('--recording-height');
+
+  function render(elapsed) {
+    const seconds = Math.floor(elapsed / 1000);
+    if (seconds !== displayedSeconds) {
+      timer.textContent = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
+      timer.dateTime = `PT${seconds}S`;
+      displayedSeconds = seconds;
+    }
+
+    const wordCount = Math.floor(elapsed / duration * words.length);
+    if (wordCount !== displayedWords) {
+      transcript.textContent = wordCount ? words.slice(0, wordCount).join(' ') : 'Здесь появится текст';
+      transcript.classList.toggle('voice-window__text--placeholder', wordCount === 0);
+      displayedWords = wordCount;
+    }
+
+    const sample = Math.floor(elapsed / sampleInterval);
+    for (let index = 0; index < Math.min(sample, bars.length); index++) {
+      const recordedSample = sample - index;
+      const envelope = Math.max(0, Math.sin(recordedSample * 0.31));
+      const variation = 0.4 + 0.6 * Math.abs(Math.sin(recordedSample * 1.7));
+      const height = 2 + Math.round(18 * envelope * variation);
+      bars[index].style.setProperty('--recording-height', `${height}px`);
+    }
+  }
+
+  function update() {
+    const elapsed = Math.min(recordedTime + performance.now() - startedAt, duration);
+    render(elapsed);
+    if (elapsed === duration) clearInterval(unifiedRecordingInterval);
+    return elapsed;
+  }
+
+  toggleUnifiedRecordingPause = () => {
+    const paused = !voiceWindow.hasAttribute('data-recording-paused');
+    if (paused) {
+      recordedTime = update();
+      clearInterval(unifiedRecordingInterval);
+    } else if (recordedTime < duration) {
+      startedAt = performance.now();
+      unifiedRecordingInterval = setInterval(update, sampleInterval);
+    }
+    setUnifiedRecordingPaused(voiceWindow, paused);
+  };
+
+  render(0);
+  unifiedRecordingInterval = setInterval(update, sampleInterval);
+}
 
 function closeUnifiedWindow() {
   clearTimeout(unifiedProcessingTimeout);
+  clearInterval(unifiedRecordingInterval);
+  toggleUnifiedRecordingPause = undefined;
   for (const voiceWindow of voiceWindows) {
     voiceWindow.hidden = true;
     voiceWindow.removeAttribute('data-processing');
+    voiceWindow.style.removeProperty('top');
+    if (voiceWindow.hasAttribute('data-recording-preview')) {
+      setUnifiedRecordingPaused(voiceWindow, false);
+      voiceWindow.removeAttribute('data-recording-preview');
+      const transcript = voiceWindow.querySelector('.voice-window__text');
+      transcript.textContent = rawText;
+      transcript.classList.remove('voice-window__text--placeholder');
+      const timer = voiceWindow.querySelector('.voice-window__timer');
+      timer.textContent = '0:12';
+      timer.dateTime = 'PT12S';
+    }
     voiceWindow.querySelector('.voice-window__transcript input')?.removeAttribute('disabled');
   }
-  showFormatMenu(false);
+  closeFormatMenus();
   unifiedMicrophone.setAttribute('aria-expanded', 'false');
 }
 
@@ -37,8 +148,11 @@ function showScenario({ scenario }) {
   editorAudio.hidden = !compare;
   editorAudio.disabled = compare;
   for (const button of insertButtons) button.disabled = compare;
+  for (const button of stage.querySelectorAll('[data-unified-pause], [data-unified-restart]')) button.disabled = compare;
   if (compare) {
     for (const voiceWindow of voiceWindows) voiceWindow.hidden = false;
+  } else {
+    dictationTranscript.focus({ preventScroll: true });
   }
 }
 
@@ -47,7 +161,8 @@ function openUnifiedWindow() {
   if (!voiceWindow || unifiedMicrophone.getAttribute('aria-expanded') === 'true') return;
   finishDictation();
   selectWindowOutput(voiceWindow, 'text');
-  selectMenuFormat(formatOptions[0]);
+  startUnifiedRecording(voiceWindow);
+  voiceWindow.style.top = `${getDescriptionLineBottom()}px`;
   voiceWindow.hidden = false;
   unifiedMicrophone.setAttribute('aria-expanded', 'true');
   voiceWindow.focus({ preventScroll: true });
@@ -56,7 +171,7 @@ function openUnifiedWindow() {
 function dismissUnifiedWindow() {
   if (frame.value.scenario === 'compare-audio') return;
   closeUnifiedWindow();
-  unifiedMicrophone.focus({ preventScroll: true });
+  dictationTranscript.focus({ preventScroll: true });
 }
 
 function removeUnifiedAudio() {
@@ -83,22 +198,32 @@ function selectWindowOutput(voiceWindow, value) {
   const caption = value === 'audio' ? 'Вставить аудио' : 'Вставить текст';
   const insertLabel = voiceWindow.querySelector('.voice-window__insert');
   if (insertLabel) insertLabel.textContent = caption;
+  formatMenus.get(voiceWindow)?.select(value);
   voiceWindow.querySelector('.voice-window__confirm')?.setAttribute('aria-label', caption);
 }
 
 const clearEditorAudioSelection = bindAudioWidgetSelection(
   editorAudio, removeUnifiedAudio, () => !editorAudio.hidden && !editorAudio.disabled
 );
-stage.querySelector('.editor-audio-toolbar__delete').addEventListener('click', removeUnifiedAudio);
 for (const voiceWindow of voiceWindows) {
   voiceWindow.tabIndex = -1;
   voiceWindow.querySelector('.voice-window__toolbar').prepend(processingControls.cloneNode(true));
   voiceWindow.querySelector('.voice-window__dismiss').addEventListener('click', dismissUnifiedWindow);
+  const pauseButton = voiceWindow.querySelector('[data-unified-pause]');
+  pauseButton.addEventListener('click', () => toggleUnifiedRecordingPause?.());
+  voiceWindow.querySelector('[data-unified-restart]').addEventListener('click', () => startUnifiedRecording(voiceWindow));
+  const playButton = document.getElementById('voice-paused-play').content.firstElementChild.cloneNode(true);
+  if (voiceWindow.classList.contains('voice-window--radio-buttons')) {
+    playButton.className = `${pauseButton.className} voice-window__paused-play`;
+    playButton.firstElementChild.className = 'btn__icon';
+  }
+  pauseButton.before(playButton);
   const skipProcessing = voiceWindow.querySelector('.voice-window__skip');
   skipProcessing.addEventListener('click', () => finishUnifiedProcessing(voiceWindow, rawText));
 
   for (const insert of voiceWindow.querySelectorAll('[data-insert-voice]')) {
     insert.addEventListener('click', () => {
+      clearInterval(unifiedRecordingInterval);
       const selectedAudio = voiceWindow.querySelector('input[value="audio"]:checked, [data-format="audio"][aria-pressed="true"]');
       const output = insert.dataset.insertVoice || (selectedAudio ? 'audio' : 'text');
       if (output === 'audio') {
@@ -109,7 +234,7 @@ for (const voiceWindow of voiceWindows) {
         resizeDescription();
         editorAudio.focus({ preventScroll: true });
       } else {
-        showFormatMenu(false);
+        closeFormatMenus();
         voiceWindow.setAttribute('data-processing', '');
         voiceWindow.querySelector('.voice-window__transcript input')?.setAttribute('disabled', '');
         skipProcessing.focus({ preventScroll: true });
@@ -140,82 +265,99 @@ for (const waveform of stage.querySelectorAll('.voice-window__waveform')) {
   const peaks = isMenuWaveform ? menuWaveformPeaks : waveformPeaks;
   const bars = Array.from({ length: isMenuWaveform ? 190 : 209 }, (_, index) => {
     const bar = document.createElement('span');
-    bar.style.height = `${peaks[index] ?? 2}px`;
+    bar.style.setProperty('--waveform-height', `${peaks[index] ?? 2}px`);
     return bar;
   });
   waveform.append(...bars);
 }
 
-const menuGroup = stage.querySelector('.voice-window__menu-group');
-const menuTrigger = menuGroup.querySelector('.voice-window__menu-trigger');
-const formatMenu = menuGroup.querySelector('.voice-window__menu');
-const addButton = menuGroup.querySelector('.voice-window__add');
-const addIcon = addButton.querySelector('.voice-format-icon');
-const formatOptions = formatMenu.querySelectorAll('[data-format]');
-
-const triggerIcon = menuTrigger.querySelector('.btn__icon');
-const menuTitle = formatMenu.querySelector('.voice-window__menu-title > span');
-const menuClose = formatMenu.querySelector('.voice-window__menu-close');
-
-function positionFormatMenu() {
-  formatMenu.style.removeProperty('left');
-  formatMenu.style.removeProperty('top');
-
-  const scene = stage.getBoundingClientRect();
-  const menu = formatMenu.getBoundingClientRect();
-  const icon = triggerIcon.getBoundingClientRect();
-  const title = menuTitle.getBoundingClientRect();
-  const close = menuClose.getBoundingClientRect();
-  const scaleX = scene.width / stage.offsetWidth;
-  const scaleY = scene.height / stage.offsetHeight;
-
-  const desiredShift = icon.left + icon.width / 2 - title.left;
-  const minShift = scene.left - menu.left;
-  const maxShift = scene.right - Math.max(menu.right, close.right);
-  const shiftX = Math.max(minShift, Math.min(desiredShift, maxShift));
-  const desiredShiftY = icon.top + icon.height / 2 + 4 * scaleY - (title.top + title.height / 2);
-  const shiftY = Math.max(scene.top - menu.top, Math.min(desiredShiftY, scene.bottom - menu.bottom));
-
-  formatMenu.style.left = `${shiftX / scaleX}px`;
-  formatMenu.style.top = `calc(100% + 4px + ${shiftY / scaleY}px)`;
+const formatMenus = new Map();
+for (const voiceWindow of voiceWindows) {
+  const menuGroup = voiceWindow.querySelector('.voice-window__menu-group');
+  if (menuGroup) formatMenus.set(voiceWindow, bindFormatMenu(voiceWindow, menuGroup));
 }
 
-function showFormatMenu(show) {
-  formatMenu.hidden = !show;
-  menuTrigger.setAttribute('aria-expanded', String(show));
-  if (show) positionFormatMenu();
+function closeFormatMenus() {
+  for (const menu of formatMenus.values()) menu.close();
 }
 
-function closeFormatMenu() {
-  showFormatMenu(false);
-  menuTrigger.focus({ preventScroll: true });
-}
+function bindFormatMenu(voiceWindow, menuGroup) {
+  const menuTrigger = menuGroup.querySelector('.voice-window__menu-trigger');
+  const formatMenu = menuGroup.querySelector('.voice-window__menu');
+  const addButton = menuGroup.querySelector('.voice-window__add');
+  const addIcon = addButton.querySelector('.voice-format-icon');
+  const caption = addButton.querySelector('.btn__caption');
+  const formatOptions = formatMenu.querySelectorAll('[data-format]');
+  const triggerIcon = menuTrigger.querySelector('.btn__icon');
+  const menuTitle = formatMenu.querySelector('.voice-window__menu-title > span');
+  const menuClose = formatMenu.querySelector('.voice-window__menu-close');
 
-function selectMenuFormat(option) {
-  const isAudio = option.dataset.format === 'audio';
-  for (const item of formatOptions) {
-    item.setAttribute('aria-pressed', String(item === option));
+  function positionFormatMenu() {
+    formatMenu.style.removeProperty('left');
+    formatMenu.style.removeProperty('top');
+
+    const scene = stage.getBoundingClientRect();
+    const menu = formatMenu.getBoundingClientRect();
+    const icon = triggerIcon.getBoundingClientRect();
+    const title = menuTitle.getBoundingClientRect();
+    const close = menuClose.getBoundingClientRect();
+    const scaleX = scene.width / stage.offsetWidth;
+    const scaleY = scene.height / stage.offsetHeight;
+
+    const desiredShift = icon.left + icon.width / 2 - title.left;
+    const minShift = scene.left - menu.left;
+    const maxShift = scene.right - Math.max(menu.right, close.right);
+    const shiftX = Math.max(minShift, Math.min(desiredShift, maxShift));
+    const desiredShiftY = icon.top + icon.height / 2 + 4 * scaleY - (title.top + title.height / 2);
+    const shiftY = Math.max(scene.top - menu.top, Math.min(desiredShiftY, scene.bottom - menu.bottom));
+
+    formatMenu.style.left = `${shiftX / scaleX}px`;
+    formatMenu.style.top = `calc(100% + 4px + ${shiftY / scaleY}px)`;
   }
-  addButton.setAttribute('aria-label', isAudio ? 'Добавить аудио' : 'Добавить текст');
-  addIcon.textContent = option.querySelector('.voice-format-icon').textContent;
-}
 
-menuTrigger.addEventListener('click', () => showFormatMenu(formatMenu.hidden));
-menuClose.addEventListener('click', closeFormatMenu);
-for (const option of formatOptions) {
-  option.addEventListener('click', () => {
-    selectMenuFormat(option);
-    closeFormatMenu();
+  function showFormatMenu(show) {
+    formatMenu.hidden = !show;
+    menuTrigger.setAttribute('aria-expanded', String(show));
+    if (show) positionFormatMenu();
+  }
+
+  function select(value) {
+    for (const option of formatOptions) {
+      const selected = option.dataset.format === value;
+      option.setAttribute('aria-pressed', String(selected));
+      if (selected && addIcon) addIcon.textContent = option.querySelector('.voice-format-icon').textContent;
+    }
+    if (addIcon) {
+      addButton.setAttribute('aria-label', value === 'audio' ? 'Добавить аудио' : 'Добавить текст');
+    } else {
+      caption.textContent = value === 'audio' ? 'Вставить аудио' : 'Вставить текст';
+    }
+  }
+
+  function closeAndFocusTrigger() {
+    showFormatMenu(false);
+    menuTrigger.focus({ preventScroll: true });
+  }
+
+  menuTrigger.addEventListener('click', () => showFormatMenu(formatMenu.hidden));
+  menuClose.addEventListener('click', closeAndFocusTrigger);
+  for (const option of formatOptions) {
+    option.addEventListener('click', () => {
+      selectWindowOutput(voiceWindow, option.dataset.format);
+      closeAndFocusTrigger();
+    });
+  }
+  document.addEventListener('click', event => {
+    if (!formatMenu.hidden && !menuGroup.contains(event.target)) showFormatMenu(false);
   });
+  menuGroup.addEventListener('keydown', event => {
+    if (event.key !== 'Escape' || formatMenu.hidden) return;
+    event.preventDefault();
+    closeAndFocusTrigger();
+  });
+
+  return { select, close: () => showFormatMenu(false) };
 }
-document.addEventListener('click', event => {
-  if (!formatMenu.hidden && !menuGroup.contains(event.target)) showFormatMenu(false);
-});
-menuGroup.addEventListener('keydown', event => {
-  if (event.key !== 'Escape' || formatMenu.hidden) return;
-  event.preventDefault();
-  closeFormatMenu();
-});
 
 const team = [
   {
@@ -234,6 +376,7 @@ const team = [
 
 const windowScenarios = [
   { id: 'radio-buttons', title: 'Радиокнопки' },
+  { id: radioMenuScenario, title: 'Радиокнопки + двойная кнопка' },
   { id: 'toggle', title: 'Тумблер' },
   { id: 'two-buttons', title: '2 кнопки' },
   { id: 'split-window', title: 'Окно из двух частей' },
@@ -262,7 +405,9 @@ const frame = DemoFrame.mount({
   ],
   team,
   onChange(value) {
-    if (approach === 'unified') windowScenario = value.scenario;
+    if (approach === 'unified' && windowScenarios.some(({ id }) => id === value.scenario)) {
+      windowScenario = value.scenario;
+    }
     showScenario(value);
   }
 });
@@ -284,6 +429,7 @@ windowGroup.setAttribute('aria-label', scenarioCard.querySelector('.df-group').t
 windowGroup.append(...scenarioCard.children);
 
 const comparisonGroup = frame.panel.querySelector('.df-card--bottom');
+comparisonGroup.className = 'demo-scenario-group';
 comparisonGroup.setAttribute('aria-label', 'Сравнение');
 
 const panelOptions = document.getElementById('demo-panel-options-template').content.cloneNode(true);
@@ -291,7 +437,7 @@ const [approachGroup, editorStateGroup] = panelOptions.querySelectorAll('[role="
 const unifiedMicrophone = stage.querySelector('.voice-toolbar__microphone');
 const dictationButton = stage.querySelector('[data-voice-command="voice-input"]');
 const audioRecordingButton = stage.querySelector('[data-voice-command="audio-recording"]');
-scenarioCard.append(panelOptions, windowGroup);
+scenarioCard.append(panelOptions, windowGroup, comparisonGroup);
 
 function showApproach() {
   approach = approachGroup.querySelector('input:checked').value;
@@ -299,7 +445,6 @@ function showApproach() {
   unifiedMicrophone.hidden = !unified;
   dictationButton.hidden = unified;
   audioRecordingButton.hidden = unified;
-  editorStateGroup.hidden = unified;
   windowGroup.hidden = !unified;
   comparisonGroup.hidden = !unified;
   frame.select(unified ? windowScenario : null);
@@ -307,7 +452,7 @@ function showApproach() {
 
 approachGroup.addEventListener('change', showApproach);
 editorStateGroup.addEventListener('change', () => {
-  frame.select(null);
+  frame.select(approach === 'unified' ? windowScenario : null);
   const withText = editorStateGroup.querySelector('input:checked').value === 'text';
   dictationTranscript.value = withText ? sampleText : '';
   const caret = withText ? sampleOpening.length : 0;
@@ -370,6 +515,35 @@ function resizeTextArea(field) {
   const borderHeight = field.offsetHeight - field.clientHeight;
   field.style.height = `${field.scrollHeight + borderHeight}px`;
   return field.offsetHeight;
+}
+
+function getDescriptionLineBottom() {
+  const { value, selectionStart, selectionEnd, selectionDirection, offsetTop, scrollTop } = dictationTranscript;
+  const caret = selectionDirection === 'backward' ? selectionStart : selectionEnd;
+  const { lineHeight, paddingTop } = getComputedStyle(dictationTranscript);
+  const lineHeightPx = parseFloat(lineHeight);
+  const paddingTopPx = parseFloat(paddingTop);
+
+  // Measure the full text so that wrapped words retain their original line breaks.
+  const mirror = document.createElement('div');
+  mirror.className = 'dictation-preview';
+  mirror.style.cssText = 'display: block; visibility: hidden;';
+  mirror.setAttribute('aria-hidden', 'true');
+  const text = document.createTextNode(`${value}\u200b`);
+  mirror.append(text);
+  stage.append(mirror);
+
+  const range = document.createRange();
+  range.setStart(text, caret);
+  range.setEnd(text, caret + (value[caret] === '\n' ? 0 : 1));
+  const rect = range.getBoundingClientRect();
+  const mirrorRect = mirror.getBoundingClientRect();
+  const scale = mirrorRect.height / mirror.offsetHeight;
+  const lineCenter = (rect.top + rect.height / 2 - mirrorRect.top) / scale - paddingTopPx;
+  const line = Math.max(0, Math.floor(lineCenter / lineHeightPx));
+  mirror.remove();
+
+  return offsetTop + paddingTopPx + (line + 1) * lineHeightPx - scrollTop;
 }
 
 function resizeDescription() {

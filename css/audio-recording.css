@@ -301,7 +301,3 @@
 .demo-stage--inline-audio .editor-audio-panel:has(.editor-audio:not([hidden])) {
   height: 111px;
 }
-
-.demo-stage--inline-audio .editor-audio-toolbar {
-  top: calc(-34px - var(--inline-audio-offset, 0px));
-}
