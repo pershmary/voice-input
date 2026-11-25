@@ -88,36 +88,36 @@ body {
   padding: 6px;
 }
 
-.df-panel :is(.df-radio.is-on, .demo-approach-option:has(:checked)) .df-radio__box::before {
+.df-panel :is(.df-radio.is-on, .demo-panel-option:has(:checked)) .df-radio__box::before {
   border: 0;
   background: url("../assets/system-panel/selected-radio.svg") center no-repeat;
   box-shadow: none;
 }
 
-.demo-approach-option {
+.demo-panel-option {
   position: relative;
   display: flex;
   align-items: flex-start;
   cursor: pointer;
 }
 
-.demo-approach-option input {
+.demo-panel-option input {
   position: absolute;
   width: 1px;
   height: 1px;
   opacity: 0;
 }
 
-.demo-approach-option:has(:checked) .df-radio__text {
+.demo-panel-option:has(:checked) .df-radio__text {
   color: var(--components-toggle-selected_text-color_switcher);
 }
 
-.demo-approach-option:has(:focus-visible) {
+.demo-panel-option:has(:focus-visible) {
   outline: 2px solid var(--border-info_border-color);
   outline-offset: -2px;
 }
 
-.demo-approach-option:not(:has(:checked)):hover .df-radio__text {
+.demo-panel-option:not(:has(:checked)):hover .df-radio__text {
   text-decoration: underline;
 }
 

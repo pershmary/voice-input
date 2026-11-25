@@ -7,6 +7,8 @@ const editorAudio = document.getElementById('editor-audio');
 const processingControls = document.getElementById('voice-processing-controls').content;
 const rawText = voiceWindows[0].querySelector('.voice-window__text').textContent.trim();
 const processedText = 'Нужно отрисовать объединенный механизм голосового ввода и отправки аудиосообщения. Также нужно добавить возможность голосового ввода в любое поле на сайте по шорткату';
+const sampleOpening = 'Сейчас голосовой ввод работает только в БТР.';
+const sampleText = `${sampleOpening} По проекту добавим возможность ввода во все поля на сайте`;
 editorAudio.querySelector('.editor-audio__transcript').textContent = processedText;
 
 let unifiedProcessingTimeout;
@@ -24,12 +26,14 @@ function closeUnifiedWindow() {
 
 function showScenario({ scenario }) {
   audioRecording.clear();
+  joinDescription();
   clearEditorAudioSelection();
   closeUnifiedWindow();
   const compare = scenario === 'compare-audio';
   stage.classList.toggle('demo-stage--compare-audio', compare);
   finishDictation();
   dictationTranscript.hidden = compare;
+  resizeDescription();
   editorAudio.hidden = !compare;
   editorAudio.disabled = compare;
   for (const button of insertButtons) button.disabled = compare;
@@ -59,14 +63,17 @@ function removeUnifiedAudio() {
   clearEditorAudioSelection();
   editorAudio.hidden = true;
   dictationTranscript.hidden = false;
+  joinDescription();
+  resizeDescription();
   unifiedMicrophone.focus({ preventScroll: true });
 }
 
 function finishUnifiedProcessing(voiceWindow, text) {
   const restoreFocus = voiceWindow.contains(document.activeElement);
   closeUnifiedWindow();
-  finishDictation(text);
-  if (restoreFocus) dictationResult.focus({ preventScroll: true });
+  const { value, selectionStart, selectionEnd } = dictationTranscript;
+  writeInsertion({ value, selectionStart, selectionEnd }, text);
+  if (restoreFocus) dictationTranscript.focus({ preventScroll: true });
 }
 
 function selectWindowOutput(voiceWindow, value) {
@@ -96,8 +103,10 @@ for (const voiceWindow of voiceWindows) {
       const output = insert.dataset.insertVoice || (selectedAudio ? 'audio' : 'text');
       if (output === 'audio') {
         closeUnifiedWindow();
-        dictationTranscript.hidden = true;
+        if (dictationTranscript.value) splitDescription(editorAudioPanel);
+        else dictationTranscript.hidden = true;
         editorAudio.hidden = false;
+        resizeDescription();
         editorAudio.focus({ preventScroll: true });
       } else {
         showFormatMenu(false);
@@ -278,7 +287,7 @@ const comparisonGroup = frame.panel.querySelector('.df-card--bottom');
 comparisonGroup.setAttribute('aria-label', 'Сравнение');
 
 const panelOptions = document.getElementById('demo-panel-options-template').content.cloneNode(true);
-const approachGroup = panelOptions.querySelector('[role="radiogroup"]');
+const [approachGroup, editorStateGroup] = panelOptions.querySelectorAll('[role="radiogroup"]');
 const unifiedMicrophone = stage.querySelector('.voice-toolbar__microphone');
 const dictationButton = stage.querySelector('[data-voice-command="voice-input"]');
 const audioRecordingButton = stage.querySelector('[data-voice-command="audio-recording"]');
@@ -290,12 +299,22 @@ function showApproach() {
   unifiedMicrophone.hidden = !unified;
   dictationButton.hidden = unified;
   audioRecordingButton.hidden = unified;
+  editorStateGroup.hidden = unified;
   windowGroup.hidden = !unified;
   comparisonGroup.hidden = !unified;
   frame.select(unified ? windowScenario : null);
 }
 
 approachGroup.addEventListener('change', showApproach);
+editorStateGroup.addEventListener('change', () => {
+  frame.select(null);
+  const withText = editorStateGroup.querySelector('input:checked').value === 'text';
+  dictationTranscript.value = withText ? sampleText : '';
+  const caret = withText ? sampleOpening.length : 0;
+  dictationTranscript.setSelectionRange(caret, caret);
+  resizeDescription();
+  dictationTranscript.focus({ preventScroll: true });
+});
 unifiedMicrophone.addEventListener('click', openUnifiedWindow);
 
 frame.panel.querySelectorAll('.df-team__label').forEach((label, index) => {
@@ -309,14 +328,75 @@ frame.panel.querySelectorAll('.df-team__label').forEach((label, index) => {
 canvas.prepend(frame.root);
 
 const dictationToolbar = document.getElementById('dictation-toolbar');
+const voiceToolbar = document.getElementById('voice-toolbar');
 const dictationTranscript = document.getElementById('dictation-transcript');
-const dictationPlaceholder = dictationTranscript.querySelector('.dictation-transcript__placeholder');
-const dictationDraft = dictationTranscript.querySelector('.dictation-transcript__draft');
-const dictationResult = dictationTranscript.querySelector('.dictation-transcript__result');
+const descriptionAfterAudio = document.getElementById('description-after-audio');
+const audioRecordingRoot = document.getElementById('audio-recording');
+const editorAudioPanel = editorAudio.closest('.editor-audio-panel');
+const dictationPreview = document.getElementById('dictation-preview');
+const dictationDraft = document.createElement('span');
+dictationDraft.className = 'dictation-preview__draft';
 const dictationPause = dictationToolbar.querySelector('.dictation-toolbar__pause');
 const pauseCaption = dictationPause.querySelector('.tb__caption');
 const pauseIcon = dictationPause.querySelector('.tb__icon');
 const dictationTimer = dictationPause.querySelector('time');
+let inlineAudio;
+
+function splitDescription(widget) {
+  const splitAt = dictationTranscript.selectionStart;
+  const value = dictationTranscript.value;
+  inlineAudio = widget;
+  stage.classList.add('demo-stage--inline-audio');
+  dictationTranscript.value = value.slice(0, splitAt);
+  descriptionAfterAudio.value = value.slice(splitAt);
+  descriptionAfterAudio.hidden = !descriptionAfterAudio.value;
+  resizeDescription();
+}
+
+function joinDescription() {
+  if (!inlineAudio) return;
+  const splitAt = dictationTranscript.value.length;
+  dictationTranscript.value += descriptionAfterAudio.value;
+  dictationTranscript.setSelectionRange(splitAt, splitAt);
+  descriptionAfterAudio.value = '';
+  descriptionAfterAudio.hidden = true;
+  stage.classList.remove('demo-stage--inline-audio');
+  inlineAudio = undefined;
+  resizeDescription();
+}
+
+function resizeTextArea(field) {
+  field.style.height = '0';
+  const borderHeight = field.offsetHeight - field.clientHeight;
+  field.style.height = `${field.scrollHeight + borderHeight}px`;
+  return field.offsetHeight;
+}
+
+function resizeDescription() {
+  if (dictationTranscript.hidden) return;
+  let height = resizeTextArea(dictationTranscript);
+  if (inlineAudio) {
+    height = dictationTranscript.value ? height : 0;
+    stage.style.setProperty('--inline-audio-offset', `${height}px`);
+    height += inlineAudio.offsetHeight;
+    stage.style.setProperty('--after-audio-offset', `${height}px`);
+    if (!descriptionAfterAudio.hidden) height += resizeTextArea(descriptionAfterAudio);
+  }
+  stage.style.setProperty('--dictation-editor-height', `${height}px`);
+}
+
+dictationTranscript.addEventListener('input', resizeDescription);
+descriptionAfterAudio.addEventListener('input', resizeDescription);
+document.fonts.ready.then(resizeDescription);
+const audioLayoutResize = new ResizeObserver(() => {
+  if (inlineAudio) resizeDescription();
+});
+audioLayoutResize.observe(audioRecordingRoot);
+audioLayoutResize.observe(editorAudioPanel);
+new MutationObserver(() => {
+  if (inlineAudio === audioRecordingRoot && audioRecordingRoot.hidden) joinDescription();
+}).observe(audioRecordingRoot, { attributeFilter: ['hidden'] });
+
 const rawWords = rawText.split(' ');
 const processedWords = processedText.split(' ');
 
@@ -328,16 +408,37 @@ let processingTimeout;
 let pauseWidthAnimation;
 let elapsed = 0;
 let runningSince = null;
+let dictationSource;
+let recordedWordCount = 0;
+
+function writeInsertion({ value, selectionStart, selectionEnd }, text) {
+  const before = value.slice(0, selectionStart);
+  const after = value.slice(selectionEnd);
+  const prefix = text && /\S$/.test(before) ? ' ' : '';
+  const suffix = text && /^\S/.test(after) ? ' ' : '';
+  dictationTranscript.value = text ? before + prefix + text + suffix + after : value;
+  if (dictationTranscript.readOnly) {
+    dictationDraft.textContent = text;
+    if (text) {
+      dictationPreview.replaceChildren(before + prefix, dictationDraft, suffix + after);
+    } else {
+      dictationPreview.textContent = value;
+    }
+  }
+  const caret = selectionStart + prefix.length + text.length;
+  dictationTranscript.setSelectionRange(caret, text ? caret : selectionEnd);
+  resizeDescription();
+}
 
 function updateDictation() {
   const activeTime = elapsed + (runningSince === null ? 0 : performance.now() - runningSince);
   const seconds = Math.floor(activeTime / 1000);
-  const wordCount = Math.floor(activeTime / wordInterval);
+  recordedWordCount = Math.min(rawWords.length, Math.floor(activeTime / wordInterval));
   const minutesLabel = String(Math.floor(seconds / 60)).padStart(2, '0');
   const secondsLabel = String(seconds % 60).padStart(2, '0');
   dictationTimer.textContent = `${minutesLabel}:${secondsLabel}`;
   dictationTimer.dateTime = `PT${seconds}S`;
-  dictationDraft.textContent = rawWords.slice(0, wordCount).join(' ');
+  writeInsertion(dictationSource, rawWords.slice(0, recordedWordCount).join(' '));
   if (runningSince !== null) {
     tickTimeout = setTimeout(updateDictation, wordInterval - activeTime % wordInterval);
   }
@@ -367,11 +468,11 @@ function setDictationPaused(paused) {
 
 function startDictation() {
   elapsed = 0;
-  dictationPlaceholder.hidden = true;
-  dictationResult.hidden = true;
-  dictationResult.textContent = '';
-  dictationDraft.hidden = false;
-  dictationToolbar.hidden = false;
+  const { value, selectionStart, selectionEnd } = dictationTranscript;
+  dictationSource ??= { value, selectionStart, selectionEnd };
+  dictationTranscript.readOnly = true;
+  dictationToolbar.inert = false;
+  voiceToolbar.inert = true;
   setDictationPaused(false);
 }
 
@@ -379,21 +480,20 @@ function stopDictation() {
   clearTimeout(tickTimeout);
   pauseWidthAnimation?.cancel();
   runningSince = null;
-  dictationToolbar.hidden = true;
+  dictationToolbar.inert = true;
+  voiceToolbar.inert = false;
 }
 
 function finishDictation(text = '') {
   stopDictation();
   clearTimeout(processingTimeout);
   dictationTranscript.removeAttribute('aria-busy');
-  dictationDraft.hidden = true;
-  dictationDraft.textContent = '';
-  dictationResult.textContent = text;
-  dictationResult.hidden = !text;
-  dictationPlaceholder.hidden = Boolean(text);
+  dictationTranscript.readOnly = false;
+  if (dictationSource) writeInsertion(dictationSource, text);
+  dictationSource = undefined;
 }
 
-const audioRecording = mountAudioRecording(document.getElementById('audio-recording'), () => {
+const audioRecording = mountAudioRecording(audioRecordingRoot, () => {
   dictationTranscript.focus({ preventScroll: true });
 });
 
@@ -406,12 +506,13 @@ dictationButton.addEventListener('click', () => {
 audioRecordingButton.addEventListener('click', () => {
   frame.select('audio-recording');
   audioRecording.start(audioRecordingButton);
+  if (dictationTranscript.value && !audioRecordingRoot.hidden) splitDescription(audioRecordingRoot);
 });
 
 dictationPause.addEventListener('click', () => setDictationPaused(runningSince !== null));
 dictationToolbar.querySelector('.dictation-toolbar__restart').addEventListener('click', startDictation);
 dictationToolbar.querySelector('.dictation-toolbar__confirm').addEventListener('click', () => {
-  const wordCount = dictationDraft.textContent.match(/\S+/g)?.length ?? 0;
+  const wordCount = recordedWordCount;
   if (wordCount === 0) {
     finishDictation();
   } else {
@@ -429,6 +530,5 @@ function clearDictation() {
 }
 
 dictationToolbar.querySelector('.dictation-toolbar__cancel').addEventListener('click', clearDictation);
-dictationResult.addEventListener('click', clearDictation);
 
 showApproach();

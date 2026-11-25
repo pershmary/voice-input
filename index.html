@@ -11,28 +11,43 @@
   <link rel="stylesheet" href="vendor/ui-kit/components/button/button.css">
   <link rel="stylesheet" href="vendor/ui-kit/components/tumbler/tumbler.css">
   <link rel="stylesheet" href="css/fonts.css">
-  <link rel="stylesheet" href="css/demo-frame.css?v=stable-radio-height">
-  <link rel="stylesheet" href="css/scene-background.css?v=audio-without-border">
-  <link rel="stylesheet" href="css/voice-toolbar.css?v=separate-voice-commands">
-  <link rel="stylesheet" href="css/audio-recording.css?v=audio-selection-radius">
+  <link rel="stylesheet" href="css/demo-frame.css?v=editor-state">
+  <link rel="stylesheet" href="css/scene-background.css?v=continuous-sidebar-divider">
+  <link rel="stylesheet" href="css/voice-toolbar.css?v=toolbar-transition-150ms">
+  <link rel="stylesheet" href="css/audio-recording.css?v=equal-audio-spacing">
   <script defer src="vendor/ui-kit/components/demo-frame/demo-frame.js"></script>
-  <script defer src="js/audio-recording.js?v=audio-widget-selection"></script>
-  <script defer src="js/demo-frame.js?v=audio-widget-selection"></script>
+  <script defer src="js/audio-recording.js?v=audio-selection-without-transcript"></script>
+  <script defer src="js/demo-frame.js?v=toolbar-transition"></script>
 </head>
 <body>
   <template id="demo-panel-options-template">
     <div class="demo-scenario-group" role="radiogroup" aria-labelledby="demo-approach-title">
       <div class="df-group" id="demo-approach-title">Подход</div>
       <div class="df-options">
-        <label class="demo-approach-option">
+        <label class="demo-panel-option">
           <input type="radio" name="demo-approach" value="commands" checked>
           <span class="df-radio__box" aria-hidden="true"></span>
           <span class="df-radio__text">2 команды</span>
         </label>
-        <label class="demo-approach-option">
+        <label class="demo-panel-option">
           <input type="radio" name="demo-approach" value="unified">
           <span class="df-radio__box" aria-hidden="true"></span>
           <span class="df-radio__text">Единое окно</span>
+        </label>
+      </div>
+    </div>
+    <div class="demo-scenario-group" role="radiogroup" aria-labelledby="demo-editor-state-title" hidden>
+      <div class="df-group" id="demo-editor-state-title">Состояние редактора</div>
+      <div class="df-options">
+        <label class="demo-panel-option">
+          <input type="radio" name="demo-editor-state" value="empty" checked>
+          <span class="df-radio__box" aria-hidden="true"></span>
+          <span class="df-radio__text">Пусто</span>
+        </label>
+        <label class="demo-panel-option">
+          <input type="radio" name="demo-editor-state" value="text">
+          <span class="df-radio__box" aria-hidden="true"></span>
+          <span class="df-radio__text">С текстом</span>
         </label>
       </div>
     </div>
@@ -89,12 +104,10 @@
           </div>
         </div>
       </div>
-      <div class="dictation-transcript" id="dictation-transcript" tabindex="-1" aria-label="Описание" hidden>
-        <p class="dictation-transcript__placeholder">Описание</p>
-        <p class="dictation-transcript__draft" hidden></p>
-        <button type="button" class="dictation-transcript__result" title="Убрать обработанный текст" hidden></button>
-      </div>
-      <div class="tb tb--style-info recording-toolbar dictation-toolbar" id="dictation-toolbar" role="toolbar" aria-label="Тулбар голосового ввода" hidden>
+      <textarea class="dictation-transcript" id="dictation-transcript" rows="1" aria-label="Описание" placeholder="Описание" hidden></textarea>
+      <div class="dictation-preview" id="dictation-preview" aria-hidden="true"></div>
+      <textarea class="dictation-transcript dictation-transcript--after-audio" id="description-after-audio" rows="1" aria-label="Описание после аудио" hidden></textarea>
+      <div class="tb tb--style-info recording-toolbar dictation-toolbar" id="dictation-toolbar" role="toolbar" aria-label="Тулбар голосового ввода" inert>
         <button type="button" class="tb__btn is-selected recording-toolbar__pause dictation-toolbar__pause" aria-label="Пауза">
           <span class="tb__icon" aria-hidden="true">&#xE639;</span>
           <span class="tb__caption">Пауза</span>

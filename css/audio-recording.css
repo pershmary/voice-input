@@ -31,15 +31,15 @@
   background: var(--background-background-color);
 }
 
-.demo-stage:has(.audio-recording__widget:not([hidden])) .dictation-transcript__placeholder {
+.demo-stage:not(.demo-stage--inline-audio):has(.audio-recording__widget:not([hidden])) .dictation-transcript {
   visibility: hidden;
 }
 
-.audio-recording[data-state="ready"] .audio-recording__widget {
+.audio-recording:is([data-state="ready"], [data-state="unavailable"]) .audio-recording__widget {
   cursor: pointer;
 }
 
-:is(.audio-recording[data-state="ready"] .audio-recording__widget, .editor-audio:enabled):hover::after,
+:is(.audio-recording:is([data-state="ready"], [data-state="unavailable"]) .audio-recording__widget, .editor-audio:enabled):hover::after,
 :is(.audio-recording__widget, .editor-audio)[data-audio-selected]::after {
   position: absolute;
   inset: 0;
@@ -248,20 +248,60 @@
 }
 
 /* The original task image resumes beneath the taller description field. */
-.demo-stage:has(.audio-recording:is([data-state="processing"], [data-state="ready"], [data-state="unavailable"])) .scene-background__task-body img {
-  clip-path: inset(0 0 calc(100% - 218px) 0);
+.demo-stage:not(.demo-stage--inline-audio):has(.audio-recording:is([data-state="processing"], [data-state="ready"], [data-state="unavailable"])) .scene-background__task-body img {
+  clip-path: inset(0 0 calc(100% - 217px) 0);
 }
 
-.demo-stage:has(.audio-recording:is([data-state="processing"], [data-state="ready"], [data-state="unavailable"])) .scene-background__task-body::after {
+.demo-stage:not(.demo-stage--inline-audio):has(.audio-recording:is([data-state="processing"], [data-state="ready"], [data-state="unavailable"])) .scene-background__task-body::after {
   inset: calc(160px + var(--audio-editor-height, 148px)) 0 0;
   width: auto;
   height: auto;
   background: url("../assets/scene/task-panel.png") no-repeat -8px -218px;
 }
 
-.audio-recording:is([data-state="processing"], [data-state="ready"], [data-state="unavailable"]) .audio-recording__editor {
+.demo-stage:not(.demo-stage--inline-audio) .audio-recording:is([data-state="processing"], [data-state="ready"], [data-state="unavailable"]) .audio-recording__editor {
   box-sizing: content-box;
   min-height: 148px;
   border-bottom: 1px solid #d2d6da;
   background: var(--background-background-color);
+}
+
+.demo-stage--inline-audio {
+  --inline-audio-text-gap: 6px;
+}
+
+.demo-stage--inline-audio .dictation-transcript {
+  min-height: 0;
+}
+
+.demo-stage--inline-audio #dictation-transcript {
+  padding-bottom: var(--inline-audio-text-gap);
+  border-bottom: 0;
+}
+
+.demo-stage--inline-audio #dictation-transcript:placeholder-shown {
+  visibility: hidden;
+}
+
+.demo-stage--inline-audio .dictation-transcript--after-audio {
+  top: calc(157px + var(--after-audio-offset, 0px));
+  padding-top: var(--inline-audio-text-gap);
+}
+
+.demo-stage--inline-audio .audio-recording,
+.demo-stage--inline-audio .editor-audio-panel:has(.editor-audio:not([hidden])) {
+  top: calc(157px + var(--inline-audio-offset, 0px));
+}
+
+.demo-stage--inline-audio .audio-recording__editor {
+  position: relative;
+  top: 0;
+}
+
+.demo-stage--inline-audio .editor-audio-panel:has(.editor-audio:not([hidden])) {
+  height: 111px;
+}
+
+.demo-stage--inline-audio .editor-audio-toolbar {
+  top: calc(-34px - var(--inline-audio-offset, 0px));
 }

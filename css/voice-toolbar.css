@@ -92,7 +92,19 @@
 .voice-toolbar__wave span:first-child,
 .voice-toolbar__wave span:last-child { height: 6px; }
 
-.demo-stage:has(.dictation-toolbar:not([hidden])) .voice-toolbar,
+.voice-toolbar,
+.dictation-toolbar {
+  --toolbar-transition-duration: 150ms;
+  transition: opacity var(--toolbar-transition-duration) ease, visibility 0s;
+}
+
+.voice-toolbar[inert],
+.dictation-toolbar[inert] {
+  opacity: 0;
+  visibility: hidden;
+  transition-delay: 0s, var(--toolbar-transition-duration);
+}
+
 .recording-toolbar[hidden] {
   display: none;
 }
@@ -150,56 +162,69 @@
   content: none;
 }
 
-.dictation-transcript {
+.dictation-transcript,
+.dictation-preview {
   position: absolute;
-  top: 165px;
+  top: 157px;
   left: 814px;
   box-sizing: border-box;
-  width: 704px;
-  min-height: 44px;
-  padding-top: 3px;
+  width: 720px;
+  min-height: 53px;
+  padding: 2px 0 9px;
+  border: 0;
+  border-bottom: 1px solid var(--border-unaccented_border-color);
+  border-radius: 0;
   color: var(--text-text-color);
+  font: inherit;
   font-size: var(--font-font-size-font-size_m);
   line-height: 20px;
   letter-spacing: -0.0141em;
 }
 
-.dictation-transcript:has(.dictation-transcript__placeholder[hidden]) {
-  border-bottom: 1px solid var(--border-unaccented_border-color);
+.dictation-transcript {
   background: var(--background-background-color);
+  resize: none;
+  overflow: hidden;
 }
 
-.dictation-transcript__placeholder,
-.dictation-transcript__draft,
-.dictation-transcript__result {
-  position: relative;
-  top: -8px;
-  margin: 0;
+.dictation-preview {
+  display: none;
+  border-bottom-color: transparent;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  pointer-events: none;
 }
 
-.dictation-transcript__placeholder {
-  color: var(--components-input-placeholder-color_inputtext);
+.dictation-transcript:read-only:not([hidden]) {
+  color: transparent;
 }
 
-.dictation-transcript__placeholder::before {
-  content: "";
-  position: absolute;
-  top: 1px;
-  left: 0;
-  width: 1px;
-  height: 16px;
-  background: #333;
+.dictation-transcript:read-only:not([hidden]) + .dictation-preview {
+  display: block;
 }
 
-.dictation-transcript__draft {
+.dictation-preview__draft {
   opacity: 0.4;
 }
 
-.dictation-transcript[aria-busy="true"] .dictation-transcript__draft,
+.dictation-transcript::placeholder {
+  color: var(--components-input-placeholder-color_inputtext);
+  opacity: 1;
+}
+
+.dictation-transcript:read-only::placeholder {
+  color: transparent;
+}
+
+.dictation-transcript:focus {
+  outline: none;
+}
+
+.dictation-transcript[aria-busy="true"] + .dictation-preview .dictation-preview__draft,
 .voice-window[data-processing] .voice-window__text {
   opacity: 1;
   color: transparent;
-  background-image: linear-gradient(90deg, rgb(0 0 0 / 30%), rgb(0 0 0 / 50%), rgb(0 0 0 / 30%));
+  background-image: linear-gradient(90deg, rgb(0 0 0 / 30%), var(--text-info_text-color) 50%, rgb(0 0 0 / 30%));
   background-size: 200% 100%;
   background-clip: text;
   animation: dictation-processing var(--dictation-processing-duration) linear both;
@@ -211,7 +236,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dictation-transcript[aria-busy="true"] .dictation-transcript__draft,
+  .voice-toolbar,
+  .dictation-toolbar {
+    --toolbar-transition-duration: 0ms;
+  }
+
+  .dictation-transcript[aria-busy="true"] + .dictation-preview .dictation-preview__draft,
   .voice-window[data-processing] .voice-window__text {
     animation: none;
     background-position: center;
@@ -219,23 +249,15 @@
 }
 
 @media (forced-colors: active) {
-  .dictation-transcript[aria-busy="true"] .dictation-transcript__draft,
+  .dictation-transcript:read-only:not([hidden]),
+  .dictation-transcript:read-only::placeholder {
+    forced-color-adjust: none;
+  }
+
+  .dictation-transcript[aria-busy="true"] + .dictation-preview .dictation-preview__draft,
   .voice-window[data-processing] .voice-window__text {
     animation: none;
     background-image: none;
     color: CanvasText;
   }
-}
-
-.dictation-transcript__result:not([hidden]) {
-  appearance: none;
-  display: block;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  font: inherit;
-  letter-spacing: inherit;
-  text-align: left;
-  cursor: pointer;
 }

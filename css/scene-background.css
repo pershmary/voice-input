@@ -130,6 +130,8 @@
   width: 796px;
   overflow: hidden;
   background: var(--background-background-color);
+  /* Continue the image's two-pixel divider through the expanding editor. */
+  box-shadow: inset -2px 0 #eee;
 }
 
 .scene-background__task-body img {
@@ -229,9 +231,17 @@
   background: var(--background-same-info_same_background-color);
 }
 
-/* The task-card image is cropped at y=210 and resumes below the expanded editor. */
+/* Skip the editor divider on image row 217 and resume below the live editor. */
+.demo-stage:has(:where(.dictation-transcript:not([hidden]))) .scene-background__task-body img,
 .demo-stage:has(.editor-audio:not([hidden])) .scene-background__task-body img {
-  clip-path: inset(0 0 calc(100% - 218px) 0);
+  clip-path: inset(0 0 calc(100% - 217px) 0);
+}
+
+.demo-stage:has(:where(.dictation-transcript:not([hidden]))) .scene-background__task-body::after {
+  inset: max(210px, calc(157px + var(--dictation-editor-height, 0px))) 0 0;
+  width: auto;
+  height: auto;
+  background: url("../assets/scene/task-panel.png") no-repeat -8px -218px;
 }
 
 .demo-stage:has(.editor-audio:not([hidden])) .scene-background__task-body::after {

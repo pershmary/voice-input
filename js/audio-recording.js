@@ -34,7 +34,8 @@ function mountAudioRecording(root, onPermissionUnavailable) {
   );
   const widgetTime = widget.querySelector('time');
   const speeds = [1, 1.25, 1.5, 2];
-  const clearSelection = bindAudioWidgetSelection(widget, dismissRecording, () => root.dataset.state === 'ready');
+  const isSelectable = () => ['ready', 'unavailable'].includes(root.dataset.state);
+  const clearSelection = bindAudioWidgetSelection(widget, dismissRecording, isSelectable);
 
   let session;
   let trigger;
@@ -52,7 +53,7 @@ function mountAudioRecording(root, onPermissionUnavailable) {
     root.dataset.state = state;
     root.hidden = state === 'idle' && !message;
     widget.hidden = !starting && !recording && !showPlayer;
-    if (state === 'ready') widget.tabIndex = 0;
+    if (isSelectable()) widget.tabIndex = 0;
     else widget.removeAttribute('tabindex');
     actions.stop.hidden = actions.cancel.hidden = !starting && !recording;
     actions.stop.disabled = !recording;
