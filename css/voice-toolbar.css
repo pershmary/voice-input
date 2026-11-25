@@ -23,7 +23,7 @@
 
 .voice-toolbar[hidden],
 .voice-toolbar__microphone[hidden],
-.voice-launch[hidden] {
+.voice-toolbar [data-voice-command][hidden] {
   display: none;
 }
 
@@ -73,99 +73,24 @@
   content: none;
 }
 
-.voice-launch {
-  position: relative;
-  display: flex;
-  gap: var(--offset-offset_3xs);
-}
-
-.voice-launch__main {
-  width: var(--inline_height-inline_height_xl);
-  border-start-start-radius: var(--border-radius-border-radius_3xl);
-  border-end-start-radius: var(--border-radius-border-radius_3xl);
-  border-start-end-radius: 0;
-  border-end-end-radius: 0;
-}
-
-.voice-launch__main:hover {
-  border-radius: var(--border-radius-border-radius_m);
-}
-
-.voice-launch__toggle {
-  min-width: 0;
-  padding: var(--offset-offset_3xs);
-  padding-inline-start: 0;
-  border-radius: 0 var(--border-radius-border-radius_3xl) var(--border-radius-border-radius_3xl) 0;
-}
-
-.voice-launch__toggle .tb__arrow {
-  width: var(--icon-icon_size-icon-size_2xs);
-  height: var(--icon-icon_size-icon-size_2xs);
-  font-size: var(--icon-icon_size-icon-size_2xs);
-}
-
-.voice-launch:has(.voice-launch__toggle:hover) .voice-launch__main,
-.voice-launch:has(.voice-launch__toggle[aria-expanded="true"]) > .tb__btn {
-  --tb-bg: var(--tb-hover);
-}
-
-.voice-launch:has(.voice-launch__toggle:hover, .voice-launch__toggle[aria-expanded="true"]) .voice-launch__main {
-  border-radius: var(--border-radius-border-radius_m) 0 0 var(--border-radius-border-radius_m);
-}
-
-.voice-launch__wave {
+.voice-toolbar__wave {
   box-sizing: border-box;
   display: grid;
+  justify-items: start;
   grid-template-columns: 5px 4.5px 4.5px 5px 1px;
   padding-inline: 2px;
 }
 
-.voice-launch__wave span {
+.voice-toolbar__wave span {
   width: 1px;
   height: 12px;
   border-radius: 2px;
   background: currentColor;
 }
 
-.voice-launch__wave span:nth-child(3) { height: 20px; }
-.voice-launch__wave span:first-child,
-.voice-launch__wave span:last-child { height: 6px; }
-
-.voice-launch__menu {
-  position: absolute;
-  z-index: 2;
-  /* The extra 3px clear the toolbar padding and border. */
-  inset-block-start: calc(100% + var(--offset-offset_2xs) + var(--offset-offset_3xs) + 1px);
-  /* Align the menu's 20px icon inset with the main button's 4px inset. */
-  inset-inline-start: calc(var(--offset-offset_2xs) - var(--offset-offset_s) - var(--offset-offset_m));
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  min-width: 200px;
-  gap: var(--offset-offset_xs);
-  padding: var(--offset-offset_s) var(--offset-offset_s) var(--offset-offset_m);
-  border-radius: var(--border-radius-border-radius_s);
-  background: var(--components-popuptemplate-background-color_sticky);
-  box-shadow: 0 0 var(--blur-shadow-blur_a2) var(--color-shadow-color_a),
-              0 0 var(--blur-shadow-blur_a) var(--color-shadow-color_a);
-}
-
-.voice-launch__menu[hidden] { display: none; }
-
-.voice-launch__option {
-  --tb-hover: var(--background-same-info_hover_same_background-color);
-  justify-content: flex-start;
-  gap: var(--offset-offset_s);
-  padding-inline: var(--offset-offset_m) calc(2 * var(--offset-offset_s));
-  border-radius: var(--components-popup-menu-item_border-radius);
-  font-size: var(--font-font-size-font-size_xl);
-}
-
-.voice-launch__dismiss {
-  position: absolute;
-  inset-block-start: var(--offset-offset_s);
-  inset-inline-end: calc(-1 * var(--clb-size) / 2);
-}
+.voice-toolbar__wave span:nth-child(3) { height: 20px; }
+.voice-toolbar__wave span:first-child,
+.voice-toolbar__wave span:last-child { height: 6px; }
 
 .demo-stage:has(.dictation-toolbar:not([hidden])) .voice-toolbar,
 .recording-toolbar[hidden] {
