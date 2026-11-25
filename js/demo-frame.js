@@ -23,7 +23,6 @@ function closeUnifiedWindow() {
 }
 
 function showScenario({ scenario }) {
-  showVoiceLaunchMenu(false);
   audioRecording.clear();
   closeUnifiedWindow();
   const compare = scenario === 'compare-audio';
@@ -277,19 +276,16 @@ comparisonGroup.setAttribute('aria-label', 'Сравнение');
 const panelOptions = document.getElementById('demo-panel-options-template').content.cloneNode(true);
 const approachGroup = panelOptions.querySelector('[role="radiogroup"]');
 const unifiedMicrophone = stage.querySelector('.voice-toolbar__microphone');
-const voiceLaunch = stage.querySelector('.voice-launch');
-const voiceLaunchMain = voiceLaunch.querySelector('.voice-launch__main');
-const voiceLaunchToggle = voiceLaunch.querySelector('.voice-launch__toggle');
-const voiceLaunchMenu = voiceLaunch.querySelector('.voice-launch__menu');
-const voiceLaunchOptions = voiceLaunchMenu.querySelectorAll('[data-command]');
-let voiceLaunchCommand = 'voice-input';
+const dictationButton = stage.querySelector('[data-voice-command="voice-input"]');
+const audioRecordingButton = stage.querySelector('[data-voice-command="audio-recording"]');
 scenarioCard.append(panelOptions, windowGroup);
 
 function showApproach() {
   approach = approachGroup.querySelector('input:checked').value;
   const unified = approach === 'unified';
   unifiedMicrophone.hidden = !unified;
-  voiceLaunch.hidden = unified;
+  dictationButton.hidden = unified;
+  audioRecordingButton.hidden = unified;
   windowGroup.hidden = !unified;
   comparisonGroup.hidden = !unified;
   frame.select(unified ? windowScenario : null);
@@ -395,49 +391,17 @@ function finishDictation(text = '') {
 
 const audioRecording = mountAudioRecording(document.getElementById('audio-recording'));
 
-function launchVoiceCommand() {
-  frame.select(voiceLaunchCommand);
-  if (voiceLaunchCommand === 'voice-input') {
-    startDictation();
-    dictationPause.focus({ preventScroll: true });
-  } else {
-    audioRecording.start(voiceLaunchMain);
-  }
-}
-
-function showVoiceLaunchMenu(show) {
-  voiceLaunchMenu.hidden = !show;
-  voiceLaunchToggle.setAttribute('aria-expanded', String(show));
-  if (show) voiceLaunchOptions[0].focus({ preventScroll: true });
-}
-
-function dismissVoiceLaunchMenu() {
-  showVoiceLaunchMenu(false);
-  voiceLaunchToggle.focus({ preventScroll: true });
-}
-
-voiceLaunchMain.addEventListener('click', launchVoiceCommand);
-voiceLaunchToggle.addEventListener('click', () => showVoiceLaunchMenu(voiceLaunchMenu.hidden));
-voiceLaunchMenu.querySelector('.voice-launch__dismiss').addEventListener('click', dismissVoiceLaunchMenu);
-
-for (const option of voiceLaunchOptions) {
-  option.addEventListener('click', () => {
-    voiceLaunchCommand = option.dataset.command;
-    voiceLaunchMain.setAttribute('aria-label', option.querySelector('.tb__caption').textContent);
-    voiceLaunchMain.replaceChildren(option.querySelector('.tb__icon').cloneNode(true));
-    voiceLaunchMain.focus({ preventScroll: true });
-    launchVoiceCommand();
-  });
-}
-
-document.addEventListener('click', event => {
-  if (!voiceLaunchMenu.hidden && !voiceLaunch.contains(event.target)) showVoiceLaunchMenu(false);
+dictationButton.addEventListener('click', () => {
+  frame.select('voice-input');
+  startDictation();
+  dictationPause.focus({ preventScroll: true });
 });
-voiceLaunch.addEventListener('keydown', event => {
-  if (event.key !== 'Escape' || voiceLaunchMenu.hidden) return;
-  event.preventDefault();
-  dismissVoiceLaunchMenu();
+
+audioRecordingButton.addEventListener('click', () => {
+  frame.select('audio-recording');
+  audioRecording.start(audioRecordingButton);
 });
+
 dictationPause.addEventListener('click', () => setDictationPaused(runningSince !== null));
 dictationToolbar.querySelector('.dictation-toolbar__restart').addEventListener('click', startDictation);
 dictationToolbar.querySelector('.dictation-toolbar__confirm').addEventListener('click', () => {
@@ -450,11 +414,11 @@ dictationToolbar.querySelector('.dictation-toolbar__confirm').addEventListener('
     const text = processedWords.slice(0, wordCount).join(' ');
     processingTimeout = setTimeout(() => finishDictation(text), processingDuration);
   }
-  voiceLaunchMain.focus({ preventScroll: true });
+  dictationButton.focus({ preventScroll: true });
 });
 function clearDictation() {
   finishDictation();
-  const microphone = approach === 'unified' ? unifiedMicrophone : voiceLaunchMain;
+  const microphone = approach === 'unified' ? unifiedMicrophone : dictationButton;
   microphone.focus({ preventScroll: true });
 }
 
