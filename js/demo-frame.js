@@ -591,11 +591,20 @@ function writeInsertion({ value, selectionStart, selectionEnd }, text) {
   const suffix = text && /^\S/.test(after) ? ' ' : '';
   dictationTranscript.value = text ? before + prefix + text + suffix + after : value;
   if (dictationTranscript.readOnly) {
-    dictationDraft.textContent = text;
-    if (text) {
-      dictationPreview.replaceChildren(before + prefix, dictationDraft, suffix + after);
-    } else {
-      dictationPreview.textContent = value;
+    // Keep a measurable insertion point before the first dictated word arrives.
+    dictationDraft.textContent = text || '\u200b';
+    dictationPreview.replaceChildren(
+      before + prefix,
+      dictationDraft,
+      text ? suffix + after : value.slice(selectionStart)
+    );
+
+    const firstLine = dictationDraft.getClientRects()[0];
+    const previewRect = dictationPreview.getBoundingClientRect();
+    if (firstLine && previewRect.width) {
+      const scale = previewRect.width / dictationPreview.offsetWidth;
+      const left = dictationPreview.offsetLeft + (firstLine.left - previewRect.left) / scale;
+      dictationToolbar.style.left = `${left}px`;
     }
   }
   const caret = selectionStart + prefix.length + text.length;
