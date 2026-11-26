@@ -604,7 +604,12 @@ function writeInsertion({ value, selectionStart, selectionEnd }, text) {
     if (firstLine && previewRect.width) {
       const scale = previewRect.width / dictationPreview.offsetWidth;
       const left = dictationPreview.offsetLeft + (firstLine.left - previewRect.left) / scale;
+      const { lineHeight, paddingTop } = getComputedStyle(dictationPreview);
+      const lineHeightPx = parseFloat(lineHeight);
+      const lineCenter = (firstLine.top + firstLine.height / 2 - previewRect.top) / scale;
+      const line = Math.max(0, Math.floor((lineCenter - parseFloat(paddingTop)) / lineHeightPx));
       dictationToolbar.style.left = `${left}px`;
+      dictationToolbar.style.setProperty('--dictation-line-offset', `${line * lineHeightPx}px`);
     }
   }
   const caret = selectionStart + prefix.length + text.length;

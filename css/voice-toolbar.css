@@ -116,7 +116,7 @@
 
 .dictation-toolbar {
   position: absolute;
-  top: 120px;
+  top: calc(120px + var(--dictation-line-offset, 0px));
   left: 814px;
 }
 
