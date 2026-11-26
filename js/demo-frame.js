@@ -482,7 +482,6 @@ const dictationPreview = document.getElementById('dictation-preview');
 const dictationDraft = document.createElement('span');
 dictationDraft.className = 'dictation-preview__draft';
 const dictationPause = dictationToolbar.querySelector('.dictation-toolbar__pause');
-const pauseCaption = dictationPause.querySelector('.tb__caption');
 const pauseIcon = dictationPause.querySelector('.tb__icon');
 const dictationTimer = dictationPause.querySelector('time');
 let inlineAudio;
@@ -626,8 +625,7 @@ function setDictationPaused(paused) {
   clearTimeout(tickTimeout);
   if (paused) elapsed += performance.now() - runningSince;
   runningSince = paused ? null : performance.now();
-  pauseCaption.textContent = paused ? 'Продолжить' : 'Пауза';
-  dictationPause.setAttribute('aria-label', pauseCaption.textContent);
+  dictationPause.setAttribute('aria-label', paused ? 'Продолжить' : 'Пауза');
   dictationPause.classList.toggle('is-paused', paused);
   pauseIcon.textContent = paused ? '\uE9B1' : '\uE639';
   updateDictation();
