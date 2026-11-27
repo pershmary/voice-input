@@ -13,11 +13,11 @@
   <link rel="stylesheet" href="css/fonts.css">
   <link rel="stylesheet" href="css/demo-frame.css?v=toggle-play-icon-offset">
   <link rel="stylesheet" href="css/scene-background.css?v=unified-audio-without-toolbar">
-  <link rel="stylesheet" href="css/voice-toolbar.css?v=dictation-line-offset">
+  <link rel="stylesheet" href="css/voice-toolbar.css?v=dictation-svg">
   <link rel="stylesheet" href="css/audio-recording.css?v=audio-toolbar-visible">
   <script defer src="vendor/ui-kit/components/demo-frame/demo-frame.js"></script>
   <script defer src="js/audio-recording.js?v=audio-selection-without-transcript"></script>
-  <script defer src="js/demo-frame.js?v=dictation-line-offset"></script>
+  <script defer src="js/demo-frame.js?v=dictation-icon-options"></script>
 </head>
 <body>
   <template id="demo-panel-options-template">
@@ -48,6 +48,36 @@
           <input type="radio" name="demo-editor-state" value="text">
           <span class="df-radio__box" aria-hidden="true"></span>
           <span class="df-radio__text">С текстом</span>
+        </label>
+      </div>
+    </div>
+    <div class="demo-scenario-group" role="radiogroup" aria-labelledby="demo-toolbar-commands-title">
+      <div class="df-group" id="demo-toolbar-commands-title">Команды в тулбаре</div>
+      <div class="df-options">
+        <label class="demo-panel-option">
+          <input type="radio" name="demo-toolbar-commands" value="separate" checked>
+          <span class="df-radio__box" aria-hidden="true"></span>
+          <span class="df-radio__text">Разные</span>
+        </label>
+        <label class="demo-panel-option">
+          <input type="radio" name="demo-toolbar-commands" value="unified">
+          <span class="df-radio__box" aria-hidden="true"></span>
+          <span class="df-radio__text">Единая</span>
+        </label>
+      </div>
+    </div>
+    <div class="demo-scenario-group" role="radiogroup" aria-labelledby="demo-dictation-icon-title">
+      <div class="df-group" id="demo-dictation-icon-title">Иконка диктовки</div>
+      <div class="df-options">
+        <label class="demo-panel-option">
+          <input type="radio" name="demo-dictation-icon" value="wave" checked>
+          <span class="df-radio__box" aria-hidden="true"></span>
+          <span class="df-radio__text">Волна</span>
+        </label>
+        <label class="demo-panel-option">
+          <input type="radio" name="demo-dictation-icon" value="microphone-letter">
+          <span class="df-radio__box" aria-hidden="true"></span>
+          <span class="df-radio__text">Микрофон с буквой</span>
         </label>
       </div>
     </div>
@@ -214,7 +244,25 @@
           </button>
           <button type="button" class="tb__btn" data-voice-command="voice-input" aria-label="Диктовать">
             <span class="tb__icon voice-toolbar__wave" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></span>
+            <img class="tb__icon voice-toolbar__dictation-letter" src="assets/voice-toolbar/dictation.svg" alt="">
           </button>
+          <div class="voice-launch" hidden>
+            <button type="button" class="tb__btn voice-launch__main" aria-label="Диктовать" aria-expanded="false" aria-controls="voice-launch-menu">
+              <span class="tb__icon voice-toolbar__wave" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></span>
+              <img class="tb__icon voice-toolbar__dictation-letter" src="assets/voice-toolbar/dictation.svg" alt="">
+            </button>
+            <div class="voice-launch__menu" id="voice-launch-menu" role="group" aria-label="Голосовые действия" hidden>
+              <button type="button" class="tb__btn voice-launch__option" data-command="voice-input">
+                <span class="tb__icon voice-toolbar__wave" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></span>
+                <img class="tb__icon voice-toolbar__dictation-letter" src="assets/voice-toolbar/dictation.svg" alt="">
+                <span class="tb__caption">Диктовать</span>
+              </button>
+              <button type="button" class="tb__btn voice-launch__option" data-command="audio-recording">
+                <span class="tb__icon" aria-hidden="true">&#xe9b1;</span>
+                <span class="tb__caption">Записать аудио</span>
+              </button>
+            </div>
+          </div>
           <button type="button" class="tb__btn" aria-label="SabyGPT" disabled>
             <span class="voice-toolbar__assistant"><img src="assets/voice-toolbar/assistant.svg" alt=""></span>
           </button>

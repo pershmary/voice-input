@@ -23,7 +23,9 @@
 
 .voice-toolbar[hidden],
 .voice-toolbar__microphone[hidden],
-.voice-toolbar [data-voice-command][hidden] {
+.voice-toolbar [data-voice-command][hidden],
+.voice-launch[hidden],
+.voice-launch__menu[hidden] {
   display: none;
 }
 
@@ -71,6 +73,56 @@
 
 .voice-toolbar__close::before {
   content: none;
+}
+
+.voice-launch {
+  position: relative;
+  display: flex;
+}
+
+.voice-launch__main[aria-expanded="true"] {
+  --tb-bg: var(--tb-hover);
+}
+
+.voice-launch__menu {
+  --voice-launch-menu-gap: calc(var(--offset-offset_2xs) + var(--offset-offset_3xs) + 1px);
+  position: absolute;
+  z-index: 2;
+  inset-block-start: calc(100% + var(--voice-launch-menu-gap));
+  inset-inline-start: calc(var(--offset-offset_2xs) - var(--offset-offset_s) - var(--offset-offset_m));
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-width: 200px;
+  gap: var(--offset-offset_xs);
+  padding: var(--offset-offset_s) var(--offset-offset_s) var(--offset-offset_m);
+  border-radius: var(--border-radius-border-radius_s);
+  background: var(--components-popuptemplate-background-color_sticky);
+  box-shadow: 0 0 var(--blur-shadow-blur_a2) var(--color-shadow-color_a),
+              0 0 var(--blur-shadow-blur_a) var(--color-shadow-color_a);
+}
+
+.voice-launch__menu::before {
+  /* Keep the menu open while the pointer crosses the gap below the button. */
+  position: absolute;
+  inset-block-end: 100%;
+  inset-inline: 0;
+  height: var(--voice-launch-menu-gap);
+  content: "";
+}
+
+.voice-launch__option {
+  --tb-hover: var(--background-hover_background-color);
+  justify-content: flex-start;
+  gap: var(--offset-offset_s);
+  padding-inline: var(--offset-offset_m) calc(2 * var(--offset-offset_s));
+  border-radius: var(--components-popup-menu-item_border-radius);
+  font-size: var(--font-font-size-font-size_xl);
+}
+
+.demo-stage:not([data-dictation-icon="microphone-letter"]) .voice-toolbar__dictation-letter,
+.demo-stage[data-dictation-icon="microphone-letter"] .voice-toolbar__wave {
+  display: none;
 }
 
 .voice-toolbar__wave {
